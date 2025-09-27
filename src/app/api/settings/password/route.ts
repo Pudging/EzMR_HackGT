@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth/config";
 import { db } from "@/server/db";
+import { logUserAction, ActionType } from "@/lib/logging";
 import bcrypt from "bcryptjs";
 
 export async function PUT(request: NextRequest) {
@@ -49,9 +50,11 @@ export async function PUT(request: NextRequest) {
     );
 
     if (!credentialAccount) {
-      // User is using OAuth (Google), so they don't have a password to change
+      // User is using email/magic link authentication, so they don't have a password to change
       return NextResponse.json(
-        { error: "Password change not available for OAuth accounts" },
+        {
+          error: "Password change not available for email-based authentication",
+        },
         { status: 400 },
       );
     }
@@ -80,11 +83,26 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    await logUserAction({
+      action: ActionType.UPDATE,
+      resource: "password",
+      resourceId: session.user.id,
+      request,
+      success: true,
+    });
+
     return NextResponse.json({
       message: "Password updated successfully",
     });
   } catch (error) {
     console.error("Error updating password:", error);
+    await logUserAction({
+      action: ActionType.UPDATE,
+      resource: "password",
+      request,
+      success: false,
+      metadata: { stage: "PUT password" },
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

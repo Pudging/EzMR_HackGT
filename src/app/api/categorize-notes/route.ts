@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
-import { google } from '@ai-sdk/google';
 import { z } from 'zod';
+import { runMastraGenerate } from '@/mastra/run';
 
 // Define Zod schema for categorization data
 const categorizationSchema = z.object({
@@ -33,11 +32,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use Vercel AI SDK with Google Gemini
-    const result = await generateObject({
-      model: google('gemini-2.0-flash-exp'),
-      schema: categorizationSchema,
-      prompt: `
+    // Mastra Agent (Gemini) + Zod validation
+    const prompt = `
 Analyze the following medical text and categorize it into EMR sections. Provide confidence scores and key findings.
 
 MEDICAL TEXT:
@@ -64,11 +60,25 @@ Also provide:
 - Key medical findings as bullet points
 
 Be thorough in your analysis and extract as much relevant information as possible.
-      `,
-      temperature: 0.1, // Low temperature for consistent categorization
-    });
+Return ONLY strict JSON matching the schema with no extra commentary.
+    `;
+    const textOut = await runMastraGenerate(prompt, 'gemini-2.0-flash-exp');
+    const jsonMatch = /\{[\s\S]*\}/.exec(textOut);
+    const jsonString = jsonMatch ? jsonMatch[0] : textOut;
 
-    return NextResponse.json(result.object);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(jsonString);
+    } catch (_err) {
+      return NextResponse.json({ error: 'AI did not return valid JSON', raw: textOut }, { status: 502 });
+    }
+
+    const validated = categorizationSchema.safeParse(parsed);
+    if (!validated.success) {
+      return NextResponse.json({ error: 'AI output failed schema validation', issues: validated.error.issues, raw: parsed }, { status: 422 });
+    }
+
+    return NextResponse.json(validated.data);
 
   } catch (error) {
     console.error('Error categorizing medical notes:', error);

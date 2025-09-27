@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
-import { google } from '@ai-sdk/google';
 import { z } from 'zod';
+import { runMastraGenerate } from '@/mastra/run';
 
 // Define Zod schema for medical data
 const medicalDataSchema = z.object({
@@ -75,11 +74,8 @@ export async function POST(request: NextRequest) {
     const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
     const now = new Date().toISOString(); // Get current timestamp
 
-    // Use Vercel AI SDK with Google Gemini
-    const result = await generateObject({
-      model: google('gemini-2.0-flash-exp'),
-      schema: medicalDataSchema,
-      prompt: `
+    // Mastra: call Gemini via Mastra Agent and validate with Zod
+    const prompt = `
 You are a medical AI assistant specialized in parsing clinical notes and extracting structured EMR data.
 
 Parse the following medical notes and extract relevant information. Be very thorough and extract as much relevant medical information as possible, even from casual or conversational language.
@@ -141,11 +137,34 @@ IMPORTANT PARSING INSTRUCTIONS:
     - **Blood Type**: Extract exact blood type (A+, A-, B+, B-, AB+, AB-, O+, O-), include Rh factor
 
 Extract all relevant medical information from the notes and structure it according to the schema.
-      `,
-      temperature: 0.1, // Low temperature for consistent medical parsing
-    });
+Return ONLY a strict JSON object that conforms to the schema with no extra commentary.
+    `;
 
-    return NextResponse.json(result.object);
+    const text = await runMastraGenerate(prompt, 'gemini-2.0-flash-exp');
+
+    // Attempt to extract JSON block
+    const jsonMatch = /\{[\s\S]*\}/.exec(text);
+    const jsonString = jsonMatch ? jsonMatch[0] : text;
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(jsonString);
+    } catch (_err) {
+      return NextResponse.json(
+        { error: 'AI did not return valid JSON', raw: text },
+        { status: 502 }
+      );
+    }
+
+    const validated = medicalDataSchema.safeParse(parsed);
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: 'AI output failed schema validation', issues: validated.error.issues, raw: parsed },
+        { status: 422 }
+      );
+    }
+
+    return NextResponse.json(validated.data);
 
   } catch (error) {
     console.error('Error parsing medical notes:', error);

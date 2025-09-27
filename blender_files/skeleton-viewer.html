@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Skeleton Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            z-index: 100;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .control-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .control-btn:hover {
+            background: #45a049;
+        }
+        
+        #status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="loading">Loading 3D Skeleton...</div>
+        <div id="controls" style="display: none;">
+            <div style="margin-bottom: 10px;"><strong>🎮 3D Skeleton Viewer</strong></div>
+            <div style="margin-bottom: 10px;">Mouse: Rotate | Scroll: Zoom | Right-click: Pan</div>
+            <div style="margin-bottom: 10px;">
+                <button class="control-btn" onclick="resetView()">Reset View</button>
+                <button class="control-btn" onclick="toggleWireframe()">Toggle Wireframe</button>
+                <button class="control-btn" onclick="clearHighlights()">Clear Highlights</button>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong>Mesh Components:</strong><br>
+                <div id="mesh-buttons" style="max-height: 200px; overflow-y: auto; margin-top: 5px;">
+                    Loading mesh components...
+                </div>
+            </div>
+        </div>
+        
+        <div id="status">
+            <div id="status-text">Ready to load skeleton...</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script>
+        // Global variables
+        let scene, camera, renderer, controls, skeleton;
+        let wireframeMode = false;
+        let originalMaterials = new Map();
+        let highlightedParts = new Set();
+
+        // Initialize the 3D scene
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(5, 5, 5);
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('container').appendChild(renderer.domElement);
+            
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 10, 5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            
+            // Add controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            
+            // Load skeleton
+            loadSkeleton();
+            
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            
+            // Start animation
+            animate();
+        }
+
+        // Load the skeleton model
+        function loadSkeleton() {
+            const loader = new THREE.GLTFLoader();
+            
+            loader.load(
+                'blender_files/overview-skeleton.glb',
+                function(gltf) {
+                    console.log('Skeleton loaded successfully!');
+                    skeleton = gltf.scene;
+                    
+                    // Store original materials
+                    storeOriginalMaterials(skeleton);
+                    
+                    // Generate mesh component buttons
+                    generateMeshButtons(skeleton);
+                    
+                    // Add to scene
+                    scene.add(skeleton);
+                    
+                    // Center and scale
+                    centerSkeleton();
+                    
+                    // Hide loading, show controls
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('controls').style.display = 'block';
+                    
+                    updateStatus('Skeleton loaded! Click any mesh component to highlight it.');
+                },
+                function(progress) {
+                    const percent = Math.round((progress.loaded / progress.total) * 100);
+                    document.getElementById('loading').textContent = `Loading... ${percent}%`;
+                },
+                function(error) {
+                    console.error('Error loading skeleton:', error);
+                    document.getElementById('loading').textContent = 'Error loading skeleton model';
+                }
+            );
+        }
+
+        // Center the skeleton
+        function centerSkeleton() {
+            if (!skeleton) return;
+            
+            const box = new THREE.Box3().setFromObject(skeleton);
+            const center = new THREE.Vector3();
+            box.getCenter(center);
+            skeleton.position.sub(center);
+            
+            const size = new THREE.Vector3();
+            box.getSize(size);
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const distance = maxDim * 2;
+            
+            camera.position.set(distance, distance * 0.5, distance);
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
+
+        // Reset view
+        function resetView() {
+            if (!skeleton) return;
+            centerSkeleton();
+            updateStatus('View reset to default');
+        }
+
+        // Store original materials
+        function storeOriginalMaterials(object) {
+            object.traverse(function(child) {
+                if (child.isMesh && child.material) {
+                    originalMaterials.set(child.name, child.material.clone());
+                }
+            });
+        }
+
+        // Generate buttons for all mesh components
+        function generateMeshButtons(skeleton) {
+            const meshNames = [];
+            skeleton.traverse(function(child) {
+                if (child.isMesh) {
+                    meshNames.push(child.name);
+                }
+            });
+            
+            // Sort mesh names alphabetically
+            meshNames.sort();
+            
+            const container = document.getElementById('mesh-buttons');
+            let html = '';
+            
+            // Group meshes by type for better organization
+            const leftMeshes = meshNames.filter(name => name.includes('_left') || name.includes('.l'));
+            const rightMeshes = meshNames.filter(name => name.includes('_right') || name.includes('.r'));
+            const otherMeshes = meshNames.filter(name => !name.includes('_left') && !name.includes('_right') && !name.includes('.l') && !name.includes('.r'));
+            
+            // Left meshes
+            if (leftMeshes.length > 0) {
+                html += '<div style="margin-bottom: 10px;"><strong style="color: #4ecdc4;">Left Side:</strong></div>';
+                leftMeshes.forEach(name => {
+                    html += `<button class="control-btn" onclick="highlightPart('${name}')" style="font-size: 10px; padding: 4px 8px; margin: 2px;">${name}</button>`;
+                });
+            }
+            
+            // Right meshes
+            if (rightMeshes.length > 0) {
+                html += '<div style="margin-bottom: 10px; margin-top: 15px;"><strong style="color: #ff6b6b;">Right Side:</strong></div>';
+                rightMeshes.forEach(name => {
+                    html += `<button class="control-btn" onclick="highlightPart('${name}')" style="font-size: 10px; padding: 4px 8px; margin: 2px;">${name}</button>`;
+                });
+            }
+            
+            // Other meshes
+            if (otherMeshes.length > 0) {
+                html += '<div style="margin-bottom: 10px; margin-top: 15px;"><strong style="color: #ffd93d;">Other:</strong></div>';
+                otherMeshes.forEach(name => {
+                    html += `<button class="control-btn" onclick="highlightPart('${name}')" style="font-size: 10px; padding: 4px 8px; margin: 2px;">${name}</button>`;
+                });
+            }
+            
+            container.innerHTML = html;
+            console.log(`Generated buttons for ${meshNames.length} mesh components`);
+        }
+
+        // Highlight a specific part
+        function highlightPart(partName) {
+            if (!skeleton) {
+                updateStatus('No skeleton loaded!');
+                return;
+            }
+            
+            // Clear previous highlights
+            clearHighlights();
+            
+            // Find and highlight the part
+            const part = skeleton.getObjectByName(partName);
+            if (part && part.isMesh) {
+                const highlightMaterial = new THREE.MeshLambertMaterial({ 
+                    color: 0xff0000,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                part.material = highlightMaterial;
+                highlightedParts.add(partName);
+                
+                // Focus camera on the highlighted part
+                focusOnPart(part);
+                
+                updateStatus(`Highlighted: ${partName}`);
+                console.log(`Highlighted part: ${partName}`);
+            } else {
+                updateStatus(`Part not found: ${partName}`);
+                console.warn(`Part not found: ${partName}`);
+            }
+        }
+
+        // Focus camera on a specific part
+        function focusOnPart(part) {
+            const partBox = new THREE.Box3().setFromObject(part);
+            const partCenter = new THREE.Vector3();
+            partBox.getCenter(partCenter);
+            
+            const partSize = new THREE.Vector3();
+            partBox.getSize(partSize);
+            const maxDim = Math.max(partSize.x, partSize.y, partSize.z);
+            const distance = maxDim * 3;
+            
+            const direction = new THREE.Vector3().subVectors(camera.position, partCenter).normalize();
+            camera.position.copy(partCenter).add(direction.multiplyScalar(distance));
+            controls.target.copy(partCenter);
+            controls.update();
+        }
+
+        // Clear all highlights
+        function clearHighlights() {
+            if (!skeleton) return;
+            
+            highlightedParts.forEach(partName => {
+                const part = skeleton.getObjectByName(partName);
+                if (part && part.isMesh && originalMaterials.has(partName)) {
+                    part.material = originalMaterials.get(partName);
+                }
+            });
+            
+            highlightedParts.clear();
+            updateStatus('Highlights cleared');
+        }
+
+        // Toggle wireframe mode
+        function toggleWireframe() {
+            if (!skeleton) return;
+            
+            wireframeMode = !wireframeMode;
+            
+            skeleton.traverse(function(child) {
+                if (child.isMesh && child.material) {
+                    if (wireframeMode) {
+                        child.material.wireframe = true;
+                    } else {
+                        child.material.wireframe = false;
+                    }
+                }
+            });
+            
+            updateStatus(wireframeMode ? 'Wireframe mode ON' : 'Wireframe mode OFF');
+        }
+
+        // Window resize
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Update status
+        function updateStatus(message) {
+            document.getElementById('status-text').textContent = message;
+            console.log('Status:', message);
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

@@ -18,14 +18,17 @@ export const useMastraAgent = () => {
     setError(null);
 
     try {
-      // Use server-side API route to avoid client-side Mastra issues
+      // Force Mastra-style server pipeline only (no client fallback)
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
+      // Tag the request to indicate Mastra/Cedar pipeline usage (still Gemini under the hood)
       const response = await fetch('/api/parse-notes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Agent-Framework': 'Mastra',
+          'X-Voice-Provider': 'Cedar',
         },
         body: JSON.stringify({ notes: rawNotes }),
         signal: controller.signal,
@@ -58,7 +61,7 @@ export const useMastraAgent = () => {
     setError(null);
 
     try {
-      // Use server-side API route for categorization
+      // Force Mastra-style server pipeline only (no client fallback)
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
@@ -66,6 +69,8 @@ export const useMastraAgent = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Agent-Framework': 'Mastra',
+          'X-Voice-Provider': 'Cedar',
         },
         body: JSON.stringify({ text: medicalText }),
         signal: controller.signal,

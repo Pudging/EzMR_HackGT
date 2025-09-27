@@ -1,8 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth/config";
 import { db } from "@/server/db";
+import { logUserAction, ActionType } from "@/lib/logging";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await auth();
 
@@ -24,9 +25,24 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    await logUserAction({
+      action: ActionType.ACCESS,
+      resource: "profile",
+      resourceId: session.user.id,
+      request,
+      success: true,
+    });
+
     return NextResponse.json(user);
   } catch (error) {
     console.error("Error fetching profile:", error);
+    await logUserAction({
+      action: ActionType.ACCESS,
+      resource: "profile",
+      request,
+      success: false,
+      metadata: { stage: "GET profile" },
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -90,6 +106,15 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    await logUserAction({
+      action: ActionType.UPDATE,
+      resource: "profile",
+      resourceId: session.user.id,
+      request,
+      success: true,
+      metadata: { fields: ["name", "email"] },
+    });
+
     return NextResponse.json({
       message: "Profile updated successfully",
       user: {
@@ -101,6 +126,13 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error updating profile:", error);
+    await logUserAction({
+      action: ActionType.UPDATE,
+      resource: "profile",
+      request,
+      success: false,
+      metadata: { stage: "PUT profile" },
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
