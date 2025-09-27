@@ -101,8 +101,13 @@ function DashboardPageContent() {
     const patientFromStorage = sessionStorage.getItem("selectedPatient");
     const patientIdFromUrl = searchParams.get("patientId");
 
+    console.log(`🔍 Dashboard: Looking for patient data`);
+    console.log(`📦 From sessionStorage:`, patientFromStorage);
+    console.log(`🔗 From URL:`, patientIdFromUrl);
+
     if (patientFromStorage) {
       const patient = JSON.parse(patientFromStorage);
+      console.log(`✅ Dashboard: Selected patient from storage:`, patient);
       setSelectedPatient(patient);
     } else if (patientIdFromUrl) {
       // Mock data lookup by ID - in real app this would be an API call

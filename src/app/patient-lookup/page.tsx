@@ -170,8 +170,12 @@ export default function PatientLookupPage() {
   };
 
   const goToDashboard = (patient: PatientSearchResult) => {
+    console.log(`🚀 Patient Lookup: Going to dashboard with patient:`, patient);
+    
     // Store selected patient in sessionStorage for access by other pages
     sessionStorage.setItem("selectedPatient", JSON.stringify(patient));
+    
+    console.log(`💾 Patient Lookup: Stored in sessionStorage:`, JSON.stringify(patient));
 
     // Navigate to dashboard
     router.push("/dashboard");

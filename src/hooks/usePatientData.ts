@@ -137,11 +137,15 @@ export function usePatientData(patientId: string) {
         setLoading(true);
         setError(null);
         
+        console.log(`🔄 usePatientData: Loading data for patientId: ${patientId}`);
+        
         // Fetch both patient data and assessment data
         const [patientResponse, assessmentResponse] = await Promise.all([
           fetch(`/api/patients/${patientId}`),
           fetch(`/api/patients/${patientId}/assessment`)
         ]);
+        
+        console.log(`📡 Patient API response status: ${patientResponse.status}`);
         
         if (!patientResponse.ok) {
           if (patientResponse.status === 404) {
