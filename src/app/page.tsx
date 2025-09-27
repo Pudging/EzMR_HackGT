@@ -70,6 +70,18 @@ export default async function HomePage() {
                     Keep track of your medications and set reminders.
                   </p>
                 </div>
+
+                <Link href="/id-scan" className="group">
+                  <div className="rounded-xl border-0 bg-white/80 p-6 shadow-lg backdrop-blur-sm transition-all duration-200 hover:shadow-xl dark:bg-gray-800/80 group-hover:scale-105">
+                    <h3 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">
+                      📷 ID Scanner
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Scan your ID to automatically extract personal information.
+                    </p>
+                  </div>
+                </Link>
+
               </div>
             </div>
           ) : (
