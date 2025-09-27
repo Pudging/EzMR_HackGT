@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { useSearch } from "@/hooks/use-search";
 import { usePatientData } from "@/hooks/usePatientData";
+import { AISearchBox } from "@/components/ui/ai-search-box";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -438,8 +439,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* AI Clinical Search */}
+        <AISearchBox 
+          patientData={patientData}
+          onHighlightSection={(section) => {
+            // Optional: Add custom highlighting logic here
+            console.log('Highlighting section:', section);
+          }}
+        />
+
         {/* Past Medical History Section */}
-        <div className="mb-6">
+        <div className="mb-6" id="section-pastConditions">
           {/* Past Medical History Section - Full width */}
           <div className="bg-card rounded-lg border shadow-sm">
             <div className="border-b px-4 py-3">
@@ -460,7 +470,7 @@ export default function DashboardPage() {
                 {/* Left Column */}
                 <div className="space-y-4">
                   {/* Social History */}
-                  <div className="rounded-lg border p-3">
+                  <div className="rounded-lg border p-3" id="section-socialHistory">
                     <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
                       <Users className="text-primary mr-2 h-4 w-4" />
                       Social History
@@ -516,7 +526,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Immunization History */}
-                  <div className="rounded-lg border p-3">
+                  <div className="rounded-lg border p-3" id="section-immunizations">
                     <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
                       <Shield className="text-primary mr-2 h-4 w-4" />
                       Immunization History
@@ -551,7 +561,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Allergies */}
-                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700" id="section-allergies">
                     <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
                       <Bell className="mr-2 h-4 w-4 text-red-600" />
                       Allergies
@@ -661,7 +671,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Family Medical History */}
-                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700" id="section-familyHistory">
                     <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
                       <Users className="mr-2 h-4 w-4 text-purple-600" />
                       Family Medical History
@@ -916,7 +926,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Vital Signs Overview */}
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4" id="section-vitals">
           <Card className="border-l-4 border-l-green-500">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -1197,7 +1207,7 @@ export default function DashboardPage() {
           {/* Right Column - Medical Info & Actions */}
           <div className="space-y-6">
             {/* Current Medications */}
-            <Card className="border">
+            <Card className="border" id="section-medications">
               <CardHeader className="border-b">
                 <CardTitle className="text-foreground flex items-center">
                   <Pill className="mr-2 h-5 w-5" />
