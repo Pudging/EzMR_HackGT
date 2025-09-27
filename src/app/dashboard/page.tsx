@@ -9,6 +9,7 @@ import { AISearchBox } from "@/components/ui/ai-search-box";
 import { ModernDicomViewer } from "@/components/medical/modern-dicom-viewer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DashboardLoadingAnimation } from "@/components/ui/dashboard-loading-animation";
 import {
   Card,
   CardContent,
@@ -76,7 +77,9 @@ function DashboardPageContent() {
       default: return 'text-gray-500';
     }
   };
-  const [selectedPatient, setSelectedPatient] = useState<SelectedPatient | null>(null);
+  const [selectedPatient, setSelectedPatient] =
+    useState<SelectedPatient | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const {
     currentMatch,
     totalMatches,
@@ -87,13 +90,17 @@ function DashboardPageContent() {
   } = useSearch();
 
   // Load full patient data
-  const { patientData, loading: patientDataLoading, error: patientDataError } = usePatientData(selectedPatient?.patientId ?? "");
+  const {
+    patientData,
+    loading: patientDataLoading,
+    error: patientDataError,
+  } = usePatientData(selectedPatient?.patientId ?? "");
 
   useEffect(() => {
     // Check for selected patient in sessionStorage or URL params
-    const patientFromStorage = sessionStorage.getItem('selectedPatient');
-    const patientIdFromUrl = searchParams.get('patientId');
-    
+    const patientFromStorage = sessionStorage.getItem("selectedPatient");
+    const patientIdFromUrl = searchParams.get("patientId");
+
     if (patientFromStorage) {
       const patient = JSON.parse(patientFromStorage);
       setSelectedPatient(patient);
@@ -103,35 +110,41 @@ function DashboardPageContent() {
         {
           id: "pat_1",
           name: "Kevin Ketong Gao",
-          patientId: "1", 
+          patientId: "1",
           dob: "1995-03-15",
           sex: "Male",
-          bloodType: "O+"
-        }
+          bloodType: "O+",
+        },
       ];
-      
-      const patient = mockPatients.find(p => p.patientId === patientIdFromUrl);
+
+      const patient = mockPatients.find(
+        (p) => p.patientId === patientIdFromUrl,
+      );
       if (patient) {
         setSelectedPatient(patient);
-        sessionStorage.setItem('selectedPatient', JSON.stringify(patient));
+        sessionStorage.setItem("selectedPatient", JSON.stringify(patient));
       }
     }
   }, [searchParams]);
 
+  const handleLoadingComplete = () => {
+    setIsInitialLoading(false);
+  };
+
   // Redirect to patient lookup if no patient selected
   if (!selectedPatient) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md mx-4">
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <Card className="mx-4 max-w-md">
           <CardHeader className="text-center">
-            <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-yellow-500" />
             <CardTitle>No Patient Selected</CardTitle>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
+          <CardContent className="space-y-4 text-center">
             <p className="text-muted-foreground">
               Please select a patient before accessing the dashboard.
             </p>
-            <Button onClick={() => router.push('/patient-lookup')}>
+            <Button onClick={() => router.push("/patient-lookup")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Go to Patient Lookup
             </Button>
@@ -141,13 +154,24 @@ function DashboardPageContent() {
     );
   }
 
+  // Show initial loading animation
+  if (isInitialLoading) {
+    return (
+      <DashboardLoadingAnimation
+        onComplete={handleLoadingComplete}
+        duration={4000}
+        patientName={selectedPatient?.name ?? "Patient"}
+      />
+    );
+  }
+
   // Show loading state while patient data loads
   if (patientDataLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md mx-4">
-          <CardContent className="text-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <Card className="mx-4 max-w-md">
+          <CardContent className="py-8 text-center">
+            <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
             <p className="text-muted-foreground">Loading patient data...</p>
           </CardContent>
         </Card>
@@ -158,17 +182,17 @@ function DashboardPageContent() {
   // Show error if patient data failed to load
   if (patientDataError || !patientData) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md mx-4">
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <Card className="mx-4 max-w-md">
           <CardHeader className="text-center">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-500" />
             <CardTitle>Error Loading Patient Data</CardTitle>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
+          <CardContent className="space-y-4 text-center">
             <p className="text-muted-foreground">
-              {patientDataError ?? 'Failed to load patient information'}
+              {patientDataError ?? "Failed to load patient information"}
             </p>
-            <Button onClick={() => router.push('/patient-lookup')}>
+            <Button onClick={() => router.push("/patient-lookup")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Patient Lookup
             </Button>
@@ -193,7 +217,8 @@ function DashboardPageContent() {
                   Patient Dashboard - {selectedPatient.name}
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  ID: {selectedPatient.patientId} • DOB: {selectedPatient.dob} • {selectedPatient.sex}
+                  ID: {selectedPatient.patientId} • DOB: {selectedPatient.dob} •{" "}
+                  {selectedPatient.sex}
                 </p>
               </div>
             </div>
@@ -206,9 +231,9 @@ function DashboardPageContent() {
                 totalMatches={totalMatches}
                 isSearching={isSearching}
               />
-              <Button 
-                variant="outline" 
-                onClick={() => router.push('/patient-lookup')}
+              <Button
+                variant="outline"
+                onClick={() => router.push("/patient-lookup")}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Change Patient
@@ -337,8 +362,11 @@ function DashboardPageContent() {
                         {patientData.address?.line1 ?? "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-sm">
-                        {patientData.address?.line2 && `${patientData.address.line2}, `}
-                        {patientData.address?.city}, {patientData.address?.state} {patientData.address?.postalCode}
+                        {patientData.address?.line2 &&
+                          `${patientData.address.line2}, `}
+                        {patientData.address?.city},{" "}
+                        {patientData.address?.state}{" "}
+                        {patientData.address?.postalCode}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Home Address
@@ -364,10 +392,12 @@ function DashboardPageContent() {
                     <CreditCard className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        {patientData.insurance?.primary?.provider ?? "Not provided"}
+                        {patientData.insurance?.primary?.provider ??
+                          "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-sm">
-                        Policy: {patientData.insurance?.primary?.policyNumber ?? "N/A"}
+                        Policy:{" "}
+                        {patientData.insurance?.primary?.policyNumber ?? "N/A"}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Primary Insurance
@@ -462,11 +492,11 @@ function DashboardPageContent() {
 
 
         {/* AI Clinical Search */}
-        <AISearchBox 
+        <AISearchBox
           patientData={patientData}
           onHighlightSection={(section) => {
             // Optional: Add custom highlighting logic here
-            console.log('Highlighting section:', section);
+            console.log("Highlighting section:", section);
           }}
         />
 
@@ -492,7 +522,10 @@ function DashboardPageContent() {
                 {/* Left Column */}
                 <div className="space-y-4">
                   {/* Social History */}
-                  <div className="rounded-lg border p-3" id="section-socialHistory">
+                  <div
+                    className="rounded-lg border p-3"
+                    id="section-socialHistory"
+                  >
                     <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
                       <Users className="text-primary mr-2 h-4 w-4" />
                       Social History
@@ -541,104 +574,133 @@ function DashboardPageContent() {
                         )}
                     </div>
                     ) : (
-                      <div className="text-center py-4">
-                        <p className="text-muted-foreground text-sm">No social history recorded</p>
+                      <div className="py-4 text-center">
+                        <p className="text-muted-foreground text-sm">
+                          No social history recorded
+                        </p>
                       </div>
                     )}
                   </div>
 
                   {/* Immunization History */}
-                  <div className="rounded-lg border p-3" id="section-immunizations">
+                  <div
+                    className="rounded-lg border p-3"
+                    id="section-immunizations"
+                  >
                     <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
                       <Shield className="text-primary mr-2 h-4 w-4" />
                       Immunization History
                     </h3>
-                    {patientData.immunizations && patientData.immunizations.length > 0 ? (
-                    <div className="space-y-1">
-                        {patientData.immunizations.map((immunization, index) => (
-                          <div key={index} className="bg-secondary rounded border p-2">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-foreground text-sm font-medium">
-                                  {immunization.vaccine}
-                            </p>
-                                {immunization.notes && (
-                            <p className="text-muted-foreground text-xs">
-                                    {immunization.notes}
-                            </p>
-                                )}
-                          </div>
-                          <span className="text-primary text-xs font-medium">
-                                {new Date(immunization.administeredOn).toLocaleDateString()}
-                          </span>
-                        </div>
+                    {patientData.immunizations &&
+                    patientData.immunizations.length > 0 ? (
+                      <div className="space-y-1">
+                        {patientData.immunizations.map(
+                          (immunization, index) => (
+                            <div
+                              key={index}
+                              className="bg-secondary rounded border p-2"
+                            >
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <p className="text-foreground text-sm font-medium">
+                                    {immunization.vaccine}
+                                  </p>
+                                  {immunization.notes && (
+                                    <p className="text-muted-foreground text-xs">
+                                      {immunization.notes}
+                                    </p>
+                                  )}
+                                </div>
+                                <span className="text-primary text-xs font-medium">
+                                  {new Date(
+                                    immunization.administeredOn,
+                                  ).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          ),
+                        )}
                       </div>
-                        ))}
-                          </div>
                     ) : (
                       <div className="text-center py-4">
                         <p className="text-muted-foreground text-sm">No immunization records</p>
-                        </div>
+                      </div>
                     )}
                   </div>
 
                   {/* Allergies */}
-                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700" id="section-allergies">
+                  <div
+                    className="rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                    id="section-allergies"
+                  >
                     <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
                       <Bell className="mr-2 h-4 w-4 text-red-600" />
                       Allergies
                     </h3>
                     <div className="space-y-1">
-                      {patientData.allergies && patientData.allergies.length > 0 ? (
+                      {patientData.allergies &&
+                      patientData.allergies.length > 0 ? (
                         patientData.allergies.map((allergy, index) => {
                           // Determine border and background colors based on severity
                           const getSeverityStyle = (severity: string) => {
                             switch (severity.toLowerCase()) {
-                              case 'severe':
+                              case "severe":
                                 return {
-                                  border: 'border-red-200 dark:border-red-800',
-                                  bg: 'bg-red-50 dark:bg-red-900/20',
-                                  textColor: 'text-red-600'
+                                  border: "border-red-200 dark:border-red-800",
+                                  bg: "bg-red-50 dark:bg-red-900/20",
+                                  textColor: "text-red-600",
                                 };
-                              case 'moderate':
+                              case "moderate":
                                 return {
-                                  border: 'border-orange-200 dark:border-orange-800',
-                                  bg: 'bg-orange-50 dark:bg-orange-900/20',
-                                  textColor: 'text-orange-600'
+                                  border:
+                                    "border-orange-200 dark:border-orange-800",
+                                  bg: "bg-orange-50 dark:bg-orange-900/20",
+                                  textColor: "text-orange-600",
                                 };
-                              case 'mild':
+                              case "mild":
                                 return {
-                                  border: 'border-yellow-200 dark:border-yellow-800',
-                                  bg: 'bg-yellow-50 dark:bg-yellow-900/20',
-                                  textColor: 'text-yellow-600'
+                                  border:
+                                    "border-yellow-200 dark:border-yellow-800",
+                                  bg: "bg-yellow-50 dark:bg-yellow-900/20",
+                                  textColor: "text-yellow-600",
                                 };
                               default:
                                 return {
-                                  border: 'border-gray-200 dark:border-gray-700',
-                                  bg: 'bg-gray-50 dark:bg-gray-900/20',
-                                  textColor: 'text-gray-600'
+                                  border:
+                                    "border-gray-200 dark:border-gray-700",
+                                  bg: "bg-gray-50 dark:bg-gray-900/20",
+                                  textColor: "text-gray-600",
                                 };
                             }
                           };
-                          
+
                           const style = getSeverityStyle(allergy.severity);
-                          
+
                           return (
-                            <div key={index} className={`rounded border ${style.border} ${style.bg} p-2`}>
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <div
+                              key={index}
+                              className={`rounded border ${style.border} ${style.bg} p-2`}
+                            >
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {allergy.substance}
                             </p>
                             <p className="text-xs text-gray-600 dark:text-gray-400">
                                     {allergy.severity} - {allergy.reaction}
-                            </p>
-                          </div>
-                                <span className={`text-xs font-medium ${style.textColor}`}>
-                                  {allergy.notedOn ? new Date(allergy.notedOn).toLocaleDateString() : 'Date unknown'}
-                          </span>
-                        </div>
-                      </div>
+                                  </p>
+                                </div>
+                                <span
+                                  className={`text-xs font-medium ${style.textColor}`}
+                                >
+                                  {allergy.notedOn
+                                    ? new Date(
+                                        allergy.notedOn,
+                                      ).toLocaleDateString()
+                                    : "Date unknown"}
+                                </span>
+                              </div>
+                            </div>
                           );
                         })
                       ) : (
@@ -667,43 +729,60 @@ function DashboardPageContent() {
                       <Activity className="mr-2 h-4 w-4 text-blue-600" />
                       Past Injuries & Conditions
                     </h3>
-                    {patientData.pastConditions && patientData.pastConditions.length > 0 ? (
-                    <div className="space-y-1">
+                    {patientData.pastConditions &&
+                    patientData.pastConditions.length > 0 ? (
+                      <div className="space-y-1">
                         {patientData.pastConditions.map((condition, index) => (
-                          <div key={index} className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                          <div
+                            key={index}
+                            className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20"
+                          >
+                            <div className="mb-1 flex items-start justify-between">
+                              <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                                 {condition.bodyPart}:
-                          </span>
-                          <span className="text-xs font-medium text-blue-600">
-                                {condition.date ? new Date(condition.date).toLocaleDateString() : 'Unknown date'}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                              </span>
+                              <span className="text-xs font-medium text-blue-600">
+                                {condition.date
+                                  ? new Date(
+                                      condition.date,
+                                    ).toLocaleDateString()
+                                  : "Unknown date"}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                               {condition.notes}
                         </p>
                       </div>
                         ))}
                         </div>
                     ) : (
-                      <div className="text-center py-4">
-                        <p className="text-muted-foreground text-sm">No past medical conditions recorded</p>
+                      <div className="py-4 text-center">
+                        <p className="text-muted-foreground text-sm">
+                          No past medical conditions recorded
+                        </p>
                       </div>
                     )}
                   </div>
 
                   {/* Family Medical History */}
-                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700" id="section-familyHistory">
+                  <div
+                    className="rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                    id="section-familyHistory"
+                  >
                     <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
                       <Users className="mr-2 h-4 w-4 text-purple-600" />
                       Family Medical History
                     </h3>
-                    {patientData.familyHistory && patientData.familyHistory.length > 0 ? (
-                    <div className="space-y-1">
+                    {patientData.familyHistory &&
+                    patientData.familyHistory.length > 0 ? (
+                      <div className="space-y-1">
                         {patientData.familyHistory.map((history, index) => (
-                          <div key={index} className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                          <div
+                            key={index}
+                            className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20"
+                          >
+                            <div className="mb-1 flex items-start justify-between">
+                              <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
                                 {history.relation}:
                           </span>
                         </div>
@@ -715,8 +794,10 @@ function DashboardPageContent() {
                         ))}
                         </div>
                     ) : (
-                      <div className="text-center py-4">
-                        <p className="text-muted-foreground text-sm">No family medical history recorded</p>
+                      <div className="py-4 text-center">
+                        <p className="text-muted-foreground text-sm">
+                          No family medical history recorded
+                        </p>
                       </div>
                     )}
                         </div>
@@ -948,7 +1029,10 @@ function DashboardPageContent() {
         </div>
 
         {/* Vital Signs Overview */}
-        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4" id="section-vitals">
+        <div
+          className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4"
+          id="section-vitals"
+        >
           <Card className="border-l-4 border-l-green-500">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -957,9 +1041,10 @@ function DashboardPageContent() {
                     Blood Pressure & Type
                   </p>
                   <p className="text-foreground text-xl font-bold">
-                    {patientData.vitals?.bloodPressure 
+                    {patientData.vitals?.bloodPressure
                       ? `${patientData.vitals.bloodPressure.systolic}/${patientData.vitals.bloodPressure.diastolic}`
-                      : "N/A"} • {patientData.bloodType ?? "N/A"}
+                      : "N/A"}{" "}
+                    • {patientData.bloodType ?? "N/A"}
                   </p>
                   <p className="text-xs text-green-600">Normal</p>
                 </div>
@@ -1010,7 +1095,8 @@ function DashboardPageContent() {
                     Weight & Height
                   </p>
                   <p className="text-foreground text-xl font-bold">
-                    {patientData.vitals?.weight ?? "N/A"} • {patientData.vitals?.height ?? "N/A"}
+                    {patientData.vitals?.weight ?? "N/A"} •{" "}
+                    {patientData.vitals?.height ?? "N/A"}
                   </p>
                   <p className="text-xs text-purple-600">
                     BMI: {patientData.vitals?.bmi ?? "N/A"}
@@ -1023,54 +1109,64 @@ function DashboardPageContent() {
         </div>
 
         {/* Patient Assessment Section */}
-        {patientData?.assessmentData && Object.keys(patientData.assessmentData).length > 0 && (
-          <Card className="border" id="section-assessment">
-            <CardHeader className="border-b">
-              <CardTitle className="text-foreground flex items-center">
-                <Stethoscope className="mr-2 h-5 w-5" />
-                Physical Assessment
-              </CardTitle>
-              <CardDescription>
-                Latest physical examination findings by body region
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {Object.entries(patientData.assessmentData).map(([bodyPart, notes]) => {
-                  if (!notes || notes.trim().length === 0) return null;
-                  
-                  const bodyPartLabel = bodyPart
-                    .split('-')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ');
-                  
-                  return (
-                    <div
-                      key={bodyPart}
-                      className="rounded-lg border bg-card p-4 text-card-foreground"
-                    >
-                      <div className="mb-2 flex items-center">
-                        <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg mr-3">
-                          <Activity className="text-primary h-4 w-4" />
+        {patientData?.assessmentData &&
+          Object.keys(patientData.assessmentData).length > 0 && (
+            <Card className="border" id="section-assessment">
+              <CardHeader className="border-b">
+                <CardTitle className="text-foreground flex items-center">
+                  <Stethoscope className="mr-2 h-5 w-5" />
+                  Physical Assessment
+                </CardTitle>
+                <CardDescription>
+                  Latest physical examination findings by body region
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {Object.entries(patientData.assessmentData).map(
+                    ([bodyPart, notes]) => {
+                      if (!notes || notes.trim().length === 0) return null;
+
+                      const bodyPartLabel = bodyPart
+                        .split("-")
+                        .map(
+                          (word) =>
+                            word.charAt(0).toUpperCase() + word.slice(1),
+                        )
+                        .join(" ");
+
+                      return (
+                        <div
+                          key={bodyPart}
+                          className="bg-card text-card-foreground rounded-lg border p-4"
+                        >
+                          <div className="mb-2 flex items-center">
+                            <div className="bg-primary/10 mr-3 flex h-8 w-8 items-center justify-center rounded-lg">
+                              <Activity className="text-primary h-4 w-4" />
+                            </div>
+                            <h4 className="text-sm font-semibold">
+                              {bodyPartLabel}
+                            </h4>
+                          </div>
+                          <p className="text-muted-foreground text-sm leading-relaxed">
+                            {notes}
+                          </p>
                         </div>
-                        <h4 className="font-semibold text-sm">{bodyPartLabel}</h4>
-                      </div>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        {notes}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-              {Object.keys(patientData.assessmentData).length === 0 && (
-                <div className="text-center py-8">
-                  <Stethoscope className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">No assessment data available</p>
+                      );
+                    },
+                  )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                {Object.keys(patientData.assessmentData).length === 0 && (
+                  <div className="py-8 text-center">
+                    <Stethoscope className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+                    <p className="text-muted-foreground">
+                      No assessment data available
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
         {/* Medical Records Section */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -1315,7 +1411,6 @@ function DashboardPageContent() {
                 </div>
               </CardContent>
             </Card>
-
           </div>
 
           {/* Right Column - Medical Info & Actions */}
@@ -1330,32 +1425,39 @@ function DashboardPageContent() {
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-3">
-                  {patientData.medications?.filter(med => med.active).map((medication, index) => (
-                    <div key={index} className="bg-card flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <p className="text-foreground font-medium">
-                          {medication.name} {medication.dose && `${medication.dose}`}
+                  {patientData.medications
+                    ?.filter((med) => med.active)
+                    .map((medication, index) => (
+                      <div
+                        key={index}
+                        className="bg-card flex items-center justify-between rounded-lg border p-3"
+                      >
+                        <div>
+                          <p className="text-foreground font-medium">
+                            {medication.name}{" "}
+                            {medication.dose && `${medication.dose}`}
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            {medication.frequency ?? "As prescribed"}
+                          </p>
+                          {medication.refills !== undefined && (
+                            <p className="text-muted-foreground text-xs">
+                              Refills: {medication.refills} remaining
+                            </p>
+                          )}
+                        </div>
+                        <Clock className="text-muted-foreground h-4 w-4" />
+                      </div>
+                    )) ?? (
+                    <div className="py-4 text-center">
+                      <p className="text-muted-foreground">
+                        No current medications
                       </p>
-                      <p className="text-muted-foreground text-sm">
-                          {medication.frequency ?? "As prescribed"}
-                      </p>
-                        {medication.refills !== undefined && (
-                      <p className="text-muted-foreground text-xs">
-                            Refills: {medication.refills} remaining
-                      </p>
-                        )}
-                    </div>
-                    <Clock className="text-muted-foreground h-4 w-4" />
-                  </div>
-                  )) ?? (
-                    <div className="text-center py-4">
-                      <p className="text-muted-foreground">No current medications</p>
                     </div>
                   )}
                   </div>
               </CardContent>
             </Card>
-
           </div>
         </div>
 
@@ -1384,12 +1486,16 @@ function DashboardPageContent() {
                     Recent Notes
                   </h3>
 
-                  {patientData.recentNotes && patientData.recentNotes.length > 0 ? (
-                  <div className="space-y-3">
+                  {patientData.recentNotes &&
+                  patientData.recentNotes.length > 0 ? (
+                    <div className="space-y-3">
                       {patientData.recentNotes.map((note, index) => (
-                        <div key={index} className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-                      <div className="mb-2 flex items-start justify-between">
-                        <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                        <div
+                          key={index}
+                          className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20"
+                        >
+                          <div className="mb-2 flex items-start justify-between">
+                            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                               {note.provider}
                         </span>
                         <span className="text-xs font-medium text-blue-600">
@@ -1403,8 +1509,10 @@ function DashboardPageContent() {
                       ))}
                       </div>
                   ) : (
-                    <div className="text-center py-4">
-                      <p className="text-muted-foreground text-sm">No recent notes available</p>
+                    <div className="py-4 text-center">
+                      <p className="text-muted-foreground text-sm">
+                        No recent notes available
+                      </p>
                     </div>
                   )}
                 </div>
@@ -1415,8 +1523,10 @@ function DashboardPageContent() {
                     <BarChart3 className="text-primary mr-2 h-4 w-4" />
                     Progress Summary
                   </h3>
-                  <div className="text-center py-4">
-                    <p className="text-muted-foreground text-sm">No progress data available</p>
+                  <div className="py-4 text-center">
+                    <p className="text-muted-foreground text-sm">
+                      No progress data available
+                    </p>
                   </div>
                 </div>
 
@@ -1426,11 +1536,12 @@ function DashboardPageContent() {
                     <Eye className="text-primary mr-2 h-4 w-4" />
                     General Observations
                   </h3>
-                  <div className="text-center py-4">
-                    <p className="text-muted-foreground text-sm">No observations recorded</p>
+                  <div className="py-4 text-center">
+                    <p className="text-muted-foreground text-sm">
+                      No observations recorded
+                    </p>
                   </div>
                 </div>
-
               </div>
             </CardContent>
           </Card>
@@ -1451,14 +1562,16 @@ function DashboardPageContent() {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading dashboard...</p>
+    <Suspense
+      fallback={
+        <div className="bg-background flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
+            <p className="text-muted-foreground">Loading dashboard...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <DashboardPageContent />
     </Suspense>
   );

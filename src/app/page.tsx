@@ -6,14 +6,15 @@ import { getCurrentTenant } from "@/lib/tenant";
 
 export default async function HomePage() {
   const session = await auth();
+  console.log("Home page session", session);
   const tenant = await getCurrentTenant();
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-background">
+    <main className="bg-background min-h-[calc(100vh-64px)]">
       {/* Main Content */}
       <div className="relative z-10 mx-auto px-0 py-16">
         <div className="text-center">
-          <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-foreground">
+          <h1 className="text-foreground mb-6 text-5xl font-extrabold tracking-tight">
             Welcome to{" "}
             <span className="text-primary">
               {tenant?.hospitalName ?? "EzMR"}
@@ -22,17 +23,15 @@ export default async function HomePage() {
 
           {session ? (
             <div className="space-y-6">
-              <p className="mx-auto max-w-3xl text-xl text-muted-foreground">
-                Welcome back, {session.user?.name}! Ready to manage your medical
-                records?
+              <p className="text-muted-foreground mx-auto max-w-3xl text-xl">
+                {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+                Welcome back, {session.user?.name || "User"}! Ready to manage
+                your medical records?
               </p>
 
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Link href="/dashboard">
-                  <Button
-                    size="lg"
-                    className="px-8 py-3"
-                  >
+                  <Button size="lg" className="px-8 py-3">
                     Go to Dashboard
                   </Button>
                 </Link>
@@ -48,29 +47,31 @@ export default async function HomePage() {
               <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Link href="/patient-lookup">
                   <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
-                    <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                    <h3 className="text-card-foreground mb-3 text-xl font-semibold">
                       🔍 Patient Lookup
                     </h3>
                     <p className="text-muted-foreground">
-                      Search for patients by ID, name, or scan their ID card to access medical records.
+                      Search for patients by ID, name, or scan their ID card to
+                      access medical records.
                     </p>
                   </MagicCard>
                 </Link>
 
                 <Link href="/emr-upload">
                   <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
-                    <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                    <h3 className="text-card-foreground mb-3 text-xl font-semibold">
                       📄 EMR Upload
                     </h3>
                     <p className="text-muted-foreground">
-                      Upload and manage electronic medical records with AI-powered data extraction.
+                      Upload and manage electronic medical records with
+                      AI-powered data extraction.
                     </p>
                   </MagicCard>
                 </Link>
 
                 <Link href="/id-scan">
                   <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
-                    <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                    <h3 className="text-card-foreground mb-3 text-xl font-semibold">
                       📷 ID Scanner
                     </h3>
                     <p className="text-muted-foreground">
@@ -80,8 +81,8 @@ export default async function HomePage() {
                   </MagicCard>
                 </Link>
 
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                  <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                <div className="bg-card rounded-xl border p-6 shadow-sm">
+                  <h3 className="text-card-foreground mb-3 text-xl font-semibold">
                     📋 Medical Records
                   </h3>
                   <p className="text-muted-foreground">
@@ -90,8 +91,8 @@ export default async function HomePage() {
                   </p>
                 </div>
 
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                  <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                <div className="bg-card rounded-xl border p-6 shadow-sm">
+                  <h3 className="text-card-foreground mb-3 text-xl font-semibold">
                     👨‍⚕️ Appointments
                   </h3>
                   <p className="text-muted-foreground">
@@ -99,8 +100,8 @@ export default async function HomePage() {
                   </p>
                 </div>
 
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                  <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                <div className="bg-card rounded-xl border p-6 shadow-sm">
+                  <h3 className="text-card-foreground mb-3 text-xl font-semibold">
                     💊 Medications
                   </h3>
                   <p className="text-muted-foreground">
@@ -111,17 +112,14 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="space-y-8">
-              <p className="mx-auto max-w-3xl text-xl text-muted-foreground">
+              <p className="text-muted-foreground mx-auto max-w-3xl text-xl">
                 Your personal medical record management system. Secure, simple,
                 and always accessible.
               </p>
 
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Link href="/auth/signin">
-                  <Button
-                    size="lg"
-                    className="px-8 py-3"
-                  >
+                  <Button size="lg" className="px-8 py-3">
                     Get Started
                   </Button>
                 </Link>
@@ -136,10 +134,10 @@ export default async function HomePage() {
 
               <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-3">
                 <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border bg-secondary">
+                  <div className="bg-secondary mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border">
                     <span className="text-2xl">🔒</span>
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                  <h3 className="text-foreground mb-2 text-lg font-semibold">
                     Secure & Private
                   </h3>
                   <p className="text-muted-foreground">
@@ -148,10 +146,10 @@ export default async function HomePage() {
                 </div>
 
                 <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border bg-secondary">
+                  <div className="bg-secondary mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border">
                     <span className="text-2xl">📱</span>
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                  <h3 className="text-foreground mb-2 text-lg font-semibold">
                     Always Accessible
                   </h3>
                   <p className="text-muted-foreground">
@@ -160,10 +158,10 @@ export default async function HomePage() {
                 </div>
 
                 <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border bg-secondary">
+                  <div className="bg-secondary mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border">
                     <span className="text-2xl">⚡</span>
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                  <h3 className="text-foreground mb-2 text-lg font-semibold">
                     Lightning Fast
                   </h3>
                   <p className="text-muted-foreground">

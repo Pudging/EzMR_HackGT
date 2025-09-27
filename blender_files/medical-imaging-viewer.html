@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Imaging System - 3D Skeleton Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000000;
+            color: #ffffff;
+            font-family: 'Courier New', 'Monaco', 'Consolas', monospace;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .viewer-container {
+            flex: 1;
+            position: relative;
+            background: #000000;
+        }
+        
+        .controls {
+            width: 400px;
+            background: #111111;
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 2px solid #ffffff;
+            box-shadow: -2px 0 10px rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            color: #cccccc;
+            margin-bottom: 12px;
+            font-size: 11px;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 4px;
+        }
+        
+        .control-btn {
+            background: #000000;
+            border: 1px solid #666666;
+            color: #ffffff;
+            padding: 6px 10px;
+            margin: 2px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 9px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.1s ease;
+            text-transform: none;
+            letter-spacing: 0px;
+        }
+        
+        .control-btn:hover {
+            background: #333333;
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+        
+        .control-btn.danger {
+            background: #000000;
+            border-color: #ff6666;
+            color: #ff6666;
+        }
+        
+        .control-btn.danger:hover {
+            background: #ff6666;
+            color: #000000;
+        }
+        
+        .file-btn {
+            background: #000000;
+            border: 1px solid #666666;
+            color: #ffffff;
+            padding: 4px 8px;
+            margin: 1px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 8px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.1s ease;
+            display: block;
+            width: 100%;
+            text-align: left;
+            text-transform: none;
+        }
+        
+        .file-btn:hover {
+            background: #333333;
+            border-color: #cccccc;
+        }
+        
+        .status {
+            background: #000000;
+            border: 1px solid #333333;
+            padding: 6px;
+            margin-top: 12px;
+            font-size: 8px;
+            font-family: 'Courier New', monospace;
+            color: #cccccc;
+        }
+        
+        .file-list {
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid #333333;
+            padding: 8px;
+            background: #000000;
+            margin-bottom: 15px;
+        }
+        
+        .mesh-buttons {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #333333;
+            padding: 8px;
+            background: #000000;
+            margin-top: 15px;
+        }
+        
+        #viewer {
+            width: 100%;
+            height: 100%;
+            background: #000000;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .injury-entry {
+            background: #000000;
+            border: 1px solid #ffffff;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            line-height: 1.4;
+        }
+        
+        .injury-title {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 5px;
+        }
+        
+        .injury-details {
+            color: #cccccc;
+            margin-bottom: 6px;
+        }
+        
+        .injury-label {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        
+        .injury-value {
+            color: #00ff00;
+        }
+        
+        .injury-description {
+            color: #ffffff;
+            margin-top: 10px;
+            padding: 8px;
+            background: #111111;
+            border-left: 3px solid #ffffff;
+        }
+        
+        input, select, textarea {
+            background: #000000;
+            border: 1px solid #333333;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            width: 100%;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #ffffff;
+            outline: none;
+        }
+        
+        optgroup {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        
+        option {
+            background: #000000;
+            color: #ffffff;
+        }
+        
+        .section-divider {
+            border-top: 1px solid #333333;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="viewer-container">
+            <div id="viewer"></div>
+            <div class="loading" id="loading">Initializing system...<br>Loading default model...</div>
+        </div>
+        
+        <div class="controls">
+            <h1>3D Anatomical Analysis System</h1>
+            <div class="status" id="status">System Ready</div>
+            
+            <div class="section-divider"></div>
+            
+            <h3>Injury Analysis</h3>
+            <div style="margin-bottom: 15px;">
+                <textarea id="injury-text" placeholder="Enter injury description (e.g., 'Temporal bone fracture', 'Multiple rib fractures', 'Femur fracture left side')" 
+                          style="height: 50px; resize: vertical;"></textarea>
+                <button class="control-btn danger" onclick="analyzeInjury()" style="margin-top: 8px;">Analyze Injuries</button>
+            </div>
+            
+            <div class="section-divider"></div>
+            
+            <h3>Component Selection</h3>
+            <div style="margin-bottom: 15px;">
+                <select id="subcomponent-dropdown" style="margin-bottom: 8px;">
+                    <option value="">Select anatomical component...</option>
+                </select>
+                <button class="control-btn" onclick="searchSubcomponent()">Load & Highlight</button>
+            </div>
+            
+            <div class="section-divider"></div>
+            
+            <h3>Skeleton Files</h3>
+            <div class="file-list" id="file-list">
+                Loading skeleton files...
+            </div>
+            
+            <div class="section-divider"></div>
+            
+            <h3>Mesh Components</h3>
+            <div class="mesh-buttons" id="mesh-buttons">
+                No skeleton loaded
+            </div>
+            
+            <div class="section-divider"></div>
+            
+            <div class="injury-entry" id="injury-entry" style="display: none;">
+                <div class="injury-title">Injury Report</div>
+                <div class="injury-details">
+                    <div><span class="injury-label">Patient ID:</span> <span class="injury-value" id="patient-id">N/A</span></div>
+                    <div><span class="injury-label">Date:</span> <span class="injury-value" id="injury-date">N/A</span></div>
+                    <div><span class="injury-label">Affected Areas:</span> <span class="injury-value" id="affected-areas">N/A</span></div>
+                    <div><span class="injury-label">Severity:</span> <span class="injury-value" id="severity">N/A</span></div>
+                    <div><span class="injury-label">Model File:</span> <span class="injury-value" id="skeleton-file">N/A</span></div>
+                </div>
+                <div class="injury-description" id="injury-description">
+                    No injury data available
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let scene, camera, renderer, controls;
+        let currentSkeleton = null;
+        let originalMaterials = new Map();
+        let highlightedParts = new Set();
+        let availableFiles = [];
+
+        // Initialize the 3D viewer
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 5);
+
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth - 400, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('viewer').appendChild(renderer.domElement);
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 10, 5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // Add controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            // Load available files
+            loadAvailableFiles();
+
+            // Load default skeleton
+            loadSkeleton('overview-skeleton.glb');
+
+            // Start animation
+            animate();
+        }
+
+        // Subcomponent mapping
+        const subcomponentMap = {
+            'overview-skeleton.glb': ['skull', 'cranium', 'mandible', 'spine', 'vertebrae', 'ribs', 'pelvis', 'femur', 'tibia', 'fibula', 'humerus', 'radius', 'ulna', 'clavicle', 'scapula', 'sternum'],
+            'colored-skull-base.glb': ['skull', 'cranium', 'skull-base', 'base', 'cranial-base'],
+            'exploded-skull.glb': ['skull', 'cranium', 'exploded-skull', 'skull-parts', 'cranial-parts'],
+            'overview-colored-skull.glb': ['skull', 'cranium', 'colored-skull', 'skull-overview'],
+            'hand.glb': ['hand', 'fingers', 'thumb', 'palm', 'metacarpals', 'phalanges', 'carpals', 'wrist'],
+            'lower-limb.glb': ['femur', 'tibia', 'fibula', 'patella', 'knee', 'leg', 'lower-leg', 'thigh', 'ankle', 'foot'],
+            'upper-limb.glb': ['humerus', 'radius', 'ulna', 'elbow', 'arm', 'upper-arm', 'forearm', 'shoulder'],
+            'vertebrae.glb': ['vertebrae', 'spine', 'vertebral', 'cervical', 'thoracic', 'lumbar', 'sacrum', 'coccyx']
+        };
+
+        // Load available skeleton files
+        async function loadAvailableFiles() {
+            availableFiles = [
+                'overview-skeleton.glb',
+                'colored-skull-base.glb',
+                'exploded-skull.glb',
+                'hand.glb',
+                'lower-limb.glb',
+                'overview-colored-skull.glb',
+                'upper-limb.glb',
+                'vertebrae.glb'
+            ];
+            
+            // Populate file buttons
+            const fileList = document.getElementById('file-list');
+            let html = '';
+            
+            availableFiles.forEach((filename, index) => {
+                html += `<button class="file-btn" onclick="loadSkeleton('${filename}')" data-file="${filename}">
+                    ${filename.replace('.glb', '').toUpperCase()}
+                </button>`;
+            });
+            
+            fileList.innerHTML = html;
+            
+            // Populate subcomponent dropdown
+            populateSubcomponentDropdown();
+            
+            updateStatus(`Loaded ${availableFiles.length} model files`);
+        }
+
+        // Populate the subcomponent dropdown
+        function populateSubcomponentDropdown() {
+            const dropdown = document.getElementById('subcomponent-dropdown');
+            let html = '<option value="">SELECT ANATOMICAL COMPONENT...</option>';
+            
+            // Create a sorted list of all unique subcomponents
+            const allSubcomponents = new Set();
+            Object.values(subcomponentMap).forEach(components => {
+                components.forEach(component => allSubcomponents.add(component));
+            });
+            
+            const sortedComponents = Array.from(allSubcomponents).sort();
+            
+            // Group by category for better organization
+            const categories = {
+                'SKULL & HEAD': ['skull', 'cranium', 'mandible', 'skull-base', 'base', 'cranial-base', 'exploded-skull', 'skull-parts', 'cranial-parts', 'colored-skull', 'skull-overview'],
+                'SPINE & BACK': ['spine', 'vertebrae', 'vertebral', 'cervical', 'thoracic', 'lumbar', 'sacrum', 'coccyx'],
+                'UPPER BODY': ['ribs', 'sternum', 'clavicle', 'scapula', 'humerus', 'radius', 'ulna', 'elbow', 'arm', 'upper-arm', 'forearm', 'shoulder'],
+                'HAND & WRIST': ['hand', 'fingers', 'thumb', 'palm', 'metacarpals', 'phalanges', 'carpals', 'wrist'],
+                'LOWER BODY': ['pelvis', 'femur', 'tibia', 'fibula', 'patella', 'knee', 'leg', 'lower-leg', 'thigh', 'ankle', 'foot']
+            };
+            
+            Object.entries(categories).forEach(([category, components]) => {
+                html += `<optgroup label="${category}">`;
+                components.forEach(component => {
+                    if (allSubcomponents.has(component)) {
+                        html += `<option value="${component}">${component.toUpperCase()}</option>`;
+                    }
+                });
+                html += '</optgroup>';
+            });
+            
+            dropdown.innerHTML = html;
+        }
+
+        // Analyze injury text and highlight affected parts
+        async function analyzeInjury() {
+            const injuryText = document.getElementById('injury-text').value.trim();
+            
+            if (!injuryText) {
+                updateStatus('Please enter injury description');
+                return;
+            }
+            
+            updateStatus('Analyzing injury...');
+            
+            try {
+                const response = await fetch('/api/analyze-injury', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: injuryText })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateStatus(result.message);
+                    
+                    // Update injury report
+                    updateInjuryReport(injuryText, result);
+                    
+                    // Load the appropriate skeleton file
+                    if (result.skeletonFile) {
+                        await loadSkeleton(result.skeletonFile);
+                        
+                        // Highlight all injured parts at once
+                        setTimeout(() => {
+                            highlightMultipleParts(result.injuredParts);
+                        }, 1000);
+                    }
+                } else {
+                    updateStatus(result.message || 'No injuries detected');
+                }
+            } catch (error) {
+                console.error('Error analyzing injury:', error);
+                updateStatus('Error analyzing injury. Please try again.');
+            }
+        }
+
+        // Update injury report display
+        function updateInjuryReport(injuryText, result) {
+            const injuryEntry = document.getElementById('injury-entry');
+            injuryEntry.style.display = 'block';
+            
+            // Generate patient ID
+            const patientId = 'PAT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            document.getElementById('patient-id').textContent = patientId;
+            
+            // Current date
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            document.getElementById('injury-date').textContent = dateStr;
+            
+            // Affected areas
+            document.getElementById('affected-areas').textContent = result.injuredParts.join(', ');
+            
+            // Severity
+            const severity = result.hasInjury ? 'Severe' : 'Moderate';
+            document.getElementById('severity').textContent = severity;
+            
+            // Skeleton file
+            document.getElementById('skeleton-file').textContent = result.skeletonFile || 'N/A';
+            
+            // Description
+            const description = `Analysis complete. Detected ${result.injuredParts.length} affected anatomical structure(s). ${result.hasInjury ? 'Recommend immediate medical attention.' : 'Monitor condition.'}`;
+            document.getElementById('injury-description').textContent = description;
+        }
+
+        // Search for subcomponent and load appropriate skeleton
+        function searchSubcomponent() {
+            const dropdown = document.getElementById('subcomponent-dropdown');
+            const searchTerm = dropdown.value;
+            
+            if (!searchTerm) {
+                updateStatus('PLEASE SELECT ANATOMICAL COMPONENT');
+                return;
+            }
+            
+            // Find the best matching skeleton file
+            let bestMatch = null;
+            let bestScore = 0;
+            
+            for (const [filename, components] of Object.entries(subcomponentMap)) {
+                for (const component of components) {
+                    if (component.toLowerCase().includes(searchTerm) || searchTerm.includes(component.toLowerCase())) {
+                        const score = component.toLowerCase().includes(searchTerm) ? 2 : 1;
+                        if (score > bestScore) {
+                            bestMatch = filename;
+                            bestScore = score;
+                        }
+                    }
+                }
+            }
+            
+            if (bestMatch) {
+                updateStatus(`FOUND MATCH: ${searchTerm} → ${bestMatch}`);
+                loadSkeleton(bestMatch, searchTerm);
+            } else {
+                updateStatus(`NO SKELETON FOUND CONTAINING: ${searchTerm}`);
+            }
+        }
+
+        // Load a specific skeleton file
+        function loadSkeleton(filename, searchTerm = null) {
+            updateStatus(`LOADING ${filename}...`);
+            
+            // Clear previous skeleton
+            if (currentSkeleton) {
+                scene.remove(currentSkeleton);
+            }
+            
+            // Load new skeleton
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+                `/blender_files/${filename}`,
+                function(gltf) {
+                    currentSkeleton = gltf.scene;
+                    
+                    // Apply renaming rules
+                    applyRenamingRules(currentSkeleton);
+                    
+                    // Store original materials
+                    storeOriginalMaterials(currentSkeleton);
+                    
+                    // Add to scene
+                    scene.add(currentSkeleton);
+                    
+                    // Generate mesh buttons
+                    generateMeshButtons(currentSkeleton);
+                    
+                    // Focus camera
+                    const box = new THREE.Box3().setFromObject(currentSkeleton);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const fov = camera.fov * (Math.PI / 180);
+                    let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+                    cameraZ *= 2;
+                    
+                    camera.position.set(center.x, center.y, center.z + cameraZ);
+                    controls.target.copy(center);
+                    controls.update();
+                    
+                    updateStatus(`LOADED: ${filename}`);
+                    
+                    // Hide loading
+                    document.getElementById('loading').style.display = 'none';
+                },
+                function(progress) {
+                    const percent = Math.round((progress.loaded / progress.total) * 100);
+                    updateStatus(`LOADING ${filename}: ${percent}%`);
+                },
+                function(error) {
+                    console.error('Error loading skeleton:', error);
+                    updateStatus(`ERROR LOADING ${filename}`);
+                }
+            );
+        }
+
+        // Apply renaming rules to skeleton
+        function applyRenamingRules(skeleton) {
+            let renamedCount = 0;
+            
+            skeleton.traverse(function(child) {
+                if (child.isMesh) {
+                    const originalName = child.name;
+                    const name = originalName.toLowerCase();
+                    
+                    // Check for right.00x pattern and rename to _left
+                    if (name.includes('right.00') || name.includes('right.0')) {
+                        const leftName = originalName.replace(/right\.\d+/i, '_left');
+                        child.name = leftName;
+                        renamedCount++;
+                    } else if (name.includes('_r') || name.includes('_right') || name.includes('right.')) {
+                        const leftName = originalName.replace(/_r\b|_right\b|right\./gi, '_left');
+                        child.name = leftName;
+                        renamedCount++;
+                    } else if (name.includes('_l') || name.includes('_left') || name.includes('left.')) {
+                        // Already left side
+                    } else {
+                        // Keep original name
+                    }
+                }
+            });
+            
+            if (renamedCount > 0) {
+                updateStatus(`APPLIED RENAMING RULES: ${renamedCount} MESHES RENAMED`);
+            }
+        }
+
+        // Store original materials
+        function storeOriginalMaterials(object) {
+            originalMaterials.clear();
+            object.traverse(function(child) {
+                if (child.isMesh && child.material) {
+                    originalMaterials.set(child.name, child.material.clone());
+                }
+            });
+        }
+
+        // Highlight multiple parts at once
+        function highlightMultipleParts(partNames) {
+            if (!currentSkeleton || !partNames || partNames.length === 0) {
+                updateStatus('NO SKELETON LOADED OR NO PARTS SPECIFIED');
+                return;
+            }
+            
+            // Clear previous highlights
+            clearHighlights();
+            
+            let totalFound = 0;
+            const foundParts = [];
+            const boundingBox = new THREE.Box3();
+            
+            partNames.forEach(partName => {
+                let partFound = false;
+                
+                // Search through all meshes for partial matches
+                currentSkeleton.traverse(function(child) {
+                    if (child.isMesh) {
+                        const childName = child.name.toLowerCase();
+                        const searchTerm = partName.toLowerCase();
+                        
+                        // Try multiple matching strategies
+                        if (childName.includes(searchTerm) || 
+                            searchTerm.includes(childName) ||
+                            childName.includes(searchTerm.replace('s', '')) ||
+                            searchTerm.includes(childName.replace('s', ''))) {
+                            
+                            const highlightMaterial = new THREE.MeshLambertMaterial({ 
+                                color: 0xff0000,
+                                transparent: true,
+                                opacity: 0.8
+                            });
+                            
+                            child.material = highlightMaterial;
+                            highlightedParts.add(child.name);
+                            
+                            // Add to bounding box for camera focus
+                            const childBox = new THREE.Box3().setFromObject(child);
+                            boundingBox.union(childBox);
+                            
+                            if (!partFound) {
+                                foundParts.push(partName);
+                                totalFound++;
+                                partFound = true;
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Focus camera on all highlighted parts
+            if (totalFound > 0 && !boundingBox.isEmpty()) {
+                const center = new THREE.Vector3();
+                boundingBox.getCenter(center);
+                
+                const size = new THREE.Vector3();
+                boundingBox.getSize(size);
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const distance = maxDim * 3;
+                
+                const direction = new THREE.Vector3().subVectors(camera.position, center).normalize();
+                camera.position.copy(center).add(direction.multiplyScalar(distance));
+                controls.target.copy(center);
+                controls.update();
+                
+                updateStatus(`HIGHLIGHTED ${totalFound} PART(S): ${foundParts.join(', ').toUpperCase()}`);
+            } else {
+                updateStatus(`NO PARTS FOUND FROM: ${partNames.join(', ').toUpperCase()}`);
+            }
+        }
+
+        // Clear all highlights
+        function clearHighlights() {
+            if (!currentSkeleton) return;
+            
+            currentSkeleton.traverse(function(child) {
+                if (child.isMesh && highlightedParts.has(child.name)) {
+                    const originalMaterial = originalMaterials.get(child.name);
+                    if (originalMaterial) {
+                        child.material = originalMaterial;
+                    }
+                }
+            });
+            
+            highlightedParts.clear();
+        }
+
+        // Generate buttons for all mesh components
+        function generateMeshButtons(skeleton) {
+            const meshNames = [];
+            skeleton.traverse(function(child) {
+                if (child.isMesh) {
+                    meshNames.push(child.name);
+                }
+            });
+            
+            // Sort mesh names alphabetically
+            meshNames.sort();
+            
+            const container = document.getElementById('mesh-buttons');
+            let html = '';
+            
+            // Group meshes by type for better organization
+            const leftMeshes = meshNames.filter(name => name.includes('_left') || name.includes('.l'));
+            const rightMeshes = meshNames.filter(name => name.includes('_right') || name.includes('.r'));
+            const otherMeshes = meshNames.filter(name => !name.includes('_left') && !name.includes('_right') && !name.includes('.l') && !name.includes('.r'));
+            
+            // Left meshes
+            if (leftMeshes.length > 0) {
+                html += '<div style="margin-bottom: 8px;"><strong style="color: #ffffff;">LEFT SIDE:</strong></div>';
+                leftMeshes.forEach(name => {
+                    html += `<button class="control-btn small" onclick="highlightPart('${name}')">${name.toUpperCase()}</button>`;
+                });
+            }
+            
+            // Right meshes
+            if (rightMeshes.length > 0) {
+                html += '<div style="margin-bottom: 8px; margin-top: 10px;"><strong style="color: #ffffff;">RIGHT SIDE:</strong></div>';
+                rightMeshes.forEach(name => {
+                    html += `<button class="control-btn small" onclick="highlightPart('${name}')">${name.toUpperCase()}</button>`;
+                });
+            }
+            
+            // Other meshes
+            if (otherMeshes.length > 0) {
+                html += '<div style="margin-bottom: 8px; margin-top: 10px;"><strong style="color: #ffffff;">OTHER:</strong></div>';
+                otherMeshes.forEach(name => {
+                    html += `<button class="control-btn small" onclick="highlightPart('${name}')">${name.toUpperCase()}</button>`;
+                });
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Highlight a specific part
+        function highlightPart(partName) {
+            if (!currentSkeleton) {
+                updateStatus('NO SKELETON LOADED');
+                return;
+            }
+            
+            // Clear previous highlights
+            clearHighlights();
+            
+            // Find and highlight the part
+            const part = currentSkeleton.getObjectByName(partName);
+            if (part && part.isMesh) {
+                const highlightMaterial = new THREE.MeshLambertMaterial({ 
+                    color: 0xff0000,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                part.material = highlightMaterial;
+                highlightedParts.add(partName);
+                
+                // Focus camera on the highlighted part
+                focusOnPart(part);
+                
+                updateStatus(`HIGHLIGHTED: ${partName.toUpperCase()}`);
+            } else {
+                updateStatus(`PART NOT FOUND: ${partName.toUpperCase()}`);
+            }
+        }
+
+        // Focus camera on a specific part
+        function focusOnPart(part) {
+            const partBox = new THREE.Box3().setFromObject(part);
+            const partCenter = new THREE.Vector3();
+            partBox.getCenter(partCenter);
+            
+            const partSize = new THREE.Vector3();
+            partBox.getSize(partSize);
+            const maxDim = Math.max(partSize.x, partSize.y, partSize.z);
+            const distance = maxDim * 3;
+            
+            const direction = new THREE.Vector3().subVectors(camera.position, partCenter).normalize();
+            camera.position.copy(partCenter).add(direction.multiplyScalar(distance));
+            controls.target.copy(partCenter);
+            controls.update();
+        }
+
+        // Update status display
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            camera.aspect = (window.innerWidth - 400) / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth - 400, window.innerHeight);
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { CameraCapture } from '@/components/ui/camera-capture';
-import { 
-  Search, 
-  Camera, 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { CameraCapture } from "@/components/ui/camera-capture";
+import {
+  Search,
+  Camera,
   User,
   Loader2,
   CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+  AlertCircle,
+} from "lucide-react";
 
 interface PatientSearchResult {
   id: string;
@@ -28,8 +28,8 @@ interface PatientSearchResult {
 
 export default function PatientLookupPage() {
   const router = useRouter();
-  const [patientIdSearch, setPatientIdSearch] = useState('');
-  const [nameSearch, setNameSearch] = useState('');
+  const [patientIdSearch, setPatientIdSearch] = useState("");
+  const [nameSearch, setNameSearch] = useState("");
   const [searchResults, setSearchResults] = useState<PatientSearchResult[]>([]);
   const [isScanning, setIsScanning] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -67,64 +67,101 @@ export default function PatientLookupPage() {
     setScanError(null);
 
     try {
-      console.log('Processing image blob:', imageBlob.size, imageBlob.type);
-      
+      console.log("Processing image blob:", imageBlob.size, imageBlob.type);
+
       // Convert blob to base64
       const reader = new FileReader();
       reader.onload = async () => {
         try {
           const base64 = reader.result as string;
-          console.log('Base64 conversion complete, length:', base64.length);
-          
+          console.log("Base64 conversion complete, length:", base64.length);
+
           // Call API to process ID with Gemini
-          const response = await fetch('/api/scan-id', {
-            method: 'POST',
+          const response = await fetch("/api/scan-id", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ image: base64 }),
           });
 
-          console.log('API response status:', response.status);
+          console.log("API response status:", response.status);
           const result = await response.json();
-          console.log('API result:', result);
-          
+          console.log("API result:", result);
+
           if (result.success) {
             setScanResult(result.name);
-            console.log('Searching for patients matching:', result.name);
-            
-            // Search for patient by extracted name using database
-            const matchingPatients = await searchPatients(result.name, 'name');
-            
-            console.log('Matching patients found:', matchingPatients.map(p => p.name));
+            console.log("Searching for patients matching:", result.name);
+
+            // Search for patient by extracted name with flexible matching
+            const matchingPatients = mockPatients.filter((p) => {
+              const patientName = p.name.toLowerCase();
+              const extractedName = result.name.toLowerCase();
+
+              // Split names into parts
+              const patientParts = patientName.split(" ");
+              const extractedParts = extractedName.split(" ");
+
+              // Check if all extracted parts match patient name parts
+              const matches = extractedParts.every((extractedPart: string) => {
+                // For each extracted part, check if it matches any patient part
+                return patientParts.some((patientPart) => {
+                  // Direct match
+                  if (patientPart === extractedPart) return true;
+
+                  // Middle initial match (e.g., "k" matches "ketong")
+                  if (
+                    extractedPart.length === 1 &&
+                    patientPart.startsWith(extractedPart)
+                  )
+                    return true;
+
+                  // Partial match (e.g., "kev" matches "kevin")
+                  if (
+                    patientPart.startsWith(extractedPart) ||
+                    extractedPart.startsWith(patientPart)
+                  )
+                    return true;
+
+                  return false;
+                });
+              });
+
+              return matches;
+            });
+
+            console.log(
+              "Matching patients found:",
+              matchingPatients.map((p) => p.name),
+            );
             setSearchResults(matchingPatients);
           } else {
-            setScanError(result.error ?? 'Failed to scan ID');
+            setScanError(result.error ?? "Failed to scan ID");
           }
         } catch (apiError) {
-          console.error('API call error:', apiError);
-          setScanError('Failed to connect to scanning service');
+          console.error("API call error:", apiError);
+          setScanError("Failed to connect to scanning service");
         } finally {
           setIsScanning(false);
         }
       };
-      
+
       reader.onerror = () => {
-        setScanError('Failed to process image file');
+        setScanError("Failed to process image file");
         setIsScanning(false);
       };
-      
+
       reader.readAsDataURL(imageBlob);
     } catch (error) {
-      console.error('Error scanning ID:', error);
-      setScanError('Error processing image');
+      console.error("Error scanning ID:", error);
+      setScanError("Error processing image");
       setIsScanning(false);
     }
   };
 
   const handlePatientIdSearch = async () => {
     if (!patientIdSearch.trim()) return;
-    
+
     setIsSearching(true);
     try {
       const results = await searchPatients(patientIdSearch, 'id');
@@ -139,7 +176,7 @@ export default function PatientLookupPage() {
 
   const handleNameSearch = async () => {
     if (!nameSearch.trim()) return;
-    
+
     setIsSearching(true);
     try {
       const results = await searchPatients(nameSearch, 'name');
@@ -154,22 +191,31 @@ export default function PatientLookupPage() {
 
   const selectPatient = (patient: PatientSearchResult) => {
     // Store selected patient in sessionStorage for access by other pages
-    sessionStorage.setItem('selectedPatient', JSON.stringify(patient));
-    
+    sessionStorage.setItem("selectedPatient", JSON.stringify(patient));
+
     // Navigate to patient assessment with patient ID
     router.push(`/patient-assessment?patientId=${patient.patientId}`);
   };
 
+  const goToDashboard = (patient: PatientSearchResult) => {
+    // Store selected patient in sessionStorage for access by other pages
+    sessionStorage.setItem("selectedPatient", JSON.stringify(patient));
+
+    // Navigate to dashboard
+    router.push("/dashboard");
+  };
+
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="bg-background min-h-screen p-4">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-foreground mb-2 text-3xl font-bold">
             Patient Lookup
           </h1>
           <p className="text-muted-foreground">
-            Scan an ID, search by patient ID, or search by name to access patient records
+            Scan an ID, search by patient ID, or search by name to access
+            patient records
           </p>
         </div>
 
@@ -206,9 +252,9 @@ export default function PatientLookupPage() {
                   error={scanError}
                   onError={setScanError}
                 />
-                
+
                 {scanResult && (
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                  <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20">
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-5 w-5 text-green-600" />
                       <span className="font-medium text-green-800 dark:text-green-200">
@@ -236,9 +282,11 @@ export default function PatientLookupPage() {
                     placeholder="Enter Patient ID (e.g., 1, 2, 3)"
                     value={patientIdSearch}
                     onChange={(e) => setPatientIdSearch(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handlePatientIdSearch()}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && handlePatientIdSearch()
+                    }
                   />
-                  <Button 
+                  <Button
                     onClick={handlePatientIdSearch}
                     disabled={isSearching || !patientIdSearch.trim()}
                   >
@@ -268,9 +316,9 @@ export default function PatientLookupPage() {
                     placeholder="Enter patient name (e.g., Kevin, John, Sarah)"
                     value={nameSearch}
                     onChange={(e) => setNameSearch(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleNameSearch()}
+                    onKeyPress={(e) => e.key === "Enter" && handleNameSearch()}
                   />
-                  <Button 
+                  <Button
                     onClick={handleNameSearch}
                     disabled={isSearching || !nameSearch.trim()}
                   >
@@ -297,17 +345,17 @@ export default function PatientLookupPage() {
                 {searchResults.map((patient) => (
                   <div
                     key={patient.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                    onClick={() => selectPatient(patient)}
+                    className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
-                        <User className="h-6 w-6 text-primary" />
+                      <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
+                        <User className="text-primary h-6 w-6" />
                       </div>
                       <div>
                         <div className="font-medium">{patient.name}</div>
-                        <div className="text-sm text-muted-foreground">
-                          ID: {patient.patientId} • DOB: {patient.dob} • {patient.sex}
+                        <div className="text-muted-foreground text-sm">
+                          ID: {patient.patientId} • DOB: {patient.dob} •{" "}
+                          {patient.sex}
                         </div>
                       </div>
                     </div>
@@ -315,8 +363,15 @@ export default function PatientLookupPage() {
                       {patient.bloodType && (
                         <Badge variant="outline">{patient.bloodType}</Badge>
                       )}
-                      <Button size="sm">
-                        Select Patient
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => goToDashboard(patient)}
+                      >
+                        Go to Dashboard
+                      </Button>
+                      <Button size="sm" onClick={() => selectPatient(patient)}>
+                        Patient Assessment
                       </Button>
                     </div>
                   </div>
@@ -327,17 +382,20 @@ export default function PatientLookupPage() {
         )}
 
         {/* No Results */}
-        {searchResults.length === 0 && (patientIdSearch || nameSearch || scanResult) && !isSearching && (
-          <Card>
-            <CardContent className="text-center py-8">
-              <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-medium mb-2">No patients found</p>
-              <p className="text-muted-foreground">
-                Try adjusting your search criteria or verify the patient information
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        {searchResults.length === 0 &&
+          (patientIdSearch || nameSearch || scanResult) &&
+          !isSearching && (
+            <Card>
+              <CardContent className="py-8 text-center">
+                <AlertCircle className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+                <p className="mb-2 text-lg font-medium">No patients found</p>
+                <p className="text-muted-foreground">
+                  Try adjusting your search criteria or verify the patient
+                  information
+                </p>
+              </CardContent>
+            </Card>
+          )}
       </div>
     </div>
   );

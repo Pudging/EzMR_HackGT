@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut, User, Settings, Shield } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -61,6 +61,17 @@ export function UserNav() {
             <span>Settings</span>
           </Link>
         </DropdownMenuItem>
+        {session.user?.role === "ADMIN" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/admin/users">
+                <Shield className="mr-2 h-4 w-4" />
+                <span>Admin Panel</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
