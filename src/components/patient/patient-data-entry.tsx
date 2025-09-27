@@ -7,6 +7,7 @@ interface PatientDataEntryProps {
   selectedBodyPart: string | null;
   patientData: Record<string, string | undefined>;
   onDataUpdate: (bodyPart: string, description: string) => void;
+  savingStatus?: Record<string, 'idle' | 'pending' | 'saving' | 'saved'>;
 }
 
 const BODY_PARTS = [
@@ -27,10 +28,14 @@ const BODY_PARTS = [
   "right-arm",
   "left-forearm",
   "right-forearm",
+  "left-wrist",
+  "right-wrist",
   "left-thigh",
   "right-thigh",
   "left-shin",
   "right-shin",
+  "left-foot",
+  "right-foot",
   "spine",
   "pelvis",
 ];
@@ -53,10 +58,14 @@ const BODY_PART_LABELS = {
   "right-arm": "Right Arm",
   "left-forearm": "Left Forearm",
   "right-forearm": "Right Forearm",
+  "left-wrist": "Left Wrist",
+  "right-wrist": "Right Wrist",
   "left-thigh": "Left Thigh",
   "right-thigh": "Right Thigh",
   "left-shin": "Left Shin",
   "right-shin": "Right Shin",
+  "left-foot": "Left Foot",
+  "right-foot": "Right Foot",
   spine: "Spine",
   pelvis: "Pelvis",
   other: "Other",
@@ -66,6 +75,7 @@ export function PatientDataEntry({
   selectedBodyPart,
   patientData,
   onDataUpdate,
+  savingStatus = {},
 }: PatientDataEntryProps) {
   const [expandedBoxes, setExpandedBoxes] = useState<Set<string>>(new Set());
   const [editingText, setEditingText] = useState<
@@ -209,8 +219,28 @@ export function PatientDataEntry({
               <div className="border-border bg-background text-foreground border-t">
                 <div className="p-4">
                   <div className="space-y-3">
-                    <div className="font-mono text-xs font-bold">
-                      Assessment Notes:
+                    <div className="flex items-center justify-between">
+                      <div className="font-mono text-xs font-bold">
+                        Assessment Notes:
+                      </div>
+                      {savingStatus[bodyPart] && savingStatus[bodyPart] !== 'idle' && (
+                        <div className="flex items-center space-x-1">
+                          {savingStatus[bodyPart] === 'pending' && (
+                            <span className="text-yellow-600 text-xs">●</span>
+                          )}
+                          {savingStatus[bodyPart] === 'saving' && (
+                            <span className="text-blue-600 text-xs animate-pulse">●</span>
+                          )}
+                          {savingStatus[bodyPart] === 'saved' && (
+                            <span className="text-green-600 text-xs">✓</span>
+                          )}
+                          <span className="text-xs text-muted-foreground">
+                            {savingStatus[bodyPart] === 'pending' && 'Pending'}
+                            {savingStatus[bodyPart] === 'saving' && 'Saving...'}
+                            {savingStatus[bodyPart] === 'saved' && 'Saved'}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <Textarea
                       placeholder={`Enter assessment details for ${BODY_PART_LABELS[bodyPart as keyof typeof BODY_PART_LABELS].toLowerCase()}...`}

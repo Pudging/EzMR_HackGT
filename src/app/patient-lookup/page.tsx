@@ -11,8 +11,7 @@ import { CameraCapture } from '@/components/ui/camera-capture';
 import { 
   Search, 
   Camera, 
-  User, 
-  Upload,
+  User,
   Loader2,
   CheckCircle,
   AlertCircle
@@ -123,7 +122,7 @@ export default function PatientLookupPage() {
               const extractedParts = extractedName.split(' ');
               
               // Check if all extracted parts match patient name parts
-              const matches = extractedParts.every(extractedPart => {
+              const matches = extractedParts.every((extractedPart: string) => {
                 // For each extracted part, check if it matches any patient part
                 return patientParts.some(patientPart => {
                   // Direct match
@@ -145,7 +144,7 @@ export default function PatientLookupPage() {
             console.log('Matching patients found:', matchingPatients.map(p => p.name));
             setSearchResults(matchingPatients);
           } else {
-            setScanError(result.error || 'Failed to scan ID');
+            setScanError(result.error ?? 'Failed to scan ID');
           }
         } catch (apiError) {
           console.error('API call error:', apiError);

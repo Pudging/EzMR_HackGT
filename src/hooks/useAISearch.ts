@@ -22,7 +22,7 @@ export function useAISearch() {
   const [results, setResults] = useState<AISearchResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const search = useCallback(async (query: string, patientData?: any) => {
+  const search = useCallback(async (query: string, patientData?: unknown) => {
     if (!query.trim()) return;
 
     setIsSearching(true);

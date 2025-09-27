@@ -47,7 +47,7 @@ const BODY_PARTS = [
   {
     id: "left-lung",
     name: "LEFT LUNG",
-    position: [-0.35, 1.2, 0.7] as [number, number, number],
+    position: [0.35, 1.2, 0.7] as [number, number, number],
     size: [0.3, 0.6, 0.25] as [number, number, number],
     type: "box",
     isOrgan: true,
@@ -55,7 +55,7 @@ const BODY_PARTS = [
   {
     id: "right-lung",
     name: "RIGHT LUNG",
-    position: [0.35, 1.2, 0.7] as [number, number, number],
+    position: [-0.35, 1.2, 0.7] as [number, number, number],
     size: [0.3, 0.6, 0.25] as [number, number, number],
     type: "box",
     isOrgan: true,
@@ -87,7 +87,7 @@ const BODY_PARTS = [
   {
     id: "left-kidney",
     name: "LEFT KIDNEY",
-    position: [-0.25, -0.2, 0.5] as [number, number, number],
+    position: [0.25, -0.2, 0.5] as [number, number, number],
     size: [0.15, 0.25, 0.15] as [number, number, number],
     type: "box",
     isOrgan: true,
@@ -95,7 +95,7 @@ const BODY_PARTS = [
   {
     id: "right-kidney",
     name: "RIGHT KIDNEY",
-    position: [0.25, -0.2, 0.5] as [number, number, number],
+    position: [-0.25, -0.2, 0.5] as [number, number, number],
     size: [0.15, 0.25, 0.15] as [number, number, number],
     type: "box",
     isOrgan: true,
@@ -103,7 +103,7 @@ const BODY_PARTS = [
   {
     id: "left-shoulder",
     name: "LEFT SHOULDER",
-    position: [-0.8, 1.8, 0] as [number, number, number],
+    position: [0.8, 1.8, 0] as [number, number, number],
     size: [0.3, 0.3, 0.3] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -111,7 +111,7 @@ const BODY_PARTS = [
   {
     id: "right-shoulder",
     name: "RIGHT SHOULDER",
-    position: [0.8, 1.8, 0] as [number, number, number],
+    position: [-0.8, 1.8, 0] as [number, number, number],
     size: [0.3, 0.3, 0.3] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -119,7 +119,7 @@ const BODY_PARTS = [
   {
     id: "left-arm",
     name: "LEFT ARM",
-    position: [-1.2, 1, 0] as [number, number, number],
+    position: [1.2, 1, 0] as [number, number, number],
     size: [0.25, 1.2, 0.25] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -127,7 +127,7 @@ const BODY_PARTS = [
   {
     id: "right-arm",
     name: "RIGHT ARM",
-    position: [1.2, 1, 0] as [number, number, number],
+    position: [-1.2, 1, 0] as [number, number, number],
     size: [0.25, 1.2, 0.25] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -135,7 +135,7 @@ const BODY_PARTS = [
   {
     id: "left-forearm",
     name: "LEFT FOREARM",
-    position: [-1.2, 0.2, 0] as [number, number, number],
+    position: [1.2, 0.2, 0] as [number, number, number],
     size: [0.2, 1, 0.2] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -143,7 +143,7 @@ const BODY_PARTS = [
   {
     id: "right-forearm",
     name: "RIGHT FOREARM",
-    position: [1.2, 0.2, 0] as [number, number, number],
+    position: [-1.2, 0.2, 0] as [number, number, number],
     size: [0.2, 1, 0.2] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -151,7 +151,7 @@ const BODY_PARTS = [
   {
     id: "left-thigh",
     name: "LEFT THIGH",
-    position: [-0.3, -1.2, 0] as [number, number, number],
+    position: [0.3, -1.2, 0] as [number, number, number],
     size: [0.25, 1, 0.25] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -159,7 +159,7 @@ const BODY_PARTS = [
   {
     id: "right-thigh",
     name: "RIGHT THIGH",
-    position: [0.3, -1.2, 0] as [number, number, number],
+    position: [-0.3, -1.2, 0] as [number, number, number],
     size: [0.25, 1, 0.25] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -167,7 +167,7 @@ const BODY_PARTS = [
   {
     id: "left-shin",
     name: "LEFT SHIN",
-    position: [-0.3, -2.5, 0] as [number, number, number],
+    position: [0.3, -2.5, 0] as [number, number, number],
     size: [0.22, 1.2, 0.22] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -175,7 +175,7 @@ const BODY_PARTS = [
   {
     id: "right-shin",
     name: "RIGHT SHIN",
-    position: [0.3, -2.5, 0] as [number, number, number],
+    position: [-0.3, -2.5, 0] as [number, number, number],
     size: [0.22, 1.2, 0.22] as [number, number, number],
     type: "box",
     isOrgan: false,
@@ -193,6 +193,38 @@ const BODY_PARTS = [
     name: "PELVIS",
     position: [0, -0.8, 0] as [number, number, number],
     size: [1, 0.4, 0.4] as [number, number, number],
+    type: "box",
+    isOrgan: false,
+  },
+  {
+    id: "left-wrist",
+    name: "LEFT WRIST",
+    position: [1.2, -0.3, 0] as [number, number, number],
+    size: [0.15, 0.15, 0.15] as [number, number, number],
+    type: "box",
+    isOrgan: false,
+  },
+  {
+    id: "right-wrist",
+    name: "RIGHT WRIST",
+    position: [-1.2, -0.3, 0] as [number, number, number],
+    size: [0.15, 0.15, 0.15] as [number, number, number],
+    type: "box",
+    isOrgan: false,
+  },
+  {
+    id: "left-foot",
+    name: "LEFT FOOT",
+    position: [0.3, -3.8, 0.1] as [number, number, number],
+    size: [0.25, 0.15, 0.4] as [number, number, number],
+    type: "box",
+    isOrgan: false,
+  },
+  {
+    id: "right-foot",
+    name: "RIGHT FOOT",
+    position: [-0.3, -3.8, 0.1] as [number, number, number],
+    size: [0.25, 0.15, 0.4] as [number, number, number],
     type: "box",
     isOrgan: false,
   },
@@ -246,35 +278,25 @@ function BodyPart({
   // Removed rotation animation
 
   const getMaterial = () => {
-    // Base colors for organs vs body parts - much brighter
-    const baseColor = part.isOrgan ? "#888888" : "#aaaaaa";
     const normalOpacity = otherSelected && !isSelected ? 0.3 : 1;
 
+    // Selected = Blue
     if (isSelected) {
       return {
-        color: hasData ? "#ff4444" : "#00ddff", // Bright red/cyan
+        color: "#4444ff", // Blue for selected
         wireframe: false,
         transparent: false,
         opacity: 1,
         metalness: 0.4,
         roughness: 0.1,
-        emissive: hasData ? "#660000" : "#004466", // Stronger glow
+        emissive: "#001166", // Blue glow
       };
     }
-    if (isHovered) {
-      return {
-        color: hasData ? "#ff8888" : "#66ccff", // Very bright hover colors
-        wireframe: false,
-        transparent: false,
-        opacity: 1,
-        metalness: 0.3,
-        roughness: 0.2,
-        emissive: hasData ? "#440000" : "#002244", // Strong hover glow
-      };
-    }
+    
+    // Has data (notes) = Red  
     if (hasData) {
       return {
-        color: "#dd4444", // Bright red for parts with data
+        color: "#ff4444", // Red for parts with notes
         wireframe: false,
         transparent: normalOpacity < 1,
         opacity: normalOpacity,
@@ -283,14 +305,29 @@ function BodyPart({
         emissive: "#220000", // Red glow for data parts
       };
     }
+    
+    // Hovered but no data = light blue highlight
+    if (isHovered) {
+      return {
+        color: "#88aaff", // Light blue hover
+        wireframe: false,
+        transparent: false,
+        opacity: 1,
+        metalness: 0.3,
+        roughness: 0.2,
+        emissive: "#001144", // Subtle blue glow
+      };
+    }
+    
+    // Default unselected = White/Light Gray
     return {
-      color: baseColor,
+      color: "#f0f0f0", // Light gray for better visibility against black background
       wireframe: false,
       transparent: normalOpacity < 1,
       opacity: normalOpacity,
-      metalness: 0.1,
-      roughness: 0.6,
-      emissive: "#111111", // Slight base glow for visibility
+      metalness: 0.0, // No metalness for matte finish
+      roughness: 0.7, // Moderate roughness for good light reflection
+      emissive: "#222222", // Slight emission for visibility in dark scene
     };
   };
 
@@ -336,7 +373,9 @@ export function HumanBodyModel({
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
 
   const hasData = (partId: string) => {
-    return patientData[partId]?.trim() !== "";
+    const data = patientData[partId];
+    // Check if data exists and has meaningful content (not just whitespace)
+    return data !== undefined && data !== null && typeof data === 'string' && data.trim().length > 0;
   };
 
   const handlePartClick = (partId: string) => {

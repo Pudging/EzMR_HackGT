@@ -185,25 +185,41 @@ export function LoadingAnimation({
 
       {/* Background animated elements */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="bg-primary/20 absolute h-1 w-1 rounded-full"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              scale: [0, 1, 0],
-              opacity: [0, 0.6, 0],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
+        {[...Array(8)].map((_, i) => {
+          // Use deterministic positions based on index to avoid hydration issues
+          const positions = [
+            { top: 15, left: 25 },
+            { top: 35, left: 75 },
+            { top: 65, left: 45 },
+            { top: 80, left: 20 },
+            { top: 25, left: 90 },
+            { top: 55, left: 15 },
+            { top: 45, left: 65 },
+            { top: 75, left: 85 },
+          ];
+          const durations = [3, 4, 3.5, 4.5, 3.2, 4.2, 3.8, 4.1];
+          const delays = [0, 0.5, 1, 1.5, 0.3, 0.8, 1.2, 1.8];
+          
+          return (
+            <motion.div
+              key={i}
+              className="bg-primary/20 absolute h-1 w-1 rounded-full"
+              style={{
+                top: `${positions[i]?.top ?? 50}%`,
+                left: `${positions[i]?.left ?? 50}%`,
+              }}
+              animate={{
+                scale: [0, 1, 0],
+                opacity: [0, 0.6, 0],
+              }}
+              transition={{
+                duration: durations[i] ?? 3,
+                repeat: Infinity,
+                delay: delays[i] ?? 0,
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );

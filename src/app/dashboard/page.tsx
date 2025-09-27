@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { useSearch } from "@/hooks/use-search";
@@ -52,7 +52,7 @@ interface SelectedPatient {
   bloodType?: string;
 }
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedPatient, setSelectedPatient] = useState<SelectedPatient | null>(null);
@@ -66,7 +66,7 @@ export default function DashboardPage() {
   } = useSearch();
 
   // Load full patient data
-  const { patientData, loading: patientDataLoading, error: patientDataError } = usePatientData(selectedPatient?.patientId || "");
+  const { patientData, loading: patientDataLoading, error: patientDataError } = usePatientData(selectedPatient?.patientId ?? "");
 
   useEffect(() => {
     // Check for selected patient in sessionStorage or URL params
@@ -145,7 +145,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-muted-foreground">
-              {patientDataError || 'Failed to load patient information'}
+              {patientDataError ?? 'Failed to load patient information'}
             </p>
             <Button onClick={() => router.push('/patient-lookup')}>
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -292,7 +292,7 @@ export default function DashboardPage() {
                     <Phone className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        {patientData.phone || "Not provided"}
+                        {patientData.phone ?? "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Primary Phone
@@ -313,7 +313,7 @@ export default function DashboardPage() {
                     <MapPin className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        {patientData.address?.line1 || "Not provided"}
+                        {patientData.address?.line1 ?? "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-sm">
                         {patientData.address?.line2 && `${patientData.address.line2}, `}
@@ -328,7 +328,7 @@ export default function DashboardPage() {
                     <Mail className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        {patientData.email || "Not provided"}
+                        {patientData.email ?? "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Email Address
@@ -343,10 +343,10 @@ export default function DashboardPage() {
                     <CreditCard className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        {patientData.insurance?.primary?.provider || "Not provided"}
+                        {patientData.insurance?.primary?.provider ?? "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-sm">
-                        Policy: {patientData.insurance?.primary?.policyNumber || "N/A"}
+                        Policy: {patientData.insurance?.primary?.policyNumber ?? "N/A"}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Primary Insurance
@@ -937,7 +937,7 @@ export default function DashboardPage() {
                   <p className="text-foreground text-xl font-bold">
                     {patientData.vitals?.bloodPressure 
                       ? `${patientData.vitals.bloodPressure.systolic}/${patientData.vitals.bloodPressure.diastolic}`
-                      : "N/A"} • {patientData.bloodType || "N/A"}
+                      : "N/A"} • {patientData.bloodType ?? "N/A"}
                   </p>
                   <p className="text-xs text-green-600">Normal</p>
                 </div>
@@ -954,7 +954,7 @@ export default function DashboardPage() {
                     Heart Rate
                   </p>
                   <p className="text-foreground text-xl font-bold">
-                    {patientData.vitals?.heartRate || "N/A"} bpm
+                    {patientData.vitals?.heartRate ?? "N/A"} bpm
                   </p>
                   <p className="text-xs text-blue-600">Normal</p>
                 </div>
@@ -971,7 +971,7 @@ export default function DashboardPage() {
                     Temperature
                   </p>
                   <p className="text-foreground text-xl font-bold">
-                    {patientData.vitals?.temperature || "N/A"}°F
+                    {patientData.vitals?.temperature ?? "N/A"}°F
                   </p>
                   <p className="text-xs text-orange-600">Normal</p>
                 </div>
@@ -988,10 +988,10 @@ export default function DashboardPage() {
                     Weight & Height
                   </p>
                   <p className="text-foreground text-xl font-bold">
-                    {patientData.vitals?.weight || "N/A"} • {patientData.vitals?.height || "N/A"}
+                    {patientData.vitals?.weight ?? "N/A"} • {patientData.vitals?.height ?? "N/A"}
                   </p>
                   <p className="text-xs text-purple-600">
-                    BMI: {patientData.vitals?.bmi || "N/A"}
+                    BMI: {patientData.vitals?.bmi ?? "N/A"}
                   </p>
                 </div>
                 <Weight className="h-8 w-8 text-purple-600" />
@@ -999,6 +999,56 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Patient Assessment Section */}
+        {patientData?.assessmentData && Object.keys(patientData.assessmentData).length > 0 && (
+          <Card className="border" id="section-assessment">
+            <CardHeader className="border-b">
+              <CardTitle className="text-foreground flex items-center">
+                <Stethoscope className="mr-2 h-5 w-5" />
+                Physical Assessment
+              </CardTitle>
+              <CardDescription>
+                Latest physical examination findings by body region
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {Object.entries(patientData.assessmentData).map(([bodyPart, notes]) => {
+                  if (!notes || notes.trim().length === 0) return null;
+                  
+                  const bodyPartLabel = bodyPart
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                  
+                  return (
+                    <div
+                      key={bodyPart}
+                      className="rounded-lg border bg-card p-4 text-card-foreground"
+                    >
+                      <div className="mb-2 flex items-center">
+                        <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg mr-3">
+                          <Activity className="text-primary h-4 w-4" />
+                        </div>
+                        <h4 className="font-semibold text-sm">{bodyPartLabel}</h4>
+                      </div>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {notes}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              {Object.keys(patientData.assessmentData).length === 0 && (
+                <div className="text-center py-8">
+                  <Stethoscope className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No assessment data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Medical Records Section */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -1223,7 +1273,7 @@ export default function DashboardPage() {
                           {medication.name} {medication.dose && `${medication.dose}`}
                         </p>
                         <p className="text-muted-foreground text-sm">
-                          {medication.frequency || "As prescribed"}
+                          {medication.frequency ?? "As prescribed"}
                         </p>
                         {medication.refills !== undefined && (
                           <p className="text-muted-foreground text-xs">
@@ -1233,7 +1283,7 @@ export default function DashboardPage() {
                       </div>
                       <Clock className="text-muted-foreground h-4 w-4" />
                     </div>
-                  )) || (
+                  )) ?? (
                     <div className="text-center py-4">
                       <p className="text-muted-foreground">No current medications</p>
                     </div>
@@ -1323,5 +1373,20 @@ export default function DashboardPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    }>
+      <DashboardPageContent />
+    </Suspense>
   );
 }

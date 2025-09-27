@@ -3,18 +3,18 @@ import { seedFakePatient } from '@/lib/seed-fake-patient';
 
 export async function POST() {
   try {
-    const patient = await seedFakePatient();
+    const result = await seedFakePatient();
     
     return NextResponse.json({
       success: true,
       message: 'Successfully seeded fake patient data',
       patient: {
-        id: patient.id,
-        name: `${patient.firstName} ${patient.lastName}`,
-        mrn: patient.mrn,
-        dateOfBirth: patient.dateOfBirth,
-        sex: patient.sex,
-        bloodType: patient.bloodType,
+        id: result.localhostPatient.id,
+        name: `${result.localhostPatient.firstName} ${result.localhostPatient.lastName}`,
+        mrn: result.localhostPatient.mrn,
+        dateOfBirth: result.localhostPatient.dateOfBirth,
+        sex: result.localhostPatient.sex,
+        bloodType: result.localhostPatient.bloodType,
       },
     });
 

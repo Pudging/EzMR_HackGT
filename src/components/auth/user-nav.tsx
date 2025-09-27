@@ -3,7 +3,6 @@
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,

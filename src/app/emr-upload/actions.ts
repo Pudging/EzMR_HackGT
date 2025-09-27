@@ -264,7 +264,7 @@ export async function saveEmrFromForm(
   let parsedJson: unknown;
   try {
     parsedJson = JSON.parse(payloadRaw);
-  } catch (err) {
+  } catch (_err) {
     return { ok: false, error: "Invalid JSON" } as const;
   }
 
@@ -543,7 +543,7 @@ export async function saveEmrFromForm(
     }
 
     return { ok: true } as const;
-  } catch (err) {
+  } catch (_err) {
     return { ok: false, error: "Failed to save EMR" } as const;
   }
 }

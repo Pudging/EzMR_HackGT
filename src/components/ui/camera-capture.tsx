@@ -7,7 +7,6 @@ import {
   Camera,
   AlertCircle,
   RefreshCw,
-  Upload,
 } from "lucide-react";
 
 interface CameraCaptureProps {

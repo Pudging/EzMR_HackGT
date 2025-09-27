@@ -16,10 +16,10 @@ import {
   X,
   Loader2
 } from "lucide-react";
-import { useAISearch, type AISearchResult } from "@/hooks/useAISearch";
+import { useAISearch } from "@/hooks/useAISearch";
 
 interface AISearchBoxProps {
-  patientData?: any;
+  patientData?: unknown;
   onHighlightSection?: (section: string) => void;
 }
 
@@ -36,7 +36,7 @@ export function AISearchBox({ patientData, onHighlightSection }: AISearchBoxProp
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSearch();
+      void handleSearch();
     }
   };
 
@@ -100,7 +100,7 @@ export function AISearchBox({ patientData, onHighlightSection }: AISearchBoxProp
             <Sparkles className="text-primary mr-2 h-5 w-5" />
             AI Clinical Search
           </CardTitle>
-          {(results || error) && (
+          {(results ?? error) && (
             <Button variant="ghost" size="sm" onClick={handleClearResults}>
               <X className="h-4 w-4" />
             </Button>
@@ -128,7 +128,7 @@ export function AISearchBox({ patientData, onHighlightSection }: AISearchBoxProp
         </div>
       </CardHeader>
 
-      {(results || error || isSearching) && (
+      {(results ?? error ?? isSearching) && (
         <CardContent className="pt-0">
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">

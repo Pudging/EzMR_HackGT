@@ -108,6 +108,9 @@ export interface PatientData {
     location: string;
     status: string;
   }>;
+  
+  // Assessment Data
+  assessmentData?: Record<string, string>;
 }
 
 // Real database integration - no more mock data
@@ -123,10 +126,14 @@ export function usePatientData(patientId: string) {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`/api/patients/${patientId}`);
+        // Fetch both patient data and assessment data
+        const [patientResponse, assessmentResponse] = await Promise.all([
+          fetch(`/api/patients/${patientId}`),
+          fetch(`/api/patients/${patientId}/assessment`)
+        ]);
         
-        if (!response.ok) {
-          if (response.status === 404) {
+        if (!patientResponse.ok) {
+          if (patientResponse.status === 404) {
             setError(`Patient with ID ${patientId} not found`);
           } else {
             setError('Failed to load patient data');
@@ -134,8 +141,15 @@ export function usePatientData(patientId: string) {
           return;
         }
         
-        const data: PatientData = await response.json();
-        setPatientData(data);
+        const patientData: PatientData = await patientResponse.json();
+        
+        // Add assessment data if available
+        if (assessmentResponse.ok) {
+          const assessmentData = await assessmentResponse.json();
+          patientData.assessmentData = assessmentData;
+        }
+        
+        setPatientData(patientData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load patient data');
       } finally {

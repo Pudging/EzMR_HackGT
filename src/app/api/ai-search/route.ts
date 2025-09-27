@@ -2,7 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
-import { env } from "@/env";
 
 const searchResultsSchema = z.object({
   summary: z.string().describe("Brief summary of the query and its medical relevance based on actual patient data"),
@@ -77,9 +76,7 @@ CRITICAL INSTRUCTIONS:
 You must reference the actual patient data in every response. Be a clinical detective using the real information available.`;
 
     const result = await generateObject({
-      model: google("gemini-2.0-flash-exp", {
-        apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY,
-      }),
+      model: google("gemini-2.0-flash-exp"),
       schema: searchResultsSchema,
       prompt,
     });

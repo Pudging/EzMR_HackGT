@@ -27,6 +27,25 @@ export default function PatientAssessmentPage() {
   const [patientData, setPatientData] = useState<PatientData>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPatient, setSelectedPatient] = useState<SelectedPatient | null>(null);
+  const [saveTimeouts, setSaveTimeouts] = useState<Record<string, NodeJS.Timeout>>({});
+  const [savingStatus, setSavingStatus] = useState<Record<string, 'idle' | 'pending' | 'saving' | 'saved'>>({});
+
+  // Function to fetch existing assessment data from the API
+  const fetchPatientAssessmentData = async (patientId: string) => {
+    try {
+      const response = await fetch(`/api/patients/${patientId}/assessment`);
+      if (response.ok) {
+        const assessmentData = await response.json();
+        setPatientData(assessmentData);
+      } else {
+        console.log('No existing assessment data found');
+      }
+    } catch (error) {
+      console.error('Error fetching assessment data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Check for selected patient in sessionStorage or URL params
@@ -36,7 +55,8 @@ export default function PatientAssessmentPage() {
     if (patientFromStorage) {
       const patient = JSON.parse(patientFromStorage);
       setSelectedPatient(patient);
-      setIsLoading(false);
+      // Fetch existing assessment data for this patient
+      void fetchPatientAssessmentData(patient.patientId);
     } else if (patientIdFromUrl) {
       // Mock data lookup by ID - in real app this would be an API call
       const mockPatients: SelectedPatient[] = [
@@ -54,12 +74,22 @@ export default function PatientAssessmentPage() {
       if (patient) {
         setSelectedPatient(patient);
         sessionStorage.setItem('selectedPatient', JSON.stringify(patient));
+        // Fetch existing assessment data for this patient
+        void fetchPatientAssessmentData(patient.patientId);
+      } else {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     } else {
       setIsLoading(false);
     }
   }, [searchParams]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(saveTimeouts).forEach(timeout => clearTimeout(timeout));
+    };
+  }, [saveTimeouts]);
 
   const handleBodyPartSelect = (bodyPart: string) => {
     setSelectedBodyPart(bodyPart);
@@ -70,6 +100,89 @@ export default function PatientAssessmentPage() {
       ...prev,
       [bodyPart]: description,
     }));
+    
+    // Update saving status to pending
+    setSavingStatus(prev => ({
+      ...prev,
+      [bodyPart]: 'pending',
+    }));
+    
+    // Debounced auto-save: wait 1 second after last change before saving
+    if (selectedPatient) {
+      // Clear existing timeout for this body part
+      if (saveTimeouts[bodyPart]) {
+        clearTimeout(saveTimeouts[bodyPart]);
+      }
+      
+      // Set new timeout
+      const timeoutId = setTimeout(() => {
+        void saveAssessmentData(selectedPatient.patientId, { [bodyPart]: description });
+        setSaveTimeouts(prev => {
+          const updated = { ...prev };
+          delete updated[bodyPart];
+          return updated;
+        });
+      }, 1000);
+      
+      setSaveTimeouts(prev => ({
+        ...prev,
+        [bodyPart]: timeoutId,
+      }));
+    }
+  };
+
+  // Function to save assessment data to the API
+  const saveAssessmentData = async (patientId: string, data: Record<string, string>) => {
+    const bodyPart = Object.keys(data)[0];
+    
+    try {
+      // Update status to saving
+      setSavingStatus(prev => ({
+        ...prev,
+        [bodyPart!]: 'saving',
+      }));
+      
+      const response = await fetch(`/api/patients/${patientId}/assessment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (response.ok) {
+        // Update status to saved
+        setSavingStatus(prev => ({
+          ...prev,
+          [bodyPart!]: 'saved',
+        }));
+        
+        // Clear saved status after 2 seconds
+        setTimeout(() => {
+          setSavingStatus(prev => ({
+            ...prev,
+            [bodyPart!]: 'idle',
+          }));
+        }, 2000);
+      } else {
+        const errorText = await response.text();
+        console.error('Failed to save assessment data:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorText
+        });
+        setSavingStatus(prev => ({
+          ...prev,
+          [bodyPart!]: 'idle',
+        }));
+      }
+    } catch (error) {
+      console.error('Error saving assessment data:', error);
+      setSavingStatus(prev => ({
+        ...prev,
+        [bodyPart!]: 'idle',
+      }));
+    }
   };
 
   const handleLoadingComplete = () => {
@@ -162,6 +275,7 @@ export default function PatientAssessmentPage() {
               selectedBodyPart={selectedBodyPart}
               patientData={patientData}
               onDataUpdate={handleDataUpdate}
+              savingStatus={savingStatus}
             />
           </Card>
         </div>

@@ -2,14 +2,12 @@ import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db";
 import { getCurrentTenant } from "@/lib/tenant";
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     let tenant = await getCurrentTenant();
     
     // Default fallback for localhost - use any available tenant
-    if (!tenant) {
-      tenant = await db.tenant.findFirst();
-    }
+    tenant ??= await db.tenant.findFirst();
     
     if (!tenant) {
       return NextResponse.json({ error: "No tenant found" }, { status: 404 });
