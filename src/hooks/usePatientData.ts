@@ -111,6 +111,17 @@ export interface PatientData {
   
   // Assessment Data
   assessmentData?: Record<string, string>;
+  
+  // DICOM Files
+  dicomFiles?: Array<{
+    id: string;
+    name: string;
+    url: string; // First image URL for backward compatibility
+    modality: string;
+    description?: string;
+    performedOn?: string;
+    images: Array<{ name: string; url: string }>; // All images in the series
+  }>;
 }
 
 // Real database integration - no more mock data

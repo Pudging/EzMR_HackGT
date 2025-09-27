@@ -78,7 +78,7 @@ type PatientRecord = {
 
 const prisma = db as unknown as {
   tenant: { findFirst: (args?: unknown) => Promise<{ id: string; subdomain: string; hospitalName: string } | null> };
-  patient: { findFirst: (args: unknown) => Promise<PatientRecord | null> };
+  patient: { findFirst: (args: unknown) => Promise<PatientRecord & { imaging: any[] } | null> };
 };
 
 interface PatientParams {
@@ -134,6 +134,9 @@ export async function GET(
           orderBy: { createdAt: "desc" },
           take: 10, // Get latest 10 notes
         },
+        imaging: {
+          orderBy: { performedOn: "desc" },
+        },
         insurancePolicies: {
           orderBy: { isPrimary: "desc" },
         },
@@ -144,6 +147,9 @@ export async function GET(
           include: {
             notes: true,
           },
+        },
+        imaging: {
+          orderBy: { performedOn: "desc" },
         },
       },
     });
@@ -283,6 +289,35 @@ export async function GET(
         })),
       
       upcomingAppointments: [], // Could implement appointments table if needed
+      
+      // DICOM Files from ImagingStudy table
+      dicomFiles: (() => {
+        console.log(`🔍 Found ${patient.imaging.length} imaging studies for patient ${patient.id}`);
+        return patient.imaging.map((study: any) => {
+        // Try to parse imageUrl as JSON array (for series), fallback to single URL
+        let imageUrls: Array<{ name: string; url: string }> = [];
+        try {
+          imageUrls = JSON.parse(study.imageUrl || '[]');
+        } catch {
+          // Fallback for single URL format
+          if (study.imageUrl) {
+            imageUrls = [{ name: study.description || 'DICOM Image', url: study.imageUrl }];
+          }
+        }
+
+        const dicomFile = {
+          id: study.id,
+          name: study.description ?? `${study.modality} Study`,
+          modality: study.modality,
+          description: study.description,
+          performedOn: study.performedOn?.toISOString().split('T')[0],
+          images: imageUrls, // Array of images in the series
+          url: imageUrls[0]?.url || '', // First image URL for backward compatibility
+        };
+        console.log(`📋 DICOM file processed:`, dicomFile);
+        return dicomFile;
+      });
+      })(),
     };
 
     return NextResponse.json(transformedData);

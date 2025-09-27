@@ -6,7 +6,9 @@ import { SearchBar } from "@/components/search-bar";
 import { useSearch } from "@/hooks/use-search";
 import { usePatientData } from "@/hooks/usePatientData";
 import { AISearchBox } from "@/components/ui/ai-search-box";
+import { DicomViewer } from "@/components/medical/dicom-viewer";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -41,6 +43,8 @@ import {
   Shield,
   ArrowLeft,
   AlertCircle,
+  Monitor,
+  Upload,
 } from "lucide-react";
 
 interface SelectedPatient {
@@ -55,6 +59,23 @@ interface SelectedPatient {
 function DashboardPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [selectedDicomFile, setSelectedDicomFile] = useState<{
+    images: Array<{ name: string; url: string }>;
+    name: string;
+    modality: string;
+    description?: string;
+  } | null>(null);
+
+  // Helper function to get color for DICOM modality
+  const getModalityColor = (modality: string) => {
+    switch (modality.toUpperCase()) {
+      case 'CT': return 'text-blue-500';
+      case 'MRI': return 'text-green-500';
+      case 'XRAY': return 'text-purple-500';
+      case 'ULTRASOUND': return 'text-orange-500';
+      default: return 'text-gray-500';
+    }
+  };
   const [selectedPatient, setSelectedPatient] = useState<SelectedPatient | null>(null);
   const {
     currentMatch,
@@ -299,12 +320,12 @@ function DashboardPageContent() {
                       </p>
                       {patientData.secondaryPhone && (
                         <>
-                          <p className="text-muted-foreground text-sm">
+                      <p className="text-muted-foreground text-sm">
                             {patientData.secondaryPhone}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            Secondary Phone
-                          </p>
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Secondary Phone
+                      </p>
                         </>
                       )}
                     </div>
@@ -354,33 +375,33 @@ function DashboardPageContent() {
                     </div>
                   </div>
                   {patientData.insurance?.secondary && (
-                    <div className="flex items-start space-x-3">
-                      <Shield className="text-primary mt-0.5 h-5 w-5" />
-                      <div className="flex-1">
-                        <p className="text-foreground text-sm font-medium">
+                  <div className="flex items-start space-x-3">
+                    <Shield className="text-primary mt-0.5 h-5 w-5" />
+                    <div className="flex-1">
+                      <p className="text-foreground text-sm font-medium">
                           {patientData.insurance.secondary.provider}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
+                      </p>
+                      <p className="text-muted-foreground text-sm">
                           Policy: {patientData.insurance.secondary.policyNumber}
-                        </p>
-                        <p className="text-muted-foreground text-xs">
-                          Secondary Insurance
-                        </p>
-                      </div>
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Secondary Insurance
+                      </p>
                     </div>
+                  </div>
                   )}
                   {patientData.insurance?.primary?.groupNumber && (
-                    <div className="flex items-start space-x-3">
-                      <FileDigit className="text-primary mt-0.5 h-5 w-5" />
-                      <div className="flex-1">
-                        <p className="text-foreground text-sm font-medium">
+                  <div className="flex items-start space-x-3">
+                    <FileDigit className="text-primary mt-0.5 h-5 w-5" />
+                    <div className="flex-1">
+                      <p className="text-foreground text-sm font-medium">
                           {patientData.insurance.primary.groupNumber}
-                        </p>
-                        <p className="text-muted-foreground text-xs">
-                          Group Number
-                        </p>
-                      </div>
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Group Number
+                      </p>
                     </div>
+                  </div>
                   )}
                 </div>
 
@@ -439,6 +460,7 @@ function DashboardPageContent() {
           </div>
         </div>
 
+
         {/* AI Clinical Search */}
         <AISearchBox 
           patientData={patientData}
@@ -476,48 +498,48 @@ function DashboardPageContent() {
                       Social History
                     </h3>
                     {patientData.socialHistory ? (
-                      <div className="space-y-1">
+                    <div className="space-y-1">
                         {patientData.socialHistory.tobacco && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Smoking Status:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Smoking Status:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.tobacco}
-                            </span>
-                          </div>
+                        </span>
+                      </div>
                         )}
                         {patientData.socialHistory.alcohol && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Alcohol Use:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Alcohol Use:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.alcohol}
-                            </span>
-                          </div>
+                        </span>
+                      </div>
                         )}
                         {patientData.socialHistory.drugs && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Drug Use:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Drug Use:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.drugs}
-                            </span>
-                          </div>
+                        </span>
+                      </div>
                         )}
                         {patientData.socialHistory.occupation && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Occupation:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Occupation:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.occupation}
-                            </span>
-                          </div>
-                        )}
+                        </span>
                       </div>
+                        )}
+                    </div>
                     ) : (
                       <div className="text-center py-4">
                         <p className="text-muted-foreground text-sm">No social history recorded</p>
@@ -532,31 +554,31 @@ function DashboardPageContent() {
                       Immunization History
                     </h3>
                     {patientData.immunizations && patientData.immunizations.length > 0 ? (
-                      <div className="space-y-1">
+                    <div className="space-y-1">
                         {patientData.immunizations.map((immunization, index) => (
                           <div key={index} className="bg-secondary rounded border p-2">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="text-foreground text-sm font-medium">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-foreground text-sm font-medium">
                                   {immunization.vaccine}
-                                </p>
+                            </p>
                                 {immunization.notes && (
-                                  <p className="text-muted-foreground text-xs">
+                            <p className="text-muted-foreground text-xs">
                                     {immunization.notes}
-                                  </p>
+                            </p>
                                 )}
-                              </div>
-                              <span className="text-primary text-xs font-medium">
-                                {new Date(immunization.administeredOn).toLocaleDateString()}
-                              </span>
-                            </div>
                           </div>
-                        ))}
+                          <span className="text-primary text-xs font-medium">
+                                {new Date(immunization.administeredOn).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
+                        ))}
+                          </div>
                     ) : (
                       <div className="text-center py-4">
                         <p className="text-muted-foreground text-sm">No immunization records</p>
-                      </div>
+                        </div>
                     )}
                   </div>
 
@@ -603,35 +625,35 @@ function DashboardPageContent() {
                           
                           return (
                             <div key={index} className={`rounded border ${style.border} ${style.bg} p-2`}>
-                              <div className="flex items-start justify-between">
-                                <div>
-                                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {allergy.substance}
-                                  </p>
-                                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                                     {allergy.severity} - {allergy.reaction}
-                                  </p>
-                                </div>
+                            </p>
+                          </div>
                                 <span className={`text-xs font-medium ${style.textColor}`}>
                                   {allergy.notedOn ? new Date(allergy.notedOn).toLocaleDateString() : 'Date unknown'}
-                                </span>
-                              </div>
-                            </div>
+                          </span>
+                        </div>
+                      </div>
                           );
                         })
                       ) : (
-                        <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                No Known Allergies
-                              </p>
-                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              No Known Allergies
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                                 No allergies recorded
-                              </p>
-                            </div>
+                            </p>
                           </div>
                         </div>
+                      </div>
                       )}
                     </div>
                   </div>
@@ -646,23 +668,23 @@ function DashboardPageContent() {
                       Past Injuries & Conditions
                     </h3>
                     {patientData.pastConditions && patientData.pastConditions.length > 0 ? (
-                      <div className="space-y-1">
+                    <div className="space-y-1">
                         {patientData.pastConditions.map((condition, index) => (
                           <div key={index} className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
-                            <div className="mb-1 flex items-start justify-between">
-                              <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                        <div className="mb-1 flex items-start justify-between">
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                                 {condition.bodyPart}:
-                              </span>
-                              <span className="text-xs font-medium text-blue-600">
+                          </span>
+                          <span className="text-xs font-medium text-blue-600">
                                 {condition.date ? new Date(condition.date).toLocaleDateString() : 'Unknown date'}
-                              </span>
-                            </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                               {condition.notes}
-                            </p>
-                          </div>
-                        ))}
+                        </p>
                       </div>
+                        ))}
+                        </div>
                     ) : (
                       <div className="text-center py-4">
                         <p className="text-muted-foreground text-sm">No past medical conditions recorded</p>
@@ -677,30 +699,30 @@ function DashboardPageContent() {
                       Family Medical History
                     </h3>
                     {patientData.familyHistory && patientData.familyHistory.length > 0 ? (
-                      <div className="space-y-1">
+                    <div className="space-y-1">
                         {patientData.familyHistory.map((history, index) => (
                           <div key={index} className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
-                            <div className="mb-1 flex items-start justify-between">
-                              <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                        <div className="mb-1 flex items-start justify-between">
+                          <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
                                 {history.relation}:
-                              </span>
-                            </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                               {history.condition}
                               {history.notes && ` - ${history.notes}`}
-                            </p>
-                          </div>
-                        ))}
+                        </p>
                       </div>
+                        ))}
+                        </div>
                     ) : (
                       <div className="text-center py-4">
                         <p className="text-muted-foreground text-sm">No family medical history recorded</p>
                       </div>
                     )}
-                  </div>
-                </div>
-              </div>
-            </div>
+                        </div>
+                      </div>
+                        </div>
+                      </div>
           </div>
         </div>
 
@@ -1081,6 +1103,48 @@ function DashboardPageContent() {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-border divide-y">
+                  {/* DICOM Files from Database */}
+                  {patientData?.dicomFiles && patientData.dicomFiles.length > 0 && 
+                    patientData.dicomFiles.map((dicomFile) => (
+                      <div key={dicomFile.id} className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className={`${getModalityColor(dicomFile.modality)}/10 flex h-12 w-12 items-center justify-center rounded-lg`}>
+                              <Monitor className={`${getModalityColor(dicomFile.modality)} h-6 w-6`} />
+                            </div>
+                            <div>
+                              <p className="text-foreground font-semibold">
+                                {dicomFile.name}
+                              </p>
+                              <p className="text-muted-foreground text-sm">
+                                DICOM Imaging • {dicomFile.modality} Study
+                              </p>
+                              <p className="text-muted-foreground text-xs">
+                                {dicomFile.performedOn && new Date(dicomFile.performedOn).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge variant="secondary" className="text-xs">{dicomFile.modality}</Badge>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => setSelectedDicomFile({
+                                images: dicomFile.images || [{ name: dicomFile.name, url: dicomFile.url }],
+                                name: dicomFile.name,
+                                modality: dicomFile.modality,
+                                description: dicomFile.description
+                              })}
+                            >
+                              <Monitor className="h-4 w-4 mr-2" />
+                              View ({(dicomFile.images?.length || 1)} slice{(dicomFile.images?.length || 1) !== 1 ? 's' : ''})
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  }
+
                   <div className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -1268,27 +1332,27 @@ function DashboardPageContent() {
                 <div className="space-y-3">
                   {patientData.medications?.filter(med => med.active).map((medication, index) => (
                     <div key={index} className="bg-card flex items-center justify-between rounded-lg border p-3">
-                      <div>
-                        <p className="text-foreground font-medium">
+                    <div>
+                      <p className="text-foreground font-medium">
                           {medication.name} {medication.dose && `${medication.dose}`}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
+                      </p>
+                      <p className="text-muted-foreground text-sm">
                           {medication.frequency ?? "As prescribed"}
-                        </p>
+                      </p>
                         {medication.refills !== undefined && (
-                          <p className="text-muted-foreground text-xs">
+                      <p className="text-muted-foreground text-xs">
                             Refills: {medication.refills} remaining
-                          </p>
+                      </p>
                         )}
-                      </div>
-                      <Clock className="text-muted-foreground h-4 w-4" />
                     </div>
+                    <Clock className="text-muted-foreground h-4 w-4" />
+                  </div>
                   )) ?? (
                     <div className="text-center py-4">
                       <p className="text-muted-foreground">No current medications</p>
                     </div>
                   )}
-                </div>
+                  </div>
               </CardContent>
             </Card>
 
@@ -1321,23 +1385,23 @@ function DashboardPageContent() {
                   </h3>
 
                   {patientData.recentNotes && patientData.recentNotes.length > 0 ? (
-                    <div className="space-y-3">
+                  <div className="space-y-3">
                       {patientData.recentNotes.map((note, index) => (
                         <div key={index} className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-                          <div className="mb-2 flex items-start justify-between">
-                            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                      <div className="mb-2 flex items-start justify-between">
+                        <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                               {note.provider}
-                            </span>
-                            <span className="text-xs font-medium text-blue-600">
+                        </span>
+                        <span className="text-xs font-medium text-blue-600">
                               {new Date(note.date).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                             {note.content}
-                          </p>
-                        </div>
-                      ))}
+                      </p>
                     </div>
+                      ))}
+                      </div>
                   ) : (
                     <div className="text-center py-4">
                       <p className="text-muted-foreground text-sm">No recent notes available</p>
@@ -1372,6 +1436,15 @@ function DashboardPageContent() {
           </Card>
         </div>
       </main>
+      
+      {/* DICOM Viewer Modal */}
+      {selectedDicomFile && (
+        <DicomViewer
+          isOpen={true}
+          dicomData={selectedDicomFile}
+          onClose={() => setSelectedDicomFile(null)}
+        />
+      )}
     </div>
   );
 }
