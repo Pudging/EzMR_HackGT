@@ -6,7 +6,9 @@ import { SearchBar } from "@/components/search-bar";
 import { useSearch } from "@/hooks/use-search";
 import { usePatientData } from "@/hooks/usePatientData";
 import { AISearchBox } from "@/components/ui/ai-search-box";
+import { ModernDicomViewer } from "@/components/medical/modern-dicom-viewer";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { DashboardLoadingAnimation } from "@/components/ui/dashboard-loading-animation";
 import {
   Card,
@@ -42,6 +44,8 @@ import {
   Shield,
   ArrowLeft,
   AlertCircle,
+  Monitor,
+  Upload,
 } from "lucide-react";
 
 interface SelectedPatient {
@@ -56,6 +60,23 @@ interface SelectedPatient {
 function DashboardPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [selectedDicomFile, setSelectedDicomFile] = useState<{
+    images: Array<{ name: string; url: string }>;
+    name: string;
+    modality: string;
+    description?: string;
+  } | null>(null);
+
+  // Helper function to get color for DICOM modality
+  const getModalityColor = (modality: string) => {
+    switch (modality.toUpperCase()) {
+      case 'CT': return 'text-blue-500';
+      case 'MRI': return 'text-green-500';
+      case 'XRAY': return 'text-purple-500';
+      case 'ULTRASOUND': return 'text-orange-500';
+      default: return 'text-gray-500';
+    }
+  };
   const [selectedPatient, setSelectedPatient] =
     useState<SelectedPatient | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -324,12 +345,12 @@ function DashboardPageContent() {
                       </p>
                       {patientData.secondaryPhone && (
                         <>
-                          <p className="text-muted-foreground text-sm">
+                      <p className="text-muted-foreground text-sm">
                             {patientData.secondaryPhone}
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            Secondary Phone
-                          </p>
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Secondary Phone
+                      </p>
                         </>
                       )}
                     </div>
@@ -384,33 +405,33 @@ function DashboardPageContent() {
                     </div>
                   </div>
                   {patientData.insurance?.secondary && (
-                    <div className="flex items-start space-x-3">
-                      <Shield className="text-primary mt-0.5 h-5 w-5" />
-                      <div className="flex-1">
-                        <p className="text-foreground text-sm font-medium">
+                  <div className="flex items-start space-x-3">
+                    <Shield className="text-primary mt-0.5 h-5 w-5" />
+                    <div className="flex-1">
+                      <p className="text-foreground text-sm font-medium">
                           {patientData.insurance.secondary.provider}
-                        </p>
-                        <p className="text-muted-foreground text-sm">
+                      </p>
+                      <p className="text-muted-foreground text-sm">
                           Policy: {patientData.insurance.secondary.policyNumber}
-                        </p>
-                        <p className="text-muted-foreground text-xs">
-                          Secondary Insurance
-                        </p>
-                      </div>
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Secondary Insurance
+                      </p>
                     </div>
+                  </div>
                   )}
                   {patientData.insurance?.primary?.groupNumber && (
-                    <div className="flex items-start space-x-3">
-                      <FileDigit className="text-primary mt-0.5 h-5 w-5" />
-                      <div className="flex-1">
-                        <p className="text-foreground text-sm font-medium">
+                  <div className="flex items-start space-x-3">
+                    <FileDigit className="text-primary mt-0.5 h-5 w-5" />
+                    <div className="flex-1">
+                      <p className="text-foreground text-sm font-medium">
                           {patientData.insurance.primary.groupNumber}
-                        </p>
-                        <p className="text-muted-foreground text-xs">
-                          Group Number
-                        </p>
-                      </div>
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Group Number
+                      </p>
                     </div>
+                  </div>
                   )}
                 </div>
 
@@ -469,6 +490,7 @@ function DashboardPageContent() {
           </div>
         </div>
 
+
         {/* AI Clinical Search */}
         <AISearchBox
           patientData={patientData}
@@ -509,48 +531,48 @@ function DashboardPageContent() {
                       Social History
                     </h3>
                     {patientData.socialHistory ? (
-                      <div className="space-y-1">
+                    <div className="space-y-1">
                         {patientData.socialHistory.tobacco && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Smoking Status:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Smoking Status:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.tobacco}
-                            </span>
-                          </div>
+                        </span>
+                      </div>
                         )}
                         {patientData.socialHistory.alcohol && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Alcohol Use:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Alcohol Use:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.alcohol}
-                            </span>
-                          </div>
+                        </span>
+                      </div>
                         )}
                         {patientData.socialHistory.drugs && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Drug Use:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Drug Use:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.drugs}
-                            </span>
-                          </div>
+                        </span>
+                      </div>
                         )}
                         {patientData.socialHistory.occupation && (
-                          <div className="bg-muted flex items-center justify-between rounded p-2">
-                            <span className="text-muted-foreground text-sm font-medium">
-                              Occupation:
-                            </span>
-                            <span className="text-muted-foreground text-sm">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
+                          Occupation:
+                        </span>
+                        <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.occupation}
-                            </span>
-                          </div>
-                        )}
+                        </span>
                       </div>
+                        )}
+                    </div>
                     ) : (
                       <div className="py-4 text-center">
                         <p className="text-muted-foreground text-sm">
@@ -600,10 +622,8 @@ function DashboardPageContent() {
                         )}
                       </div>
                     ) : (
-                      <div className="py-4 text-center">
-                        <p className="text-muted-foreground text-sm">
-                          No immunization records
-                        </p>
+                      <div className="text-center py-4">
+                        <p className="text-muted-foreground text-sm">No immunization records</p>
                       </div>
                     )}
                   </div>
@@ -665,8 +685,8 @@ function DashboardPageContent() {
                                 <div>
                                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {allergy.substance}
-                                  </p>
-                                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                                     {allergy.severity} - {allergy.reaction}
                                   </p>
                                 </div>
@@ -684,18 +704,18 @@ function DashboardPageContent() {
                           );
                         })
                       ) : (
-                        <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                No Known Allergies
-                              </p>
-                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              No Known Allergies
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                                 No allergies recorded
-                              </p>
-                            </div>
+                            </p>
                           </div>
                         </div>
+                      </div>
                       )}
                     </div>
                   </div>
@@ -731,10 +751,10 @@ function DashboardPageContent() {
                             </div>
                             <p className="text-xs text-gray-600 dark:text-gray-400">
                               {condition.notes}
-                            </p>
-                          </div>
-                        ))}
+                        </p>
                       </div>
+                        ))}
+                        </div>
                     ) : (
                       <div className="py-4 text-center">
                         <p className="text-muted-foreground text-sm">
@@ -764,15 +784,15 @@ function DashboardPageContent() {
                             <div className="mb-1 flex items-start justify-between">
                               <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
                                 {history.relation}:
-                              </span>
-                            </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
                               {history.condition}
                               {history.notes && ` - ${history.notes}`}
-                            </p>
-                          </div>
-                        ))}
+                        </p>
                       </div>
+                        ))}
+                        </div>
                     ) : (
                       <div className="py-4 text-center">
                         <p className="text-muted-foreground text-sm">
@@ -780,10 +800,10 @@ function DashboardPageContent() {
                         </p>
                       </div>
                     )}
-                  </div>
-                </div>
-              </div>
-            </div>
+                        </div>
+                      </div>
+                        </div>
+                      </div>
           </div>
         </div>
 
@@ -1179,6 +1199,48 @@ function DashboardPageContent() {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-border divide-y">
+                  {/* DICOM Files from Database */}
+                  {patientData?.dicomFiles && patientData.dicomFiles.length > 0 && 
+                    patientData.dicomFiles.map((dicomFile) => (
+                      <div key={dicomFile.id} className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className={`${getModalityColor(dicomFile.modality)}/10 flex h-12 w-12 items-center justify-center rounded-lg`}>
+                              <Monitor className={`${getModalityColor(dicomFile.modality)} h-6 w-6`} />
+                            </div>
+                            <div>
+                              <p className="text-foreground font-semibold">
+                                {dicomFile.name}
+                              </p>
+                              <p className="text-muted-foreground text-sm">
+                                DICOM Imaging • {dicomFile.modality} Study
+                              </p>
+                              <p className="text-muted-foreground text-xs">
+                                {dicomFile.performedOn && new Date(dicomFile.performedOn).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge variant="secondary" className="text-xs">{dicomFile.modality}</Badge>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => setSelectedDicomFile({
+                                images: dicomFile.images || [{ name: dicomFile.name, url: dicomFile.url }],
+                                name: dicomFile.name,
+                                modality: dicomFile.modality,
+                                description: dicomFile.description
+                              })}
+                            >
+                              <Monitor className="h-4 w-4 mr-2" />
+                              View ({(dicomFile.images?.length || 1)} slice{(dicomFile.images?.length || 1) !== 1 ? 's' : ''})
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  }
+
                   <div className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -1393,7 +1455,7 @@ function DashboardPageContent() {
                       </p>
                     </div>
                   )}
-                </div>
+                  </div>
               </CardContent>
             </Card>
           </div>
@@ -1435,17 +1497,17 @@ function DashboardPageContent() {
                           <div className="mb-2 flex items-start justify-between">
                             <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                               {note.provider}
-                            </span>
-                            <span className="text-xs font-medium text-blue-600">
+                        </span>
+                        <span className="text-xs font-medium text-blue-600">
                               {new Date(note.date).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                             {note.content}
-                          </p>
-                        </div>
-                      ))}
+                      </p>
                     </div>
+                      ))}
+                      </div>
                   ) : (
                     <div className="py-4 text-center">
                       <p className="text-muted-foreground text-sm">
@@ -1485,6 +1547,15 @@ function DashboardPageContent() {
           </Card>
         </div>
       </main>
+      
+      {/* Modern DICOM Viewer Modal */}
+      {selectedDicomFile && (
+        <ModernDicomViewer
+          isOpen={true}
+          dicomData={selectedDicomFile}
+          onClose={() => setSelectedDicomFile(null)}
+        />
+      )}
     </div>
   );
 }

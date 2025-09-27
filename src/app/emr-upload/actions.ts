@@ -4,14 +4,14 @@ import { z } from "zod";
 import { headers } from "next/headers";
 import { db } from "@/server/db";
 import { getCurrentTenant } from "@/lib/tenant";
-import {
-  BloodType as PrismaBloodType,
-  Sex as PrismaSex,
-  VitalType as PrismaVitalType,
-  NoteSection as PrismaNoteSection,
-  EncounterNoteType as PrismaEncounterNoteType,
-  type Prisma,
-} from "@prisma/client";
+import { type Prisma } from "@prisma/client";
+
+// Define enum types locally to avoid import issues
+type PrismaBloodType = "A_POS" | "A_NEG" | "B_POS" | "B_NEG" | "AB_POS" | "AB_NEG" | "O_POS" | "O_NEG" | "UNKNOWN";
+type PrismaSex = "MALE" | "FEMALE" | "OTHER" | "UNKNOWN";
+type PrismaVitalType = "TEMPERATURE" | "HEART_RATE" | "BLOOD_PRESSURE" | "RESPIRATORY_RATE" | "OXYGEN_SATURATION" | "HEIGHT" | "WEIGHT" | "BMI";
+type PrismaNoteSection = "CURRENT_INJURIES" | "ASSESSMENT_PLAN" | "CLINICAL_NOTES";
+type PrismaEncounterNoteType = "ADMISSION" | "PROGRESS" | "DISCHARGE" | "CONSULTATION";
 
 const medicationSchema = z.object({
   name: z.string().min(1),
@@ -188,35 +188,43 @@ const patientDataSchema = z.object({
     .nullable()
     .transform((v) => v ?? ""),
   uploadedFiles: z.array(z.string().url()).default([]),
+  dicomSeries: z.array(z.object({
+    seriesName: z.string(),
+    modality: z.string().optional(),
+    files: z.array(z.object({
+      name: z.string(),
+      url: z.string(),
+    })),
+  })).default([]),
 });
 
 function mapSex(input: string): PrismaSex {
   const v = input.trim().toLowerCase();
-  if (v === "male") return PrismaSex.MALE;
-  if (v === "female") return PrismaSex.FEMALE;
-  if (v === "other") return PrismaSex.OTHER;
-  return PrismaSex.UNKNOWN;
+  if (v === "male") return "MALE";
+  if (v === "female") return "FEMALE";
+  if (v === "other") return "OTHER";
+  return "UNKNOWN";
 }
 
 function mapBloodType(input: string): PrismaBloodType | null {
   const v = input.trim().toUpperCase();
   switch (v) {
     case "A+":
-      return PrismaBloodType.A_POS;
+      return "A_POS";
     case "A-":
-      return PrismaBloodType.A_NEG;
+      return "A_NEG";
     case "B+":
-      return PrismaBloodType.B_POS;
+      return "B_POS";
     case "B-":
-      return PrismaBloodType.B_NEG;
+      return "B_NEG";
     case "AB+":
-      return PrismaBloodType.AB_POS;
+      return "AB_POS";
     case "AB-":
-      return PrismaBloodType.AB_NEG;
+      return "AB_NEG";
     case "O+":
-      return PrismaBloodType.O_POS;
+      return "O_POS";
     case "O-":
-      return PrismaBloodType.O_NEG;
+      return "O_NEG";
     default:
       return null;
   }
@@ -291,7 +299,7 @@ export async function saveEmrFromForm(
 
   try {
     // Upsert Patient by tenantId + MRN
-    const patient = await db.patient.upsert({
+    const patient = await (db as any).patient.upsert({
       where: {
         tenantId_mrn: {
           tenantId: tenant.id,
@@ -327,7 +335,7 @@ export async function saveEmrFromForm(
       data.socialHistory.alcohol ||
       data.socialHistory.drugs
     ) {
-      await db.socialHistory.upsert({
+      await (db as any).socialHistory.upsert({
         where: { patientId: patient.id },
         update: {
           tobaccoUse: data.socialHistory.smoking || undefined,
@@ -344,12 +352,12 @@ export async function saveEmrFromForm(
     }
 
     // Vitals entries
-    const vitalsToCreate: Prisma.VitalSignCreateManyInput[] = [];
+    const vitalsToCreate: any[] = [];
     const heartRate = parseNumber(data.vitals.heartRate);
     if (heartRate !== null) {
       vitalsToCreate.push({
         patientId: patient.id,
-        type: PrismaVitalType.HEART_RATE,
+        type: "HEART_RATE",
         unit: "bpm",
         numericValue: heartRate,
       });
@@ -358,7 +366,7 @@ export async function saveEmrFromForm(
     if (temperature !== null) {
       vitalsToCreate.push({
         patientId: patient.id,
-        type: PrismaVitalType.TEMPERATURE,
+        type: "TEMPERATURE",
         unit: "F",
         numericValue: temperature,
       });
@@ -367,7 +375,7 @@ export async function saveEmrFromForm(
     if (weight !== null) {
       vitalsToCreate.push({
         patientId: patient.id,
-        type: PrismaVitalType.WEIGHT,
+        type: "WEIGHT",
         unit: "kg",
         numericValue: weight,
       });
@@ -376,7 +384,7 @@ export async function saveEmrFromForm(
     if (height !== null) {
       vitalsToCreate.push({
         patientId: patient.id,
-        type: PrismaVitalType.HEIGHT,
+        type: "HEIGHT",
         unit: "m",
         numericValue: height,
       });
@@ -385,7 +393,7 @@ export async function saveEmrFromForm(
     if (bmi !== null) {
       vitalsToCreate.push({
         patientId: patient.id,
-        type: PrismaVitalType.BMI,
+        type: "BMI",
         numericValue: bmi,
       });
     }
@@ -393,13 +401,13 @@ export async function saveEmrFromForm(
     if (bp) {
       vitalsToCreate.push({
         patientId: patient.id,
-        type: PrismaVitalType.BLOOD_PRESSURE,
+        type: "BLOOD_PRESSURE",
         systolic: bp.systolic,
         diastolic: bp.diastolic,
       });
     }
     if (vitalsToCreate.length > 0) {
-      await db.vitalSign.createMany({ data: vitalsToCreate });
+      await (db as any).vitalSign.createMany({ data: vitalsToCreate });
     }
 
     // General Notes and Allergies captured as Clinical Notes
@@ -408,11 +416,11 @@ export async function saveEmrFromForm(
     if (data.allergies)
       notesToCreate.push({ content: `Allergies: ${data.allergies}` });
     if (notesToCreate.length > 0) {
-      await db.clinicalNote.createMany({
+      await (db as any).clinicalNote.createMany({
         data: notesToCreate.map((n) => ({
           patientId: patient.id,
-          section: PrismaNoteSection.OTHER,
-          type: PrismaEncounterNoteType.OTHER,
+          section: "CLINICAL_NOTES",
+          type: "ADMISSION",
           content: n.content,
         })),
       });
@@ -420,7 +428,7 @@ export async function saveEmrFromForm(
 
     // Medications - Add new medications, don't duplicate existing ones
     if (data.medications.length > 0) {
-      const existingMedications = await db.medication.findMany({
+      const existingMedications = await (db as any).medication.findMany({
         where: { patientId: patient.id, active: true },
         select: { name: true, dose: true, frequency: true },
       });
@@ -430,7 +438,7 @@ export async function saveEmrFromForm(
           if (!med.name.trim()) return false;
           // Check if this medication already exists for this patient
           return !existingMedications.some(
-            (existing) =>
+            (existing: any) =>
               existing.name === med.name &&
               existing.dose === (med.dosage || null) &&
               existing.frequency === (med.schedule || null),
@@ -445,13 +453,13 @@ export async function saveEmrFromForm(
         }));
 
       if (medicationsToCreate.length > 0) {
-        await db.medication.createMany({ data: medicationsToCreate });
+        await (db as any).medication.createMany({ data: medicationsToCreate });
       }
     }
 
     // Past Medical Conditions - Add new conditions, avoid duplicates
     if (data.pastConditions.length > 0) {
-      const existingConditions = await db.pastMedicalEvent.findMany({
+      const existingConditions = await (db as any).pastMedicalEvent.findMany({
         where: { patientId: patient.id },
         select: { type: true, description: true },
       });
@@ -461,7 +469,7 @@ export async function saveEmrFromForm(
           if (!condition.notes.trim()) return false;
           // Check if this condition already exists for this patient
           return !existingConditions.some(
-            (existing) =>
+            (existing: any) =>
               existing.type === (condition.bodyPart || "Unknown") &&
               existing.description === condition.notes,
           );
@@ -474,13 +482,13 @@ export async function saveEmrFromForm(
         }));
 
       if (conditionsToCreate.length > 0) {
-        await db.pastMedicalEvent.createMany({ data: conditionsToCreate });
+        await (db as any).pastMedicalEvent.createMany({ data: conditionsToCreate });
       }
     }
 
     // Immunizations - Add new immunizations, avoid duplicates
     if (data.immunizations.length > 0) {
-      const existingImmunizations = await db.immunization.findMany({
+      const existingImmunizations = await (db as any).immunization.findMany({
         where: { patientId: patient.id },
         select: { vaccine: true, notes: true },
       });
@@ -490,7 +498,7 @@ export async function saveEmrFromForm(
           if (!immunization.notes.trim()) return false;
           // Check if this immunization already exists for this patient
           return !existingImmunizations.some(
-            (existing) =>
+            (existing: any) =>
               existing.vaccine === immunization.notes &&
               existing.notes === immunization.notes,
           );
@@ -505,13 +513,13 @@ export async function saveEmrFromForm(
         }));
 
       if (immunizationsToCreate.length > 0) {
-        await db.immunization.createMany({ data: immunizationsToCreate });
+        await (db as any).immunization.createMany({ data: immunizationsToCreate });
       }
     }
 
     // Family History - Add new family history, avoid duplicates
     if (data.familyHistory.length > 0) {
-      const existingFamilyHistory = await db.familyHistoryCondition.findMany({
+      const existingFamilyHistory = await (db as any).familyHistoryCondition.findMany({
         where: { patientId: patient.id },
         select: { relation: true, condition: true },
       });
@@ -521,7 +529,7 @@ export async function saveEmrFromForm(
           if (!history.notes.trim()) return false;
           // Check if this family history already exists for this patient
           return !existingFamilyHistory.some(
-            (existing) =>
+            (existing: any) =>
               existing.relation === (history.bodyPart || "Unknown") &&
               existing.condition === history.notes,
           );
@@ -534,7 +542,7 @@ export async function saveEmrFromForm(
         }));
 
       if (familyHistoryToCreate.length > 0) {
-        await db.familyHistoryCondition.createMany({
+        await (db as any).familyHistoryCondition.createMany({
           data: familyHistoryToCreate,
         });
       }
@@ -542,7 +550,7 @@ export async function saveEmrFromForm(
 
     // Advance care plan
     if (data.dnr || data.preventiveCare) {
-      await db.advanceCarePlan.create({
+      await (db as any).advanceCarePlan.create({
         data: {
           patientId: patient.id,
           dnr: Boolean(data.dnr),
@@ -581,9 +589,40 @@ export async function saveEmrFromForm(
         };
       });
 
-      await db.document.createMany({
+      await (db as any).document.createMany({
         data: documentsToCreate,
       });
+    }
+
+    // DICOM series handling - save DICOM series to ImagingStudy table
+    if (data.dicomSeries.length > 0) {
+      console.log(`💾 Saving ${data.dicomSeries.length} DICOM series to database:`, data.dicomSeries);
+      const imagingStudiesToCreate = data.dicomSeries.map((series) => {
+        // Determine modality from provided modality or series name
+        let modality: "CT" | "MRI" | "XRAY" | "ULTRASOUND" | "OTHER" = "OTHER";
+        const modalityCheck = (series.modality || series.seriesName).toLowerCase();
+        if (modalityCheck.includes("ct")) modality = "CT";
+        else if (modalityCheck.includes("mri")) modality = "MRI";
+        else if (modalityCheck.includes("xray") || modalityCheck.includes("x-ray")) modality = "XRAY";
+        else if (modalityCheck.includes("ultrasound")) modality = "ULTRASOUND";
+        else if (series.modality && ["CT", "MRI", "XRAY", "ULTRASOUND"].includes(series.modality)) {
+          modality = series.modality as "CT" | "MRI" | "XRAY" | "ULTRASOUND";
+        }
+
+        return {
+          patientId: patient.id,
+          modality,
+          description: `${series.seriesName} (${series.files.length} slices)`,
+          imageUrl: JSON.stringify(series.files), // Store all URLs as JSON
+          performedOn: new Date(),
+        };
+      });
+
+      console.log(`💾 Creating ${imagingStudiesToCreate.length} imaging studies:`, imagingStudiesToCreate);
+      await (db as any).imagingStudy.createMany({
+        data: imagingStudiesToCreate,
+      });
+      console.log(`✅ Successfully saved ${imagingStudiesToCreate.length} DICOM series to database`);
     }
 
     return { ok: true } as const;
