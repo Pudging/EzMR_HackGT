@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/server/auth";
 import { Button } from "@/components/ui/button";
+import { MagicCard } from "@/components/ui/magic-card";
 import { getCurrentTenant } from "@/lib/tenant";
 
 export default async function HomePage() {
@@ -45,6 +46,40 @@ export default async function HomePage() {
               </div>
 
               <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Link href="/patient-lookup">
+                  <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
+                    <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                      🔍 Patient Lookup
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Search for patients by ID, name, or scan their ID card to access medical records.
+                    </p>
+                  </MagicCard>
+                </Link>
+
+                <Link href="/emr-upload">
+                  <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
+                    <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                      📄 EMR Upload
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Upload and manage electronic medical records with AI-powered data extraction.
+                    </p>
+                  </MagicCard>
+                </Link>
+
+                <Link href="/id-scan">
+                  <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
+                    <h3 className="mb-3 text-xl font-semibold text-card-foreground">
+                      📷 ID Scanner
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Scan patient's ID to automatically extract personal
+                      information.
+                    </p>
+                  </MagicCard>
+                </Link>
+
                 <div className="rounded-xl border bg-card p-6 shadow-sm">
                   <h3 className="mb-3 text-xl font-semibold text-card-foreground">
                     📋 Medical Records
@@ -72,18 +107,6 @@ export default async function HomePage() {
                     Keep track of your medications and set reminders.
                   </p>
                 </div>
-
-                <Link href="/id-scan" className="group">
-                  <div className="rounded-xl border bg-card p-6 shadow-sm transition-all duration-200 group-hover:scale-105">
-                    <h3 className="mb-3 text-xl font-semibold text-card-foreground">
-                      📷 ID Scanner
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Scan your ID to automatically extract personal
-                      information.
-                    </p>
-                  </div>
-                </Link>
               </div>
             </div>
           ) : (
