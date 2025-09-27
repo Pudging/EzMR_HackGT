@@ -42,3 +42,15 @@ export const DropdownMenuItem = (
     />
   );
 };
+
+export const DropdownMenuSeparator = (
+  props: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>,
+) => {
+  const { className, ...rest } = props;
+  return (
+    <DropdownMenuPrimitive.Separator
+      className={cn("-mx-1 my-1 h-px bg-muted", className)}
+      {...rest}
+    />
+  );
+};
