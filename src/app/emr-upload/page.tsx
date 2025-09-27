@@ -890,7 +890,7 @@ export default function EMRUploadPage() {
                           bodyPart: e.target.value,
                         }))
                       }
-                      placeholder="Body part (HEAD, OTHER, etc.)"
+                      placeholder="Body part (Head, Other, etc.)"
                     />
                     <Input
                       value={newCondition.notes}
@@ -918,7 +918,7 @@ export default function EMRUploadPage() {
                           </span>{" "}
                           -
                           <span className="text-primary ml-1 font-semibold">
-                            {condition.bodyPart || "OTHER"}
+                            {condition.bodyPart || "Other"}
                           </span>
                         </div>
                         <div className="text-foreground mt-1 text-sm">
@@ -971,7 +971,7 @@ export default function EMRUploadPage() {
                           </span>{" "}
                           -
                           <span className="text-primary ml-1 font-semibold">
-                            VACCINATION
+                            Vaccination
                           </span>
                         </div>
                         <div className="text-foreground mt-1 text-sm">

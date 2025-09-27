@@ -325,12 +325,12 @@ export default function IDScanPage() {
                   ) : (
                     <Camera className="h-5 w-5" />
                   )}
-                  {uploadMode ? "UPLOAD IMAGE" : "CAMERA FEED"}
+                  {uploadMode ? "Upload Image" : "Camera Feed"}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground font-mono">
                   {uploadMode
-                    ? "SELECT AN IMAGE FILE OF YOUR ID TO PROCESS"
-                    : "POSITION YOUR ID WITHIN THE FRAME AND CLICK CAPTURE"}
+                    ? "Select an image file of your ID to process"
+                    : "Position your ID within the frame and click capture"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -342,7 +342,7 @@ export default function IDScanPage() {
                     className="flex-1 font-mono uppercase"
                   >
                     <Camera className="mr-2 h-4 w-4" />
-                    CAMERA
+                    Camera
                   </Button>
                   <Button
                     onClick={switchToUpload}
@@ -350,7 +350,7 @@ export default function IDScanPage() {
                     className="flex-1 font-mono uppercase"
                   >
                     <Upload className="mr-2 h-4 w-4" />
-                    UPLOAD
+                    Upload
                   </Button>
                 </div>
 
@@ -359,10 +359,10 @@ export default function IDScanPage() {
                   <div className="py-8 text-center">
                     <Upload className="text-foreground mx-auto mb-4 h-16 w-16" />
                     <p className="text-muted-foreground mb-4 font-mono">
-                      SELECT AN IMAGE FILE OF YOUR ID
+                      Select an image file of your ID
                     </p>
                     <p className="text-primary mb-4 font-mono text-xs">
-                      UPLOAD MODE ACTIVE
+                      Upload mode active
                     </p>
                     <input
                       ref={fileInputRef}
@@ -384,13 +384,13 @@ export default function IDScanPage() {
                       className="mb-4 w-full font-mono uppercase"
                     >
                       <Upload className="mr-2 h-4 w-4" />
-                      CHOOSE FILE
+                      Choose File
                     </Button>
 
                     {selectedFile && (
                       <div className="bg-muted mb-4 rounded-lg border p-3">
                         <p className="text-foreground mb-2 font-mono text-sm">
-                          SELECTED FILE:
+                          Selected file:
                         </p>
                         <p className="text-muted-foreground font-mono text-xs">
                           {selectedFile.name} (
@@ -404,12 +404,12 @@ export default function IDScanPage() {
                           {isProcessing ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              PROCESSING...
+                              Processing...
                             </>
                           ) : (
                             <>
                               <CheckCircle className="mr-2 h-4 w-4" />
-                              PROCESS IMAGE
+                              Process Image
                             </>
                           )}
                         </Button>
@@ -417,7 +417,7 @@ export default function IDScanPage() {
                     )}
 
                     <p className="text-muted-foreground mt-2 font-mono text-xs">
-                      SUPPORTED: JPG, PNG, GIF, WEBP
+                      Supported: JPG, PNG, GIF, WEBP
                     </p>
 
                     {/* Debug button */}
@@ -433,7 +433,7 @@ export default function IDScanPage() {
                       variant="outline"
                       className="mt-4 font-mono text-xs uppercase"
                     >
-                      TEST UPLOAD MODE
+                      Test Upload Mode
                     </Button>
                   </div>
                 ) : (
@@ -442,14 +442,14 @@ export default function IDScanPage() {
                       <div className="py-8 text-center">
                         <Camera className="text-foreground mx-auto mb-4 h-16 w-16" />
                         <p className="text-muted-foreground mb-4 font-mono">
-                          CLICK THE BUTTON BELOW TO START YOUR CAMERA
+                          Click the button below to start your camera
                         </p>
                         <Button
                           onClick={requestCameraPermission}
                           className="w-full font-mono uppercase"
                         >
                           <Camera className="mr-2 h-4 w-4" />
-                          START CAMERA
+                          Start Camera
                         </Button>
                       </div>
                     )}
@@ -458,14 +458,14 @@ export default function IDScanPage() {
                       <div className="py-8 text-center">
                         <AlertCircle className="text-destructive mx-auto mb-4 h-16 w-16" />
                         <p className="text-destructive mb-4 font-mono">
-                          CAMERA ACCESS DENIED. PLEASE ALLOW CAMERA PERMISSION.
+                          Camera access denied. Please allow camera permission.
                         </p>
                         <Button
                           onClick={requestCameraPermission}
                           className="w-full font-mono uppercase"
                         >
                           <RefreshCw className="mr-2 h-4 w-4" />
-                          TRY AGAIN
+                          Try Again
                         </Button>
                       </div>
                     )}
@@ -489,13 +489,13 @@ export default function IDScanPage() {
                           {isScanning && (
                             <div className="border-primary absolute inset-0 rounded-lg border-4 border-dashed">
                               <div className="bg-primary text-primary-foreground absolute top-2 right-2 left-2 rounded px-2 py-1 font-mono text-sm">
-                                POSITION ID WITHIN FRAME
+                                Position ID within frame
                               </div>
                             </div>
                           )}
                           {/* Debug info */}
                           <div className="bg-primary text-primary-foreground absolute bottom-2 left-2 rounded px-2 py-1 font-mono text-xs">
-                            {hasPermission ? "CAMERA ACTIVE" : "NO CAMERA"}
+                            {hasPermission ? "Camera active" : "No camera"}
                           </div>
                           {/* Manual play button if video isn't playing */}
                           {hasPermission && (
@@ -511,7 +511,7 @@ export default function IDScanPage() {
                                 size="sm"
                                 className="px-2 py-1 font-mono text-xs"
                               >
-                                PLAY
+                                Play
                               </Button>
                             </div>
                           )}
@@ -528,7 +528,7 @@ export default function IDScanPage() {
                               className="flex-1 font-mono uppercase"
                             >
                               <Camera className="mr-2 h-4 w-4" />
-                              START SCANNING
+                              Start Scanning
                             </Button>
                           ) : (
                             <Button
@@ -539,12 +539,12 @@ export default function IDScanPage() {
                               {isProcessing ? (
                                 <>
                                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  PROCESSING...
+                                  Processing...
                                 </>
                               ) : (
                                 <>
                                   <Camera className="mr-2 h-4 w-4" />
-                                  CAPTURE PHOTO
+                                  Capture Photo
                                 </>
                               )}
                             </Button>
@@ -556,7 +556,7 @@ export default function IDScanPage() {
                               variant="outline"
                               className="font-mono uppercase"
                             >
-                              STOP
+                              Stop
                             </Button>
                           )}
                         </div>
@@ -570,7 +570,7 @@ export default function IDScanPage() {
                     <div className="text-destructive flex items-center gap-2">
                       <AlertCircle className="h-4 w-4" />
                       <span className="font-mono font-medium uppercase">
-                        ERROR
+                        Error
                       </span>
                     </div>
                     <p className="text-destructive mt-1 font-mono">{error}</p>
@@ -584,10 +584,10 @@ export default function IDScanPage() {
               <CardHeader>
                 <CardTitle className="text-card-foreground flex items-center gap-2 font-mono uppercase">
                   <CheckCircle className="h-5 w-5" />
-                  EXTRACTED INFORMATION
+                  Extracted Information
                 </CardTitle>
                 <CardDescription className="text-muted-foreground font-mono">
-                  REVIEW THE INFORMATION EXTRACTED FROM YOUR ID
+                  Review the information extracted from your ID
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -597,7 +597,7 @@ export default function IDScanPage() {
                       <Camera className="text-primary-foreground h-8 w-8" />
                     </div>
                     <p className="text-muted-foreground font-mono">
-                      NO DATA EXTRACTED YET. SCAN YOUR ID TO SEE RESULTS.
+                      No data extracted yet. Scan your ID to see results.
                     </p>
                   </div>
                 ) : (
@@ -605,7 +605,7 @@ export default function IDScanPage() {
                     <div className="grid grid-cols-1 gap-4">
                       <div className="bg-secondary text-secondary-foreground flex items-center justify-between rounded-lg border p-3">
                         <span className="font-mono font-medium uppercase">
-                          FULL NAME:
+                          Full name:
                         </span>
                         <span className="font-mono font-semibold">
                           {extractedData.fullName}
@@ -614,16 +614,16 @@ export default function IDScanPage() {
 
                       <div className="bg-secondary text-secondary-foreground flex items-center justify-between rounded-lg border p-3">
                         <span className="font-mono font-medium uppercase">
-                          AGE:
+                          Age:
                         </span>
                         <span className="font-mono font-semibold">
-                          {extractedData.age} YEARS OLD
+                          {extractedData.age} years old
                         </span>
                       </div>
 
                       <div className="bg-secondary text-secondary-foreground flex items-center justify-between rounded-lg border p-3">
                         <span className="font-mono font-medium uppercase">
-                          DATE OF BIRTH:
+                          Date of birth:
                         </span>
                         <span className="font-mono font-semibold">
                           {extractedData.dateOfBirth}
@@ -632,7 +632,7 @@ export default function IDScanPage() {
 
                       <div className="bg-secondary text-secondary-foreground flex items-center justify-between rounded-lg border p-3">
                         <span className="font-mono font-medium uppercase">
-                          HEIGHT:
+                          Height:
                         </span>
                         <span className="font-mono font-semibold">
                           {extractedData.height}
@@ -641,7 +641,7 @@ export default function IDScanPage() {
 
                       <div className="bg-secondary text-secondary-foreground flex items-center justify-between rounded-lg border p-3">
                         <span className="font-mono font-medium uppercase">
-                          WEIGHT:
+                          Weight:
                         </span>
                         <span className="font-mono font-semibold">
                           {extractedData.weight}
@@ -652,7 +652,7 @@ export default function IDScanPage() {
                     <div className="bg-secondary text-secondary-foreground mt-6 rounded-lg border p-4">
                       <div className="mb-2 flex items-center justify-between">
                         <span className="font-mono text-sm font-medium uppercase">
-                          CONFIDENCE SCORE:
+                          Confidence score:
                         </span>
                         <span className="font-mono text-sm font-semibold">
                           {extractedData.confidence}%
@@ -673,11 +673,11 @@ export default function IDScanPage() {
                         className="flex-1 font-mono uppercase"
                       >
                         <RefreshCw className="mr-2 h-4 w-4" />
-                        SCAN AGAIN
+                        Scan Again
                       </Button>
                       <Button className="flex-1 font-mono uppercase">
                         <CheckCircle className="mr-2 h-4 w-4" />
-                        CONFIRM & CONTINUE
+                        Confirm & Continue
                       </Button>
                     </div>
 
@@ -685,7 +685,7 @@ export default function IDScanPage() {
                     {rawOCRText && (
                       <div className="bg-muted text-muted-foreground mt-6 rounded-lg border p-4">
                         <h4 className="mb-2 font-mono text-sm uppercase">
-                          RAW OCR TEXT:
+                          Raw OCR text:
                         </h4>
                         <pre className="font-mono text-xs break-words whitespace-pre-wrap">
                           {rawOCRText}
@@ -702,7 +702,7 @@ export default function IDScanPage() {
           <Card className="bg-card mt-8 border">
             <CardHeader>
               <CardTitle className="text-card-foreground font-mono uppercase">
-                SCANNING INSTRUCTIONS
+                Scanning Instructions
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -714,10 +714,10 @@ export default function IDScanPage() {
                     </span>
                   </div>
                   <h3 className="text-foreground mb-2 font-mono font-semibold uppercase">
-                    POSITION ID
+                    Position ID
                   </h3>
                   <p className="text-muted-foreground font-mono text-sm">
-                    PLACE YOUR ID CARD FLAT WITHIN THE CAMERA FRAME
+                    Place your ID card flat within the camera frame
                   </p>
                 </div>
 
@@ -728,10 +728,10 @@ export default function IDScanPage() {
                     </span>
                   </div>
                   <h3 className="text-foreground mb-2 font-mono font-semibold uppercase">
-                    ENSURE CLARITY
+                    Ensure Clarity
                   </h3>
                   <p className="text-muted-foreground font-mono text-sm">
-                    MAKE SURE THE TEXT IS CLEAR AND WELL-LIT
+                    Make sure the text is clear and well-lit
                   </p>
                 </div>
 
@@ -742,10 +742,10 @@ export default function IDScanPage() {
                     </span>
                   </div>
                   <h3 className="text-foreground mb-2 font-mono font-semibold uppercase">
-                    CAPTURE
+                    Capture
                   </h3>
                   <p className="text-muted-foreground font-mono text-sm">
-                    CLICK CAPTURE WHEN THE ID IS PROPERLY POSITIONED
+                    Click capture when the ID is properly positioned
                   </p>
                 </div>
               </div>

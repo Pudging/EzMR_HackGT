@@ -61,7 +61,7 @@ export function LoadingAnimation({
     };
   }, [duration, onComplete]);
 
-  const currentMessage = loadingMessages[currentMessageIndex];
+  const currentMessage = loadingMessages[currentMessageIndex]!;
   const IconComponent = currentMessage.icon;
 
   return (

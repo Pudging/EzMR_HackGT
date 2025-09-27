@@ -519,7 +519,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            HEAD:
+                            Head:
                           </span>
                           <span className="text-xs font-medium text-blue-600">
                             Jan 15, 2023
@@ -533,7 +533,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            RIGHT KNEE:
+                            Right Knee:
                           </span>
                           <span className="text-xs font-medium text-blue-600">
                             Jun 8, 2021
@@ -547,7 +547,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            LEFT WRIST:
+                            Left Wrist:
                           </span>
                           <span className="text-xs font-medium text-blue-600">
                             Sep 22, 2020
@@ -560,7 +560,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            CHEST:
+                            Chest:
                           </span>
                           <span className="text-xs font-medium text-blue-600">
                             Mar 12, 2019
@@ -573,7 +573,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-gray-200 bg-gray-50 p-2 dark:border-gray-600 dark:bg-gray-700">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                            OTHER:
+                            Other:
                           </span>
                           <span className="text-xs font-medium text-gray-600">
                             Various dates
@@ -597,7 +597,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            FATHER:
+                            Father:
                           </span>
                           <span className="text-xs font-medium text-purple-600">
                             Age 65
@@ -611,7 +611,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            MOTHER:
+                            Mother:
                           </span>
                           <span className="text-xs font-medium text-purple-600">
                             Age 62
@@ -625,7 +625,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            MATERNAL GRANDMOTHER:
+                            Maternal Grandmother:
                           </span>
                           <span className="text-xs font-medium text-purple-600">
                             Deceased at 78
@@ -638,7 +638,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            PATERNAL GRANDFATHER:
+                            Paternal Grandfather:
                           </span>
                           <span className="text-xs font-medium text-purple-600">
                             Deceased at 72
@@ -651,7 +651,7 @@ export default function DashboardPage() {
                       <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
                         <div className="mb-1 flex items-start justify-between">
                           <span className="text-sm font-medium text-green-800 dark:text-green-200">
-                            SIBLINGS:
+                            Siblings:
                           </span>
                           <span className="text-xs font-medium text-green-600">
                             2 sisters
