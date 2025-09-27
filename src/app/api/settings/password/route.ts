@@ -49,9 +49,11 @@ export async function PUT(request: NextRequest) {
     );
 
     if (!credentialAccount) {
-      // User is using OAuth (Google), so they don't have a password to change
+      // User is using email/magic link authentication, so they don't have a password to change
       return NextResponse.json(
-        { error: "Password change not available for OAuth accounts" },
+        {
+          error: "Password change not available for email-based authentication",
+        },
         { status: 400 },
       );
     }
