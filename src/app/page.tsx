@@ -3,9 +3,11 @@ import { auth } from "@/server/auth";
 import { UserNav } from "@/components/auth/user-nav";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
+import { getCurrentTenant } from "@/lib/tenant";
 
 export default async function HomePage() {
   const session = await auth();
+  const tenant = await getCurrentTenant();
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
@@ -35,7 +37,7 @@ export default async function HomePage() {
           <h1 className="mb-6 text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white">
             Welcome to{" "}
             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              EzMR
+              {tenant?.hospitalName ?? "EzMR"}
             </span>
           </h1>
 
