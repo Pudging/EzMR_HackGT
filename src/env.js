@@ -27,6 +27,8 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
+    NEXT_PUBLIC_CLOUDINARY_API_KEY: z.string(),
   },
 
   /**
@@ -39,6 +41,9 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
+      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    NEXT_PUBLIC_CLOUDINARY_API_KEY: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**
@@ -52,5 +57,4 @@ export const env = createEnv({
    */
   emptyStringAsUndefined: true,
 });
- //http://localhost:3000 to see your page in action!
- 
+//http://localhost:3000 to see your page in action!

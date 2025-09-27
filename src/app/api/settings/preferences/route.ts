@@ -1,11 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth/config";
-import { db } from "@/server/db";
 
 export async function GET() {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -20,19 +19,19 @@ export async function GET() {
         systemUpdates: true,
         patientUpdates: true,
         emergencyAlerts: true,
-        shiftReminders: true
+        shiftReminders: true,
       },
       privacy: {
         profileVisibility: "team",
         showOnlineStatus: true,
         allowDirectMessages: true,
-        shareActivity: false
+        shareActivity: false,
       },
       appearance: {
         theme: "system",
         fontSize: "medium",
         compactMode: false,
-        sidebarCollapsed: false
+        sidebarCollapsed: false,
       },
       clinical: {
         defaultNoteTemplate: "SOAP",
@@ -40,8 +39,8 @@ export async function GET() {
         autoSaveInterval: 30,
         showPatientPhotos: true,
         enableVoiceNotes: true,
-        enableDictation: false
-      }
+        enableDictation: false,
+      },
     };
 
     return NextResponse.json(defaultPreferences);
@@ -49,7 +48,7 @@ export async function GET() {
     console.error("Error fetching preferences:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -57,7 +56,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -68,14 +67,14 @@ export async function PUT(request: NextRequest) {
     if (!preferences || typeof preferences !== "object") {
       return NextResponse.json(
         { error: "Invalid preferences data" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // In a real application, you'd save to a user preferences table
     // For now, we'll just return success
     // TODO: Create UserPreferences model in Prisma schema and implement actual saving
-    
+
     console.log("Saving preferences for user:", session.user.id, preferences);
 
     return NextResponse.json({
@@ -86,7 +85,7 @@ export async function PUT(request: NextRequest) {
     console.error("Error updating preferences:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

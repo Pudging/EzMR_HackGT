@@ -15,10 +15,16 @@ import {
   Plus,
   FileText,
   Activity,
+  X,
+  Image as ImageIcon,
+  File,
 } from "lucide-react";
 import { VoiceToText } from "@/components/ui/voice-to-text";
 import { SmartNotesParser } from "@/components/ui/smart-notes-parser";
 import { saveEmr, type SaveEmrResult } from "./actions";
+import { CldUploadButton } from "next-cloudinary";
+import type { CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import { useTheme } from "next-themes";
 
 interface PatientData {
   // Demographics
@@ -75,12 +81,82 @@ interface PatientData {
   // Care Plans
   dnr: boolean;
   preventiveCare: string;
+
+  // File Uploads
+  uploadedFiles: string[];
 }
 
 export default function EMRUploadPage() {
   const [smartNotes, setSmartNotes] = useState("");
   const [isSaving, startSaving] = useTransition();
   const [saveResult, setSaveResult] = useState<SaveEmrResult | null>(null);
+  const { theme } = useTheme();
+
+  // Cloudinary styles for light and dark mode
+  const cloudinaryDarkStyles = {
+    palette: {
+      window: "#0f172a",
+      sourceBg: "#1e293b",
+      windowBorder: "#9ca3af",
+      tabIcon: "#FFFFFF",
+      inactiveTabIcon: "#8E9FBF",
+      menuIcons: "#FFFFFF",
+      link: "#08C0FF",
+      action: "#336BFF",
+      inProgress: "#00BFFF",
+      complete: "#33ff00",
+      error: "#EA2727",
+      textDark: "#000000",
+      textLight: "#FFFFFF",
+    },
+  };
+
+  const cloudinaryLightStyles = {
+    palette: {
+      window: "#ffffff",
+      sourceBg: "#f8fafc",
+      windowBorder: "#e2e8f0",
+      tabIcon: "#1e293b",
+      inactiveTabIcon: "#64748b",
+      menuIcons: "#1e293b",
+      link: "#2563eb",
+      action: "#3b82f6",
+      inProgress: "#0ea5e9",
+      complete: "#22c55e",
+      error: "#ef4444",
+      textDark: "#ffffff",
+      textLight: "#1e293b",
+    },
+  };
+
+  const currentCloudinaryStyles =
+    theme === "dark" ? cloudinaryDarkStyles : cloudinaryLightStyles;
+
+  // Helper function to get file info and preview
+  const getFileInfo = (fileUrl: string) => {
+    const filename = fileUrl.split("/").pop() ?? "Unknown File";
+    const extension = filename.includes(".")
+      ? filename.split(".").pop()?.toLowerCase()
+      : "";
+
+    const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(
+      extension ?? "",
+    );
+    const isPdf = extension === "pdf";
+    const isDoc = ["doc", "docx"].includes(extension ?? "");
+
+    return {
+      filename,
+      extension,
+      isImage,
+      isPdf,
+      isDoc,
+      displayName: filename.includes(".")
+        ? filename.substring(0, filename.lastIndexOf("."))
+        : filename,
+    };
+  };
+
   const [patientData, setPatientData] = useState<PatientData>({
     name: "",
     dob: "",
@@ -112,6 +188,7 @@ export default function EMRUploadPage() {
     generalNotes: "",
     dnr: false,
     preventiveCare: "",
+    uploadedFiles: [],
   });
 
   // State for adding new items
@@ -749,10 +826,144 @@ export default function EMRUploadPage() {
                   <Upload className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
                   <div className="text-foreground mb-2">Upload Lab Results</div>
                   <div className="text-muted-foreground text-sm">
-                    Bloodwork, X-rays, Genetic tests
+                    Bloodwork, X-rays, Genetic tests, Medical documents
                   </div>
-                  <Button className="mt-4">Choose Files</Button>
+                  <CldUploadButton
+                    className="bg-primary text-primary-foreground ring-offset-background hover:bg-primary/90 focus-visible:ring-ring mt-4 inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                    uploadPreset="emr-upload"
+                    options={{
+                      sources: ["local", "camera"],
+                      multiple: true,
+                      maxFiles: 10,
+                      maxFileSize: 10000000, // 10MB
+                      resourceType: "auto",
+                      clientAllowedFormats: [
+                        "jpg",
+                        "jpeg",
+                        "png",
+                        "pdf",
+                        "doc",
+                        "docx",
+                      ],
+                      styles: currentCloudinaryStyles,
+                    }}
+                    onSuccess={(results) => {
+                      if (!results.info || typeof results.info === "string")
+                        return;
+                      const secureUrl =
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                        (results.info as CloudinaryUploadWidgetInfo).secure_url;
+                      setPatientData((prev) => ({
+                        ...prev,
+                        uploadedFiles: [...prev.uploadedFiles, secureUrl],
+                      }));
+                    }}
+                  >
+                    Choose Files
+                  </CldUploadButton>
                 </div>
+
+                {/* Display uploaded files */}
+                {patientData.uploadedFiles.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <Label className="text-sm font-medium">
+                      Uploaded Files:
+                    </Label>
+                    <div className="max-h-48 space-y-2 overflow-y-auto">
+                      {patientData.uploadedFiles.map((fileUrl, index) => {
+                        const fileInfo = getFileInfo(fileUrl);
+                        return (
+                          <div
+                            key={index}
+                            className="bg-muted hover:bg-muted/80 flex items-center justify-between rounded-lg border p-3 transition-colors"
+                          >
+                            <div className="flex items-center space-x-3">
+                              {/* File Preview */}
+                              <div className="flex-shrink-0">
+                                {fileInfo.isImage ? (
+                                  <div className="bg-background relative h-12 w-12 overflow-hidden rounded border">
+                                    <img
+                                      src={fileUrl}
+                                      alt={fileInfo.filename}
+                                      className="h-full w-full object-cover transition-opacity duration-200"
+                                      onError={(e) => {
+                                        const target =
+                                          e.target as HTMLImageElement;
+                                        target.style.display = "none";
+                                        const fallback =
+                                          target.nextElementSibling as HTMLElement;
+                                        if (fallback)
+                                          fallback.style.display = "flex";
+                                      }}
+                                      onLoad={(e) => {
+                                        const target =
+                                          e.target as HTMLImageElement;
+                                        target.style.opacity = "1";
+                                      }}
+                                      style={{ opacity: 0 }}
+                                    />
+                                    <div
+                                      className="bg-muted absolute inset-0 hidden items-center justify-center"
+                                      style={{ display: "none" }}
+                                    >
+                                      <ImageIcon className="text-muted-foreground h-6 w-6" />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="bg-background flex h-12 w-12 items-center justify-center rounded border">
+                                    {fileInfo.isPdf ? (
+                                      <FileText className="h-6 w-6 text-red-500" />
+                                    ) : fileInfo.isDoc ? (
+                                      <File className="h-6 w-6 text-blue-500" />
+                                    ) : (
+                                      <File className="text-muted-foreground h-6 w-6" />
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* File Info */}
+                              <div className="min-w-0 flex-1">
+                                <a
+                                  href={fileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary block text-sm font-medium hover:underline"
+                                  title={fileInfo.filename} // Tooltip showing full filename
+                                >
+                                  {fileInfo.displayName.length > 25
+                                    ? fileInfo.displayName.slice(0, 25) + "..."
+                                    : fileInfo.displayName}
+                                </a>
+                                <p className="text-muted-foreground text-xs">
+                                  {fileInfo.extension?.toUpperCase()} file
+                                  {fileInfo.isImage && " • Image"}
+                                  {fileInfo.isPdf && " • Document"}
+                                  {fileInfo.isDoc && " • Document"}
+                                </p>
+                              </div>
+                            </div>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setPatientData((prev) => ({
+                                  ...prev,
+                                  uploadedFiles: prev.uploadedFiles.filter(
+                                    (_, i) => i !== index,
+                                  ),
+                                }));
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

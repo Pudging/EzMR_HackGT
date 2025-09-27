@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth/config";
 import { db } from "@/server/db";
 
 export async function GET() {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -29,7 +29,7 @@ export async function GET() {
     console.error("Error fetching profile:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -37,19 +37,30 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { name, email, phone, department, role, employeeId, bio, timezone, language, dateFormat } = body;
+    const {
+      name,
+      email,
+      // phone,
+      // department,
+      // role,
+      // employeeId,
+      // bio,
+      // timezone,
+      // language,
+      // dateFormat,
+    } = body;
 
     // Validate required fields
     if (!name || !email) {
       return NextResponse.json(
         { error: "Name and email are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,14 +68,14 @@ export async function PUT(request: NextRequest) {
     const existingUser = await db.user.findFirst({
       where: {
         email: email,
-        id: { not: session.user.id }
-      }
+        id: { not: session.user.id },
+      },
     });
 
     if (existingUser) {
       return NextResponse.json(
         { error: "Email is already in use" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -92,7 +103,7 @@ export async function PUT(request: NextRequest) {
     console.error("Error updating profile:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
