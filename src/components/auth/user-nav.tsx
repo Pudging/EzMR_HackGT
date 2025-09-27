@@ -2,7 +2,8 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 
 export function UserNav() {
   const { data: session, status } = useSession();
@@ -37,11 +38,23 @@ export function UserNav() {
           {session.user?.name ?? "User"}
         </span>
       </div>
+      
+      <Link href="/dashboard">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center space-x-2 border-white/50 text-black hover:text-white hover:bg-black"
+        >
+          <LayoutDashboard className="h-4 w-4" />
+          <span>Dashboard</span>
+        </Button>
+      </Link>
+      
       <Button
         variant="outline"
         size="sm"
         onClick={() => signOut()}
-        className="flex items-center space-x-2"
+        className="flex items-center space-x-2 border-white/50 text-black hover:text-white hover:bg-black"
       >
         <LogOut className="h-4 w-4" />
         <span>Sign out</span>
