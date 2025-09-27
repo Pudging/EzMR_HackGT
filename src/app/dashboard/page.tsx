@@ -6,7 +6,7 @@ import { SearchBar } from "@/components/search-bar";
 import { useSearch } from "@/hooks/use-search";
 import { usePatientData } from "@/hooks/usePatientData";
 import { AISearchBox } from "@/components/ui/ai-search-box";
-import { DicomViewer } from "@/components/medical/dicom-viewer";
+import { ModernDicomViewer } from "@/components/medical/modern-dicom-viewer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -1437,9 +1437,9 @@ function DashboardPageContent() {
         </div>
       </main>
       
-      {/* DICOM Viewer Modal */}
+      {/* Modern DICOM Viewer Modal */}
       {selectedDicomFile && (
-        <DicomViewer
+        <ModernDicomViewer
           isOpen={true}
           dicomData={selectedDicomFile}
           onClose={() => setSelectedDicomFile(null)}
