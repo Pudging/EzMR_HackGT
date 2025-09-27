@@ -987,8 +987,8 @@ export default function DashboardPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="divide-y">
-                  <div className="hover:bg-accent hover:text-accent-foreground/90 p-4 transition-colors">
+                <div className="divide-border divide-y">
+                  <div className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
@@ -1007,21 +1007,21 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
                           Normal
                         </span>
                         <div className="flex space-x-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-primary"
+                            className="text-primary hover:bg-accent"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-primary"
+                            className="text-primary hover:bg-accent"
                           >
                             <Download className="h-4 w-4" />
                           </Button>
@@ -1030,40 +1030,40 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 transition-colors hover:bg-gray-50">
+                  <div className="hover:bg-accent p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                          <Stethoscope className="h-6 w-6 text-green-600" />
+                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+                          <Stethoscope className="text-primary h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="text-foreground font-semibold">
                             Annual Physical Examination
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-muted-foreground text-sm">
                             Visit Summary • Dr. Michael Johnson, MD
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-muted-foreground text-xs">
                             December 10, 2024 • 10:00 AM
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
                           Complete
                         </span>
                         <div className="flex space-x-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary hover:bg-accent"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary hover:bg-accent"
                           >
                             <Download className="h-4 w-4" />
                           </Button>
@@ -1072,40 +1072,40 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 transition-colors hover:bg-gray-50">
+                  <div className="hover:bg-accent p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                          <FileText className="h-6 w-6 text-purple-600" />
+                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+                          <FileText className="text-primary h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="text-foreground font-semibold">
                             Chest X-Ray Report
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-muted-foreground text-sm">
                             Radiology • Dr. Emily Brown, MD
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-muted-foreground text-xs">
                             December 5, 2024 • 3:45 PM
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
                           Normal
                         </span>
                         <div className="flex space-x-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary hover:bg-accent"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary hover:bg-accent"
                           >
                             <Download className="h-4 w-4" />
                           </Button>
@@ -1114,40 +1114,40 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 transition-colors hover:bg-gray-50">
+                  <div className="hover:bg-accent p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
-                          <Heart className="h-6 w-6 text-orange-600" />
+                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+                          <Heart className="text-primary h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="text-foreground font-semibold">
                             Electrocardiogram (EKG)
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-muted-foreground text-sm">
                             Cardiology • Dr. Robert Wilson, MD
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-muted-foreground text-xs">
                             November 28, 2024 • 11:15 AM
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
                           Normal
                         </span>
                         <div className="flex space-x-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary hover:bg-accent"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary hover:bg-accent"
                           >
                             <Download className="h-4 w-4" />
                           </Button>
@@ -1160,101 +1160,88 @@ export default function DashboardPage() {
             </Card>
 
             {/* Upcoming Appointments */}
-            <Card className="border border-gray-200 bg-green-50">
-              <CardHeader className="border-b border-gray-200 bg-green-50">
+            <Card className="border">
+              <CardHeader className="border-b">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center text-green-900">
-                      <Calendar className="mr-2 h-5 w-5" />
+                    <CardTitle className="text-card-foreground flex items-center">
+                      <Calendar className="text-primary mr-2 h-5 w-5" />
                       Upcoming Appointments
                     </CardTitle>
-                    <CardDescription className="text-green-700">
+                    <CardDescription>
                       Scheduled medical appointments and visits
                     </CardDescription>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-green-300 text-green-700 hover:bg-green-100"
-                  >
+                  <Button variant="outline" size="sm">
                     <Plus className="mr-2 h-4 w-4" />
                     Schedule
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="divide-y divide-gray-200">
-                  <div className="p-4 transition-colors hover:bg-gray-50">
+                <div className="divide-border divide-y">
+                  <div className="hover:bg-accent p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                          <Stethoscope className="h-6 w-6 text-blue-600" />
+                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+                          <Stethoscope className="text-primary h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="text-foreground font-semibold">
                             Follow-up Consultation
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-muted-foreground text-sm">
                             Dr. Sarah Smith, MD • Internal Medicine
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-muted-foreground text-xs">
                             Tomorrow • December 20, 2024 • 2:00 PM
                           </p>
                           <div className="mt-1 flex items-center space-x-2">
-                            <MapPin className="h-3 w-3 text-gray-400" />
-                            <span className="text-xs text-gray-500">
+                            <MapPin className="text-muted-foreground h-3 w-3" />
+                            <span className="text-muted-foreground text-xs">
                               Main Medical Center, Room 205
                             </span>
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
                           Confirmed
                         </span>
-                        <Button
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700"
-                        >
-                          Join Meeting
-                        </Button>
+                        <Button size="sm">Join Meeting</Button>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 transition-colors hover:bg-gray-50">
+                  <div className="hover:bg-accent p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-                          <Calendar className="h-6 w-6 text-green-600" />
+                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+                          <Calendar className="text-primary h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="text-foreground font-semibold">
                             Dental Checkup
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-muted-foreground text-sm">
                             Dr. James Wilson, DDS • Dentistry
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-muted-foreground text-xs">
                             December 28, 2024 • 10:00 AM
                           </p>
                           <div className="mt-1 flex items-center space-x-2">
-                            <MapPin className="h-3 w-3 text-gray-400" />
-                            <span className="text-xs text-gray-500">
+                            <MapPin className="text-muted-foreground h-3 w-3" />
+                            <span className="text-muted-foreground text-xs">
                               Dental Clinic, Suite 101
                             </span>
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
                           Scheduled
                         </span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-green-300 text-green-700 hover:bg-green-100"
-                        >
+                        <Button variant="outline" size="sm">
                           Details
                         </Button>
                       </div>
@@ -1366,26 +1353,26 @@ export default function DashboardPage() {
 
         {/* General Notes Section */}
         <div className="my-6">
-          <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+          <Card className="border shadow-sm">
+            <CardHeader className="border-b">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <CardTitle className="text-card-foreground">
                   General Notes
-                </h2>
+                </CardTitle>
                 <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                  <FileText className="text-primary h-4 w-4" />
+                  <span className="text-primary text-sm font-medium">
                     Progress & Observations
                   </span>
                 </div>
               </div>
-            </div>
-            <div className="px-4 py-3">
+            </CardHeader>
+            <CardContent className="p-6">
               <div className="space-y-4">
                 {/* Recent Notes */}
                 <div className="space-y-3">
-                  <h3 className="text-md flex items-center font-semibold text-gray-900 dark:text-gray-100">
-                    <Clock className="mr-2 h-4 w-4 text-blue-600" />
+                  <h3 className="text-md text-foreground flex items-center font-semibold">
+                    <Clock className="text-primary mr-2 h-4 w-4" />
                     Recent Notes
                   </h3>
 
@@ -1445,9 +1432,9 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Progress Summary */}
-                <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
-                  <h3 className="text-md mb-3 flex items-center font-semibold text-gray-900 dark:text-gray-100">
-                    <BarChart3 className="mr-2 h-4 w-4 text-indigo-600" />
+                <div className="border-border border-t pt-4">
+                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
+                    <BarChart3 className="text-primary mr-2 h-4 w-4" />
                     Progress Summary
                   </h3>
 
@@ -1481,9 +1468,9 @@ export default function DashboardPage() {
                 </div>
 
                 {/* General Observations */}
-                <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
-                  <h3 className="text-md mb-3 flex items-center font-semibold text-gray-900 dark:text-gray-100">
-                    <Eye className="mr-2 h-4 w-4 text-amber-600" />
+                <div className="border-border border-t pt-4">
+                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
+                    <Eye className="text-primary mr-2 h-4 w-4" />
                     General Observations
                   </h3>
 
@@ -1513,14 +1500,14 @@ export default function DashboardPage() {
 
                 {/* Add Note Button */}
                 <div className="flex justify-end pt-4">
-                  <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                  <Button>
                     <Plus className="mr-2 h-4 w-4" />
                     Add New Note
                   </Button>
                 </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

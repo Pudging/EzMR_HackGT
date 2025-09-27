@@ -144,7 +144,7 @@ export function PatientDataEntry({
   }, [selectedBodyPart]);
 
   return (
-    <div className="bg-card relative h-full">
+    <div className="bg-card relative h-full rounded-xl">
       {/* Header */}
       <div className="border-border border-b p-4">
         <h3 className="text-card-foreground font-mono text-lg">
