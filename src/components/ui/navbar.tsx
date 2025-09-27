@@ -19,11 +19,11 @@ export function Navbar() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/80">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+    <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link
           href="/"
-          className="font-mono text-sm font-bold text-gray-900 dark:text-white"
+          className="text-sm font-semibold tracking-tight text-foreground"
         >
           EzMR
         </Link>
@@ -34,10 +34,10 @@ export function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`font-mono text-xs transition-colors ${
+                  className={`text-xs transition-colors ${
                     isActive
-                      ? "text-gray-900 dark:text-white"
-                      : "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {link.label}
@@ -50,7 +50,7 @@ export function Navbar() {
           </li>
           <li className="list-none">
             {status === "loading" ? (
-              <div className="h-8 w-24 animate-pulse rounded-md bg-gray-200 dark:bg-gray-700" />
+              <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
             ) : session ? (
               <UserNav />
             ) : (

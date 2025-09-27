@@ -144,10 +144,12 @@ export function PatientDataEntry({
   }, [selectedBodyPart]);
 
   return (
-    <div className="relative h-full bg-black">
+    <div className="bg-card relative h-full">
       {/* Header */}
-      <div className="border-b border-white p-4">
-        <h3 className="font-mono text-lg text-white">PATIENT ASSESSMENT</h3>
+      <div className="border-border border-b p-4">
+        <h3 className="text-card-foreground font-mono text-lg">
+          PATIENT ASSESSMENT
+        </h3>
       </div>
 
       {/* Scrollable Content */}
@@ -159,17 +161,17 @@ export function PatientDataEntry({
         {BODY_PARTS.map((bodyPart) => (
           <div
             key={bodyPart}
-            className="border border-white"
+            className="border-border border"
             ref={(el) => {
               bodyPartRefs.current[bodyPart] = el;
             }}
           >
             {/* Collapsed Box Header */}
             <div
-              className={`cursor-pointer bg-black p-4 font-mono text-white transition-all duration-200 ${
+              className={`bg-card text-card-foreground cursor-pointer p-4 font-mono transition-all duration-200 ${
                 selectedBodyPart === bodyPart
-                  ? "border-2 border-red-500 bg-red-900/20"
-                  : "hover:bg-gray-900"
+                  ? "border-destructive bg-destructive/20 border-2"
+                  : "hover:bg-muted"
               }`}
               onClick={() => toggleBox(bodyPart)}
             >
@@ -204,7 +206,7 @@ export function PatientDataEntry({
 
             {/* Expanded Box Content */}
             {expandedBoxes.has(bodyPart) && (
-              <div className="border-t border-black bg-white text-black">
+              <div className="border-border bg-background text-foreground border-t">
                 <div className="p-4">
                   <div className="space-y-3">
                     <div className="font-mono text-xs font-bold">
@@ -216,18 +218,18 @@ export function PatientDataEntry({
                       onChange={(e) =>
                         handleTextChange(bodyPart, e.target.value)
                       }
-                      className="min-h-[120px] resize-none border-2 border-black bg-gray-100 font-mono text-sm"
+                      className="border-border bg-input min-h-[120px] resize-none border-2 font-mono text-sm"
                     />
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleSave(bodyPart)}
-                        className="flex-1 bg-black px-4 py-2 font-mono text-sm text-white transition-colors hover:bg-gray-800"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 px-4 py-2 font-mono text-sm transition-colors"
                       >
                         SAVE
                       </button>
                       <button
                         onClick={() => handleClear(bodyPart)}
-                        className="border border-black px-4 py-2 font-mono text-sm text-black transition-colors hover:bg-gray-100"
+                        className="border-border text-foreground hover:bg-muted border px-4 py-2 font-mono text-sm transition-colors"
                       >
                         CLEAR
                       </button>
@@ -241,16 +243,16 @@ export function PatientDataEntry({
 
         {/* Other Category */}
         <div
-          className="border border-white"
+          className="border-border border"
           ref={(el) => {
             bodyPartRefs.current.other = el;
           }}
         >
           <div
-            className={`cursor-pointer bg-black p-4 font-mono text-white transition-all duration-200 ${
+            className={`bg-card text-card-foreground cursor-pointer p-4 font-mono transition-all duration-200 ${
               selectedBodyPart === "other"
-                ? "border-2 border-red-500 bg-red-900/20"
-                : "hover:bg-gray-900"
+                ? "border-destructive bg-destructive/20 border-2"
+                : "hover:bg-muted"
             }`}
             onClick={() => toggleBox("other")}
           >
@@ -281,7 +283,7 @@ export function PatientDataEntry({
           </div>
 
           {expandedBoxes.has("other") && (
-            <div className="border-t border-black bg-white text-black">
+            <div className="border-border bg-background text-foreground border-t">
               <div className="p-4">
                 <div className="space-y-3">
                   <div className="font-mono text-xs font-bold">
@@ -291,18 +293,18 @@ export function PatientDataEntry({
                     placeholder="Enter other medical observations, medications, allergies, etc..."
                     value={editingText.other ?? ""}
                     onChange={(e) => handleTextChange("other", e.target.value)}
-                    className="min-h-[120px] resize-none border-2 border-black bg-gray-100 font-mono text-sm"
+                    className="border-border bg-input min-h-[120px] resize-none border-2 font-mono text-sm"
                   />
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleSave("other")}
-                      className="flex-1 bg-black px-4 py-2 font-mono text-sm text-white transition-colors hover:bg-gray-800"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 px-4 py-2 font-mono text-sm transition-colors"
                     >
                       SAVE
                     </button>
                     <button
                       onClick={() => handleClear("other")}
-                      className="border border-black px-4 py-2 font-mono text-sm text-black transition-colors hover:bg-gray-100"
+                      className="border-border text-foreground hover:bg-muted border px-4 py-2 font-mono text-sm transition-colors"
                     >
                       CLEAR
                     </button>

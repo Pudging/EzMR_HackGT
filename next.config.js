@@ -6,13 +6,21 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ],
+  },
   webpack: (config, { isServer }) => {
     // Handle Node.js modules that don't work in the browser
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
-        'fs/promises': false,
+        "fs/promises": false,
         path: false,
         crypto: false,
         stream: false,

@@ -1,6 +1,5 @@
 "use client";
 
-import { UserNav } from "@/components/auth/user-nav";
 import { SearchBar } from "@/components/search-bar";
 import { useSearch } from "@/hooks/use-search";
 import { Button } from "@/components/ui/button";
@@ -57,21 +56,21 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Medical Header */}
-      <header className="border-b-2 border-blue-600 bg-white shadow-sm dark:border-blue-400 dark:bg-gray-800">
+    <div className="bg-background min-h-screen">
+      {/* Page Header */}
+      <header className="bg-background border-b">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
-                <Stethoscope className="h-7 w-7 text-white" />
+              <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
+                <Stethoscope className="text-primary-foreground h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  Electronic Medical Records
+                <h1 className="text-foreground text-lg font-semibold">
+                  Patient Dashboard
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  EzMR System
+                <p className="text-muted-foreground text-sm">
+                  Medical Record Overview
                 </p>
               </div>
             </div>
@@ -84,21 +83,6 @@ export default function DashboardPage() {
                 totalMatches={totalMatches}
                 isSearching={isSearching}
               />
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {session?.user?.name?.split(" ")[0] ?? "Demo User"}
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Patient Portal
-                </p>
-              </div>
-              {session ? (
-                <UserNav />
-              ) : (
-                <div className="rounded bg-yellow-100 px-3 py-1 text-sm text-gray-600 dark:bg-yellow-900 dark:text-gray-400">
-                  Demo Mode
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -107,15 +91,15 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Patient Information Header */}
-        <div className="mb-4 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-          <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+        <div className="bg-card mb-4 rounded-lg border shadow-sm">
+          <div className="border-b px-4 py-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h2 className="text-card-foreground text-lg font-semibold">
                 Patient Information
               </h2>
               <div className="flex items-center space-x-2">
-                <FileDigit className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                <FileDigit className="text-primary h-4 w-4" />
+                <span className="text-primary text-sm font-medium">
                   MRN: A-13511
                 </span>
               </div>
@@ -127,32 +111,32 @@ export default function DashboardPage() {
               {/* Patient Photo */}
               <div className="flex justify-center lg:justify-start">
                 <div className="group relative">
-                  <div className="flex h-[326px] w-[298px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-gray-300 bg-gray-100 shadow-sm transition-colors hover:border-blue-400 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-blue-500">
-                    <div className="mb-2 flex h-36 w-36 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
-                      <User className="h-20 w-20 text-blue-600 dark:text-blue-400" />
+                  <div className="border-muted bg-muted hover:border-primary flex h-[326px] w-[298px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 shadow-sm transition-colors">
+                    <div className="bg-primary/10 mb-2 flex h-36 w-36 items-center justify-center rounded-full">
+                      <User className="text-primary h-20 w-20" />
                     </div>
                     <div className="text-center">
-                      <p className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                      <p className="text-muted-foreground text-xs font-medium">
                         Patient Photo
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         ID: A-13511
                       </p>
                     </div>
                     {/* Upload overlay */}
-                    <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-lg bg-black opacity-0 transition-opacity group-hover:opacity-100">
-                      <div className="text-center text-white">
+                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="text-card-foreground text-center">
                         <Plus className="mx-auto mb-1 h-6 w-6" />
                         <p className="text-xs">Update Photo</p>
                       </div>
                     </div>
                   </div>
                   {/* Status indicator */}
-                  <div className="absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-green-500">
+                  <div className="border-card absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full border-2 bg-green-500">
                     <div className="h-2 w-2 rounded-full bg-white"></div>
                   </div>
                   {/* Photo info badge */}
-                  <div className="absolute -top-2 -right-2 rounded-full bg-blue-600 px-2 py-1 text-xs text-white shadow-sm">
+                  <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs shadow-sm">
                     EMR
                   </div>
                 </div>
@@ -163,36 +147,32 @@ export default function DashboardPage() {
                 {/* Basic Demographics */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <div className="flex items-center space-x-3">
-                    <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <User className="text-primary h-5 w-5" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {session?.user?.name || "John Michael Doe"}
+                      <p className="text-foreground text-sm font-medium">
+                        {session?.user?.name ?? "John Michael Doe"}
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Full Name
-                      </p>
+                      <p className="text-muted-foreground text-xs">Full Name</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Calendar className="text-primary h-5 w-5" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-foreground text-sm font-medium">
                         03/15/1985
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Date of Birth
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Users className="text-primary h-5 w-5" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-foreground text-sm font-medium">
                         Male
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Sex
-                      </p>
+                      <p className="text-muted-foreground text-xs">Sex</p>
                     </div>
                   </div>
                 </div>
@@ -200,43 +180,43 @@ export default function DashboardPage() {
                 {/* Contact Information */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <div className="flex items-start space-x-3">
-                    <Phone className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Phone className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-foreground text-sm font-medium">
                         (555) 123-4567
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Primary Phone
                       </p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <p className="text-muted-foreground text-sm">
                         (555) 987-6543
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Secondary Phone
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <MapPin className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <MapPin className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-foreground text-sm font-medium">
                         1234 Oak Street
                       </p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <p className="text-muted-foreground text-sm">
                         Apt 5B, Springfield, IL 62701
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Home Address
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Mail className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Mail className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {session?.user?.email || "john.doe@email.com"}
+                      <p className="text-foreground text-sm font-medium">
+                        {session?.user?.email ?? "john.doe@email.com"}
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Email Address
                       </p>
                     </div>
@@ -246,40 +226,40 @@ export default function DashboardPage() {
                 {/* Insurance Information */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <div className="flex items-start space-x-3">
-                    <CreditCard className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <CreditCard className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-foreground text-sm font-medium">
                         Blue Cross Blue Shield
                       </p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <p className="text-muted-foreground text-sm">
                         Policy: BC123456789
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Primary Insurance
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <Shield className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Shield className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-foreground text-sm font-medium">
                         Medicare Part A
                       </p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <p className="text-muted-foreground text-sm">
                         Policy: MED-987654321
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Secondary Insurance
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
-                    <FileDigit className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <FileDigit className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <p className="text-foreground text-sm font-medium">
                         GRP-789456
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Group Number
                       </p>
                     </div>
@@ -287,49 +267,49 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Emergency Contacts */}
-                <div className="border-t border-gray-200 pt-3 dark:border-gray-700">
-                  <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                <div className="border-t pt-3">
+                  <h3 className="text-foreground mb-2 text-sm font-semibold">
                     Emergency Contacts
                   </h3>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    <div className="flex items-start space-x-3 rounded-lg bg-gray-50 p-2 dark:bg-gray-700">
+                    <div className="bg-muted flex items-start space-x-3 rounded-lg p-2">
                       <Users className="mt-0.5 h-5 w-5 text-orange-600 dark:text-orange-400" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <p className="text-foreground text-sm font-medium">
                           Jane Doe (Spouse)
                         </p>
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                        <p className="text-muted-foreground text-sm">
                           (555) 234-5678
                         </p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <p className="text-muted-foreground text-xs">
                           Primary Emergency
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-start space-x-3 rounded-lg bg-gray-50 p-2 dark:bg-gray-700">
+                    <div className="bg-muted flex items-start space-x-3 rounded-lg p-2">
                       <Users className="mt-0.5 h-5 w-5 text-orange-600 dark:text-orange-400" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <p className="text-foreground text-sm font-medium">
                           Robert Smith (Brother)
                         </p>
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                        <p className="text-muted-foreground text-sm">
                           (555) 345-6789
                         </p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <p className="text-muted-foreground text-xs">
                           Secondary Emergency
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-start space-x-3 rounded-lg bg-gray-50 p-2 dark:bg-gray-700">
+                    <div className="bg-muted flex items-start space-x-3 rounded-lg p-2">
                       <Users className="mt-0.5 h-5 w-5 text-orange-600 dark:text-orange-400" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <p className="text-foreground text-sm font-medium">
                           Dr. Sarah Smith (Physician)
                         </p>
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                        <p className="text-muted-foreground text-sm">
                           (555) 456-7890
                         </p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <p className="text-muted-foreground text-xs">
                           Primary Care Physician
                         </p>
                       </div>
@@ -344,15 +324,15 @@ export default function DashboardPage() {
         {/* Past Medical History Section */}
         <div className="mb-6">
           {/* Past Medical History Section - Full width */}
-          <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+          <div className="bg-card rounded-lg border shadow-sm">
+            <div className="border-b px-4 py-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="text-card-foreground text-lg font-semibold">
                   Past Medical History
                 </h2>
                 <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                  <FileText className="text-primary h-4 w-4" />
+                  <span className="text-primary text-sm font-medium">
                     Complete History
                   </span>
                 </div>
@@ -363,41 +343,41 @@ export default function DashboardPage() {
                 {/* Left Column */}
                 <div className="space-y-4">
                   {/* Social History */}
-                  <div className="w-2/3 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-                    <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
-                      <Users className="mr-2 h-4 w-4 text-orange-600" />
+                  <div className="rounded-lg border p-3">
+                    <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
+                      <Users className="text-primary mr-2 h-4 w-4" />
                       Social History
                     </h3>
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-700">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
                           Smoking Status:
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted-foreground text-sm">
                           Former smoker (quit 2019)
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-700">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
                           Alcohol Use:
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted-foreground text-sm">
                           Social drinker (1-2 drinks/week)
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-700">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
                           Drug Use:
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted-foreground text-sm">
                           None reported
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-700">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
                           Occupation:
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted-foreground text-sm">
                           Software Engineer
                         </span>
                       </div>
@@ -405,23 +385,23 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Immunization History */}
-                  <div className="w-2/3 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-                    <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
-                      <Shield className="mr-2 h-4 w-4 text-green-600" />
+                  <div className="rounded-lg border p-3">
+                    <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
+                      <Shield className="text-primary mr-2 h-4 w-4" />
                       Immunization History
                     </h3>
                     <div className="space-y-1">
-                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
+                      <div className="bg-secondary rounded border p-2">
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <p className="text-foreground text-sm font-medium">
                               COVID-19 Vaccine
                             </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                            <p className="text-muted-foreground text-xs">
                               Pfizer - Booster
                             </p>
                           </div>
-                          <span className="text-xs font-medium text-green-600">
+                          <span className="text-primary text-xs font-medium">
                             Dec 15, 2023
                           </span>
                         </div>
@@ -475,7 +455,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Allergies */}
-                  <div className="w-2/3 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
                     <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
                       <Bell className="mr-2 h-4 w-4 text-red-600" />
                       Allergies
@@ -528,7 +508,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Right Column */}
-                <div className="-ml-4 w-3/4 translate-x-[-180px] space-y-4">
+                <div className="space-y-4">
                   {/* Past Injuries and Conditions */}
                   <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
                     <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
@@ -691,15 +671,15 @@ export default function DashboardPage() {
 
         {/* Care Plans Section */}
         <div className="mb-6">
-          <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+          <div className="bg-card rounded-lg border shadow-sm">
+            <div className="border-b px-4 py-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="text-card-foreground text-lg font-semibold">
                   Care Plans
                 </h2>
                 <div className="flex items-center space-x-2">
-                  <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                  <FileText className="text-primary h-4 w-4" />
+                  <span className="text-primary text-sm font-medium">
                     Active Plans
                   </span>
                 </div>
@@ -708,72 +688,72 @@ export default function DashboardPage() {
             <div className="px-4 py-3">
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* DNRS Section */}
-                <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
-                  <h3 className="text-md mb-3 flex items-center font-semibold text-gray-900 dark:text-gray-100">
-                    <Activity className="mr-2 h-5 w-5 text-indigo-600" />
+                <div className="rounded-lg border p-4">
+                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
+                    <Activity className="text-primary mr-2 h-5 w-5" />
                     DNRS (Dynamic Neuromuscular Rehabilitation System)
                   </h3>
                   <div className="space-y-3">
-                    <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-3 dark:border-indigo-800 dark:bg-indigo-900/20">
+                    <div className="bg-secondary rounded-lg border p-3">
                       <div className="mb-2 flex items-start justify-between">
-                        <span className="text-sm font-medium text-indigo-800 dark:text-indigo-200">
+                        <span className="text-foreground text-sm font-medium">
                           Current Status:
                         </span>
-                        <span className="rounded bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-600 dark:bg-indigo-800">
+                        <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs font-medium">
                           Active
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Started: March 15, 2024
                       </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Progress: 8 months completed
                       </p>
                     </div>
 
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-700">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
                           Exercise Frequency:
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted-foreground text-sm">
                           Daily, 30-45 minutes
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-700">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
                           Current Phase:
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted-foreground text-sm">
                           Phase 3 - Advanced
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-700">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="bg-muted flex items-center justify-between rounded p-2">
+                        <span className="text-muted-foreground text-sm font-medium">
                           Next Review:
                         </span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted-foreground text-sm">
                           January 15, 2025
                         </span>
                       </div>
                     </div>
 
-                    <div className="mt-3 rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-900/20">
-                      <h4 className="mb-1 text-sm font-semibold text-green-800 dark:text-green-200">
+                    <div className="bg-secondary mt-3 rounded-lg border p-3">
+                      <h4 className="text-foreground mb-1 text-sm font-semibold">
                         Recent Progress
                       </h4>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-muted-foreground text-xs">
                         Significant improvement in neuroplasticity exercises.
                         Patient reports 40% reduction in symptoms. Continue
                         current protocol.
                       </p>
                     </div>
 
-                    <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-900/20">
-                      <h4 className="mb-1 text-sm font-semibold text-blue-800 dark:text-blue-200">
+                    <div className="bg-secondary mt-3 rounded-lg border p-3">
+                      <h4 className="text-foreground mb-1 text-sm font-semibold">
                         Key Exercises
                       </h4>
-                      <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                      <ul className="text-muted-foreground space-y-1 text-xs">
                         <li>• Limbic system retraining (20 min daily)</li>
                         <li>• Neuroplasticity exercises (15 min daily)</li>
                         <li>• Stress reduction techniques (10 min daily)</li>
@@ -783,39 +763,39 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Preventive Care Section */}
-                <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
-                  <h3 className="text-md mb-3 flex items-center font-semibold text-gray-900 dark:text-gray-100">
-                    <Shield className="mr-2 h-5 w-5 text-emerald-600" />
+                <div className="rounded-lg border p-4">
+                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
+                    <Shield className="text-primary mr-2 h-5 w-5" />
                     Preventive Care
                   </h3>
                   <div className="space-y-3">
                     {/* Upcoming Screenings */}
-                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-900/20">
-                      <h4 className="mb-2 text-sm font-semibold text-emerald-800 dark:text-emerald-200">
+                    <div className="bg-secondary rounded-lg border p-3">
+                      <h4 className="text-foreground mb-2 text-sm font-semibold">
                         Upcoming Screenings
                       </h4>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
+                          <span className="text-muted-foreground text-xs">
                             Annual Physical
                           </span>
-                          <span className="text-xs font-medium text-emerald-600">
+                          <span className="text-primary text-xs font-medium">
                             Due: Dec 2025
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
+                          <span className="text-muted-foreground text-xs">
                             Blood Pressure Check
                           </span>
-                          <span className="text-xs font-medium text-emerald-600">
+                          <span className="text-primary text-xs font-medium">
                             Due: Mar 2025
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
+                          <span className="text-muted-foreground text-xs">
                             Cholesterol Panel
                           </span>
-                          <span className="text-xs font-medium text-emerald-600">
+                          <span className="text-primary text-xs font-medium">
                             Due: Jun 2025
                           </span>
                         </div>
@@ -823,32 +803,32 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Completed Screenings */}
-                    <div className="rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-900/20">
-                      <h4 className="mb-2 text-sm font-semibold text-green-800 dark:text-green-200">
+                    <div className="bg-secondary rounded-lg border p-3">
+                      <h4 className="text-foreground mb-2 text-sm font-semibold">
                         Recently Completed
                       </h4>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
+                          <span className="text-muted-foreground text-xs">
                             COVID-19 Booster
                           </span>
-                          <span className="text-xs font-medium text-green-600">
+                          <span className="text-primary text-xs font-medium">
                             Dec 15, 2024
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
+                          <span className="text-muted-foreground text-xs">
                             Influenza Vaccine
                           </span>
-                          <span className="text-xs font-medium text-green-600">
+                          <span className="text-primary text-xs font-medium">
                             Oct 20, 2024
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
+                          <span className="text-muted-foreground text-xs">
                             Annual Physical
                           </span>
-                          <span className="text-xs font-medium text-green-600">
+                          <span className="text-primary text-xs font-medium">
                             Dec 10, 2024
                           </span>
                         </div>
@@ -916,10 +896,12 @@ export default function DashboardPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-muted-foreground text-sm font-medium">
                     Blood Pressure & Type
                   </p>
-                  <p className="text-xl font-bold text-white">120/80 • O+</p>
+                  <p className="text-foreground text-xl font-bold">
+                    120/80 • O+
+                  </p>
                   <p className="text-xs text-green-600">Normal</p>
                 </div>
                 <Droplets className="h-8 w-8 text-green-600" />
@@ -931,10 +913,10 @@ export default function DashboardPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-muted-foreground text-sm font-medium">
                     Heart Rate
                   </p>
-                  <p className="text-xl font-bold text-white">72 bpm</p>
+                  <p className="text-foreground text-xl font-bold">72 bpm</p>
                   <p className="text-xs text-blue-600">Normal</p>
                 </div>
                 <Heart className="h-8 w-8 text-blue-600" />
@@ -946,10 +928,10 @@ export default function DashboardPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-muted-foreground text-sm font-medium">
                     Temperature
                   </p>
-                  <p className="text-xl font-bold text-white">98.6°F</p>
+                  <p className="text-foreground text-xl font-bold">98.6°F</p>
                   <p className="text-xs text-orange-600">Normal</p>
                 </div>
                 <Thermometer className="h-8 w-8 text-orange-600" />
@@ -961,10 +943,10 @@ export default function DashboardPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-muted-foreground text-sm font-medium">
                     Weight & Height
                   </p>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-foreground text-xl font-bold">
                     165 lbs • 5'10"
                   </p>
                   <p className="text-xs text-purple-600">BMI: 23.4</p>
@@ -980,32 +962,24 @@ export default function DashboardPage() {
           {/* Left Column - Medical Records */}
           <div className="space-y-6 lg:col-span-2">
             {/* Recent Medical Records */}
-            <Card className="border border-gray-200 bg-blue-50">
-              <CardHeader className="border-b border-gray-200 bg-blue-50">
+            <Card className="border">
+              <CardHeader className="border-b">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center text-blue-900">
+                    <CardTitle className="text-foreground flex items-center">
                       <FileText className="mr-2 h-5 w-5" />
                       Medical Records
                     </CardTitle>
-                    <CardDescription className="text-blue-700">
+                    <CardDescription>
                       Latest medical documents and test results
                     </CardDescription>
                   </div>
                   <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                    >
+                    <Button variant="outline" size="sm">
                       <Download className="mr-2 h-4 w-4" />
                       Export
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-blue-300 text-blue-700 hover:bg-blue-100"
-                    >
+                    <Button variant="outline" size="sm">
                       <Printer className="mr-2 h-4 w-4" />
                       Print
                     </Button>
@@ -1013,21 +987,21 @@ export default function DashboardPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="divide-y divide-gray-200">
-                  <div className="p-4 transition-colors hover:bg-gray-50">
+                <div className="divide-y">
+                  <div className="hover:bg-accent hover:text-accent-foreground/90 p-4 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-                          <Activity className="h-6 w-6 text-blue-600" />
+                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+                          <Activity className="text-primary h-6 w-6" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="text-foreground font-semibold">
                             Complete Blood Count (CBC)
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-muted-foreground text-sm">
                             Lab Results • Dr. Sarah Smith, MD
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-muted-foreground text-xs">
                             December 15, 2024 • 2:30 PM
                           </p>
                         </div>
@@ -1040,14 +1014,14 @@ export default function DashboardPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-primary"
                           >
                             <Download className="h-4 w-4" />
                           </Button>
@@ -1294,45 +1268,45 @@ export default function DashboardPage() {
           {/* Right Column - Medical Info & Actions */}
           <div className="space-y-6">
             {/* Current Medications */}
-            <Card className="border border-gray-200 bg-purple-50">
-              <CardHeader className="border-b border-gray-200 bg-purple-50">
-                <CardTitle className="flex items-center text-purple-900">
+            <Card className="border">
+              <CardHeader className="border-b">
+                <CardTitle className="text-foreground flex items-center">
                   <Pill className="mr-2 h-5 w-5" />
                   Current Medications
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3">
+                  <div className="bg-card flex items-center justify-between rounded-lg border p-3">
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-foreground font-medium">
                         Lisinopril 10mg
                       </p>
-                      <p className="text-sm text-gray-600">Once daily</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-muted-foreground text-sm">
+                        Once daily
+                      </p>
+                      <p className="text-muted-foreground text-xs">
                         Refills: 2 remaining
                       </p>
                     </div>
-                    <Clock className="h-4 w-4 text-gray-400" />
+                    <Clock className="text-muted-foreground h-4 w-4" />
                   </div>
-                  <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3">
+                  <div className="bg-card flex items-center justify-between rounded-lg border p-3">
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-foreground font-medium">
                         Vitamin D3 1000IU
                       </p>
-                      <p className="text-sm text-gray-600">Once daily</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-muted-foreground text-sm">
+                        Once daily
+                      </p>
+                      <p className="text-muted-foreground text-xs">
                         Refills: 3 remaining
                       </p>
                     </div>
-                    <Clock className="h-4 w-4 text-gray-400" />
+                    <Clock className="text-muted-foreground h-4 w-4" />
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-3 w-full border-purple-300 text-purple-700 hover:bg-purple-100"
-                >
+                <Button variant="outline" size="sm" className="mt-3 w-full">
                   <Plus className="mr-2 h-4 w-4" />
                   Add Medication
                 </Button>
@@ -1340,9 +1314,9 @@ export default function DashboardPage() {
             </Card>
 
             {/* Health Alerts */}
-            <Card className="border border-gray-200 bg-orange-50">
-              <CardHeader className="border-b border-gray-200 bg-orange-50">
-                <CardTitle className="flex items-center text-orange-900">
+            <Card className="border">
+              <CardHeader className="border-b">
+                <CardTitle className="text-foreground flex items-center">
                   <Bell className="mr-2 h-5 w-5" />
                   Health Alerts & Reminders
                 </CardTitle>
@@ -1391,7 +1365,7 @@ export default function DashboardPage() {
         </div>
 
         {/* General Notes Section */}
-        <div className="mb-6">
+        <div className="my-6">
           <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
               <div className="flex items-center justify-between">

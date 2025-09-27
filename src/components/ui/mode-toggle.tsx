@@ -25,30 +25,27 @@ export function ModeToggle() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="space-y-2">
+      <DropdownMenuContent align="end" className="space-y-1">
         <DropdownMenuItem
-          className={cn({
-            "bg-blue-500 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white":
-              theme === "light",
-          })}
+          className={cn(
+            theme === "light" && "bg-accent text-accent-foreground"
+          )}
           onClick={() => setTheme("light")}
         >
           Light
         </DropdownMenuItem>
         <DropdownMenuItem
-          className={cn({
-            "bg-blue-500 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white":
-              theme === "dark",
-          })}
+          className={cn(
+            theme === "dark" && "bg-accent text-accent-foreground"
+          )}
           onClick={() => setTheme("dark")}
         >
           Dark
         </DropdownMenuItem>
         <DropdownMenuItem
-          className={cn({
-            "bg-blue-500 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white":
-              theme === "system",
-          })}
+          className={cn(
+            theme === "system" && "bg-accent text-accent-foreground"
+          )}
           onClick={() => setTheme("system")}
         >
           System

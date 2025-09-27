@@ -2,8 +2,14 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, LayoutDashboard } from "lucide-react";
-import Link from "next/link";
+import { LogOut, User } from "lucide-react";
+import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function UserNav() {
   const { data: session, status } = useSession();
@@ -21,44 +27,37 @@ export function UserNav() {
   }
 
   return (
-    <div className="flex items-center space-x-4">
-      <div className="flex items-center space-x-2">
-        {session.user?.image ? (
-          <img
-            src={session.user.image}
-            alt={session.user.name ?? "User"}
-            className="h-8 w-8 rounded-full"
-          />
-        ) : (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-            <User className="h-4 w-4" />
-          </div>
-        )}
-        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          {session.user?.name ?? "User"}
-        </span>
-      </div>
-      
-      <Link href="/dashboard">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center space-x-2 border-white/50 text-black hover:text-white hover:bg-black"
+          variant="ghost"
+          className="relative h-8 w-8 rounded-full hover:cursor-pointer"
         >
-          <LayoutDashboard className="h-4 w-4" />
-          <span>Dashboard</span>
+          <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
+            <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
+              <User className="h-4 w-4" />
+            </div>
+          </div>
         </Button>
-      </Link>
-      
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => signOut()}
-        className="flex items-center space-x-2 border-white/50 text-black hover:text-white hover:bg-black"
-      >
-        <LogOut className="h-4 w-4" />
-        <span>Sign out</span>
-      </Button>
-    </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <div className="flex items-center justify-start gap-2 p-2">
+          <div className="flex flex-col space-y-1 leading-none">
+            {session.user?.name && (
+              <p className="font-medium">{session.user.name}</p>
+            )}
+            {session.user?.email && (
+              <p className="text-muted-foreground w-[200px] truncate text-sm">
+                {session.user.email}
+              </p>
+            )}
+          </div>
+        </div>
+        <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Sign out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
