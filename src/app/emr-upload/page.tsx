@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { VoiceToText } from "@/components/ui/voice-to-text";
 import { SmartNotesParser } from "@/components/ui/smart-notes-parser";
+import { saveEmr, type SaveEmrResult } from "./actions";
 
 interface PatientData {
   // Demographics
@@ -78,6 +79,8 @@ interface PatientData {
 
 export default function EMRUploadPage() {
   const [smartNotes, setSmartNotes] = useState("");
+  const [isSaving, startSaving] = useTransition();
+  const [saveResult, setSaveResult] = useState<SaveEmrResult | null>(null);
   const [patientData, setPatientData] = useState<PatientData>({
     name: "",
     dob: "",
@@ -328,6 +331,13 @@ export default function EMRUploadPage() {
     setSmartNotes("");
   };
 
+  async function onSaveAction(formData: FormData) {
+    const payload = JSON.stringify(patientData);
+    formData.set("payload", payload);
+    const result = await saveEmr({ ok: true }, formData);
+    setSaveResult(result);
+  }
+
   return (
     <div className="bg-background min-h-screen">
       {/* Page Header */}
@@ -347,10 +357,13 @@ export default function EMRUploadPage() {
                 </p>
               </div>
             </div>
-            <Button>
-              <Upload className="mr-2 h-4 w-4" />
-              Save EMR
-            </Button>
+            <form action={(fd) => startSaving(() => onSaveAction(fd))}>
+              <input type="hidden" name="payload" value="" readOnly />
+              <Button type="submit" disabled={isSaving}>
+                <Upload className="mr-2 h-4 w-4" />
+                {isSaving ? "Saving..." : "Save EMR"}
+              </Button>
+            </form>
           </div>
         </div>
       </header>
@@ -485,6 +498,17 @@ export default function EMRUploadPage() {
                 </div>
               </CardContent>
             </Card>
+            {saveResult ? (
+              <div
+                className={`rounded-md border p-3 ${
+                  saveResult.ok
+                    ? "border-green-300 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/50 dark:text-green-300"
+                    : "border-red-300 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/50 dark:text-red-300"
+                }`}
+              >
+                {saveResult.ok ? "EMR saved" : saveResult.error}
+              </div>
+            ) : null}
 
             {/* Vital Signs */}
             <Card className="border">
