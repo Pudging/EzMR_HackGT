@@ -828,39 +828,52 @@ export default function EMRUploadPage() {
                   <div className="text-muted-foreground text-sm">
                     Bloodwork, X-rays, Genetic tests, Medical documents
                   </div>
-                  <CldUploadButton
-                    className="bg-primary text-primary-foreground ring-offset-background hover:bg-primary/90 focus-visible:ring-ring mt-4 inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-                    uploadPreset="emr-upload"
-                    options={{
-                      sources: ["local", "camera"],
-                      multiple: true,
-                      maxFiles: 10,
-                      maxFileSize: 10000000, // 10MB
-                      resourceType: "auto",
-                      clientAllowedFormats: [
-                        "jpg",
-                        "jpeg",
-                        "png",
-                        "pdf",
-                        "doc",
-                        "docx",
-                      ],
-                      styles: currentCloudinaryStyles,
-                    }}
-                    onSuccess={(results) => {
-                      if (!results.info || typeof results.info === "string")
-                        return;
-                      const secureUrl =
-                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-                        (results.info as CloudinaryUploadWidgetInfo).secure_url;
-                      setPatientData((prev) => ({
-                        ...prev,
-                        uploadedFiles: [...prev.uploadedFiles, secureUrl],
-                      }));
-                    }}
-                  >
-                    Choose Files
-                  </CldUploadButton>
+                  {process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ? (
+                    <CldUploadButton
+                      className="bg-primary text-primary-foreground ring-offset-background hover:bg-primary/90 focus-visible:ring-ring mt-4 inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                      uploadPreset="emr-upload"
+                      options={{
+                        sources: ["local", "camera"],
+                        multiple: true,
+                        maxFiles: 10,
+                        maxFileSize: 10000000, // 10MB
+                        resourceType: "auto",
+                        clientAllowedFormats: [
+                          "jpg",
+                          "jpeg",
+                          "png",
+                          "pdf",
+                          "doc",
+                          "docx",
+                        ],
+                        styles: currentCloudinaryStyles,
+                      }}
+                      onSuccess={(results) => {
+                        if (!results.info || typeof results.info === "string")
+                          return;
+                        const secureUrl =
+                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                          (results.info as CloudinaryUploadWidgetInfo).secure_url;
+                        setPatientData((prev) => ({
+                          ...prev,
+                          uploadedFiles: [...prev.uploadedFiles, secureUrl],
+                        }));
+                      }}
+                    >
+                      Choose Files
+                    </CldUploadButton>
+                  ) : (
+                    <div className="mt-4 text-center">
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                        <div className="text-yellow-800 text-sm">
+                          <strong>File Upload Unavailable</strong>
+                        </div>
+                        <div className="text-yellow-700 text-xs mt-1">
+                          Cloudinary credentials not configured. Please set NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_API_KEY in your environment variables.
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Display uploaded files */}
