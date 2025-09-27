@@ -98,104 +98,148 @@ export default function EMRUploadPage() {
   const [smartNotes, setSmartNotes] = useState("");
   const [isSaving, startSaving] = useTransition();
   const [saveResult, setSaveResult] = useState<SaveEmrResult | null>(null);
-  const [dicomSeries, setDicomSeries] = useState<Array<{ 
-    seriesName: string; 
-    files: Array<{ name: string; url: string; file?: File }>;
-    modality?: string;
-  }>>([]);
+  const [dicomSeries, setDicomSeries] = useState<
+    Array<{
+      seriesName: string;
+      files: Array<{ name: string; url: string; file?: File }>;
+      modality?: string;
+    }>
+  >([]);
   const [dicomUploading, setDicomUploading] = useState(false);
   const [zipProcessing, setZipProcessing] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0, fileName: '', startTime: 0 });
+  const [uploadProgress, setUploadProgress] = useState({
+    current: 0,
+    total: 0,
+    fileName: "",
+    startTime: 0,
+  });
   const { theme } = useTheme();
 
-  const handleDicomZipUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDicomZipUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const selectedFiles = event.target.files;
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const zipFile = selectedFiles[0];
-    if (!zipFile?.name.toLowerCase().endsWith('.zip')) {
-      alert('Please select a ZIP file containing DICOM (.dcm) files');
+    if (!zipFile?.name.toLowerCase().endsWith(".zip")) {
+      alert("Please select a ZIP file containing DICOM (.dcm) files");
       return;
     }
 
     setZipProcessing(true);
     setDicomUploading(true);
-    
+
     try {
       // Basic file validation
       if (zipFile.size === 0) {
-        throw new Error('ZIP file is empty (0 bytes)');
+        throw new Error("ZIP file is empty (0 bytes)");
       }
-      
-      if (zipFile.size > 500 * 1024 * 1024) { // 500MB limit
-        throw new Error('ZIP file is too large (>500MB). Please use a smaller file.');
+
+      if (zipFile.size > 500 * 1024 * 1024) {
+        // 500MB limit
+        throw new Error(
+          "ZIP file is too large (>500MB). Please use a smaller file.",
+        );
       }
-      
-      console.log('Processing ZIP file:', zipFile.name, 'Size:', zipFile.size, 'bytes');
-      
+
+      console.log(
+        "Processing ZIP file:",
+        zipFile.name,
+        "Size:",
+        zipFile.size,
+        "bytes",
+      );
+
       // Import JSZip dynamically
-      // @ts-expect-error - JSZip types will be available after install
-      const JSZip = (await import('jszip')).default;
-      
+      const JSZip = (await import("jszip")).default;
+
       if (!JSZip) {
-        throw new Error('Failed to load ZIP processing library. Please refresh the page and try again.');
+        throw new Error(
+          "Failed to load ZIP processing library. Please refresh the page and try again.",
+        );
       }
-      
+
       // Read and extract ZIP file
       const zip = new JSZip();
       const zipContents = await zip.loadAsync(zipFile);
-      
-      console.log('ZIP contents loaded, found files:', Object.keys(zipContents.files).length);
-      
+
+      console.log(
+        "ZIP contents loaded, found files:",
+        Object.keys(zipContents.files).length,
+      );
+
       // Log all files in the ZIP for debugging
-      Object.keys(zipContents.files).forEach(path => {
+      Object.keys(zipContents.files).forEach((path) => {
         const file = zipContents.files[path];
-        console.log(`ZIP entry: ${path}, isDir: ${(file as unknown as { dir: boolean }).dir}, size: ${(file as unknown as { _data?: { uncompressedSize: number } })._data?.uncompressedSize ?? 'unknown'}`);
+        console.log(
+          `ZIP entry: ${path}, isDir: ${(file as unknown as { dir: boolean }).dir}, size: ${(file as unknown as { _data?: { uncompressedSize: number } })._data?.uncompressedSize ?? "unknown"}`,
+        );
       });
-      
+
       // Find all DICOM files in the ZIP (including in nested folders)
-      const dicomFiles: Array<{ name: string; data: Uint8Array; path: string }> = [];
-      
+      const dicomFiles: Array<{
+        name: string;
+        data: Uint8Array;
+        path: string;
+      }> = [];
+
       for (const [fullPath, file] of Object.entries(zipContents.files)) {
-        const isDirectory = (file as unknown as { dir: boolean }).dir;
-        const fileName = fullPath.split('/').pop() || fullPath;
-        
+        const isDirectory = (file as { dir: boolean }).dir;
+        const fileName = fullPath.split("/").pop() ?? fullPath;
+
         // Skip directories and hidden/system files
-        if (isDirectory || fileName.startsWith('.') || fileName.startsWith('__MACOSX')) {
+        if (
+          isDirectory ||
+          fileName.startsWith(".") ||
+          fileName.startsWith("__MACOSX")
+        ) {
           console.log(`Skipping: ${fullPath} (directory: ${isDirectory})`);
           continue;
         }
-        
+
         // More flexible DICOM file detection
-        const isLikelyDicom = 
-          fullPath.toLowerCase().endsWith('.dcm') ||
-          fullPath.toLowerCase().endsWith('.dicom') ||
-          fullPath.toLowerCase().includes('dicom') ||
+        const isLikelyDicom =
+          fullPath.toLowerCase().endsWith(".dcm") ||
+          fullPath.toLowerCase().endsWith(".dicom") ||
+          fullPath.toLowerCase().includes("dicom") ||
           // Many DICOM files have no extension or numeric names
           /^\d+$/.test(fileName) || // Pure numbers like "1", "2", "3"
           /^IM-\d+-\d+/.test(fileName) || // IM-0001-0001 format
           /^[A-Z0-9]{8,}$/.test(fileName) || // Long alphanumeric names
-          (!fileName.includes('.') && fileName.length > 3); // No extension, reasonable length
-        
+          (!fileName.includes(".") && fileName.length > 3); // No extension, reasonable length
+
         if (isLikelyDicom) {
           console.log(`Processing potential DICOM: ${fullPath}`);
           try {
-            const data = await (file as unknown as { async: (type: string) => Promise<Uint8Array> }).async('uint8array');
-            
+            const data = await (
+              file as {
+                async: (type: string) => Promise<Uint8Array>;
+              }
+            ).async("uint8array");
+
             // Basic DICOM validation - check for DICOM magic bytes
-            const isDicom = data.length > 132 && 
-              data[128] === 0x44 && data[129] === 0x49 && 
-              data[130] === 0x43 && data[131] === 0x4D; // "DICM"
-            
-            if (isDicom || data.length > 1000) { // Accept if DICOM header found or reasonably large file
-              dicomFiles.push({ 
-                name: fileName, 
-                data, 
-                path: fullPath 
+            const isDicom =
+              data.length > 132 &&
+              data[128] === 0x44 &&
+              data[129] === 0x49 &&
+              data[130] === 0x43 &&
+              data[131] === 0x4d; // "DICM"
+
+            if (isDicom || data.length > 1000) {
+              // Accept if DICOM header found or reasonably large file
+              dicomFiles.push({
+                name: fileName,
+                data,
+                path: fullPath,
               });
-              console.log(`✓ Added DICOM file: ${fileName} (${data.length} bytes)`);
+              console.log(
+                `✓ Added DICOM file: ${fileName} (${data.length} bytes)`,
+              );
             } else {
-              console.log(`✗ Skipped non-DICOM file: ${fileName} (${data.length} bytes)`);
+              console.log(
+                `✗ Skipped non-DICOM file: ${fileName} (${data.length} bytes)`,
+              );
             }
           } catch (error) {
             console.error(`Error processing ${fullPath}:`, error);
@@ -204,89 +248,106 @@ export default function EMRUploadPage() {
           console.log(`Skipped unlikely DICOM: ${fullPath}`);
         }
       }
-      
+
       // Sort DICOM files by name to maintain slice order
       dicomFiles.sort((a, b) => {
         // Extract numbers from filenames for proper numeric sorting
         const aMatch = /(\d+)/.exec(a.name);
         const bMatch = /(\d+)/.exec(b.name);
-        const aNum = parseInt(aMatch?.[0] ?? '0');
-        const bNum = parseInt(bMatch?.[0] ?? '0');
+        const aNum = parseInt(aMatch?.[0] ?? "0");
+        const bNum = parseInt(bMatch?.[0] ?? "0");
         return aNum - bNum;
       });
-      
+
       if (dicomFiles.length === 0) {
-        console.error('No DICOM files found in ZIP archive');
-        alert(`No DICOM files found in the ZIP archive.\n\nFound ${Object.keys(zipContents.files).length} total files. Check the browser console for details about what was found in your ZIP file.\n\nDICOM files should:\n- Have .dcm or .dicom extensions, OR\n- Be files without extensions (common for DICOM), OR\n- Have numeric names like "1", "2", "3", etc.\n- Be larger than 1KB in size`);
+        console.error("No DICOM files found in ZIP archive");
+        alert(
+          `No DICOM files found in the ZIP archive.\n\nFound ${Object.keys(zipContents.files).length} total files. Check the browser console for details about what was found in your ZIP file.\n\nDICOM files should:\n- Have .dcm or .dicom extensions, OR\n- Be files without extensions (common for DICOM), OR\n- Have numeric names like "1", "2", "3", etc.\n- Be larger than 1KB in size`,
+        );
         setZipProcessing(false);
         setDicomUploading(false);
         return;
       }
-      
+
       console.log(`Found ${dicomFiles.length} DICOM files in ZIP`);
       setZipProcessing(false);
-      
+
       // Determine series name from folder structure or ZIP filename
-      let seriesName = zipFile.name.replace(/\.zip$/i, '');
-      
+      let seriesName = zipFile.name.replace(/\.zip$/i, "");
+
       // If files are in a folder, use the folder name as series name
-      if (dicomFiles.length > 0 && dicomFiles[0]!.path.includes('/')) {
-        const folderPath = dicomFiles[0]!.path.split('/');
+      if (dicomFiles.length > 0 && dicomFiles[0]!.path.includes("/")) {
+        const folderPath = dicomFiles[0]!.path.split("/");
         if (folderPath.length > 1) {
           // Use the deepest folder name that contains the DICOM files
           seriesName = folderPath[folderPath.length - 2] ?? seriesName;
         }
       }
-      
-      seriesName = seriesName ?? 'DICOM Series';
-      
+
+      seriesName = seriesName ?? "DICOM Series";
+
       // Detect modality from first file or series name
-      let modality = 'OTHER';
-      const nameToCheck = (seriesName + ' ' + dicomFiles[0]?.name || '').toLowerCase();
-      if (nameToCheck.includes('ct')) modality = 'CT';
-      else if (nameToCheck.includes('mri')) modality = 'MRI';
-      else if (nameToCheck.includes('xray') || nameToCheck.includes('x-ray')) modality = 'XRAY';
-      else if (nameToCheck.includes('ultrasound')) modality = 'ULTRASOUND';
-      
+      let modality = "OTHER";
+      const nameToCheck = (
+        seriesName + " " + dicomFiles[0]?.name || ""
+      ).toLowerCase();
+      if (nameToCheck.includes("ct")) modality = "CT";
+      else if (nameToCheck.includes("mri")) modality = "MRI";
+      else if (nameToCheck.includes("xray") || nameToCheck.includes("x-ray"))
+        modality = "XRAY";
+      else if (nameToCheck.includes("ultrasound")) modality = "ULTRASOUND";
+
       // Upload each DICOM file to Cloudinary
       const uploadedFiles: Array<{ name: string; url: string }> = [];
-      
+
       // Initialize progress
-      setUploadProgress({ current: 0, total: dicomFiles.length, fileName: '', startTime: Date.now() });
-      
+      setUploadProgress({
+        current: 0,
+        total: dicomFiles.length,
+        fileName: "",
+        startTime: Date.now(),
+      });
+
       for (let i = 0; i < dicomFiles.length; i++) {
         const dicomFile = dicomFiles[i]!;
-        
+
         // Update progress
-        setUploadProgress(prev => ({ 
-          current: i + 1, 
-          total: dicomFiles.length, 
+        setUploadProgress((prev) => ({
+          current: i + 1,
+          total: dicomFiles.length,
           fileName: dicomFile.name,
-          startTime: prev.startTime
+          startTime: prev.startTime,
         }));
-        
-        console.log(`Uploading DICOM ${i + 1}/${dicomFiles.length}: ${dicomFile.name}`);
-        
+
+        console.log(
+          `Uploading DICOM ${i + 1}/${dicomFiles.length}: ${dicomFile.name}`,
+        );
+
         // Create blob from DICOM data
-        const blob = new Blob([dicomFile.data as BlobPart], { type: 'application/dicom' });
-        
+        const blob = new Blob([dicomFile.data as BlobPart], {
+          type: "application/dicom",
+        });
+
         // Upload to Cloudinary
         const formData = new FormData();
-        formData.append('file', blob, dicomFile.name);
-        formData.append('upload_preset', 'emr-upload');
-        formData.append('resource_type', 'raw');
-        
+        formData.append("file", blob, dicomFile.name);
+        formData.append("upload_preset", "emr-upload");
+        formData.append("resource_type", "raw");
+
         try {
-          const response = await fetch(`https://api.cloudinary.com/v1_1/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/raw/upload`, {
-            method: 'POST',
-            body: formData,
-          });
-          
+          const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/raw/upload`,
+            {
+              method: "POST",
+              body: formData,
+            },
+          );
+
           if (response.ok) {
             const result = await response.json();
             uploadedFiles.push({
               name: dicomFile.name,
-              url: result.secure_url
+              url: result.secure_url,
             });
             console.log(`Successfully uploaded ${dicomFile.name}`);
           } else {
@@ -297,70 +358,78 @@ export default function EMRUploadPage() {
           console.error(`Error uploading ${dicomFile.name}:`, error);
         }
       }
-      
+
       if (uploadedFiles.length > 0) {
         // Add the series to state
-        setDicomSeries(prev => [...prev, {
-          seriesName,
-          files: uploadedFiles,
-          modality
-        }]);
-        
-        console.log(`Successfully processed ZIP: ${uploadedFiles.length}/${dicomFiles.length} files uploaded`);
+        setDicomSeries((prev) => [
+          ...prev,
+          {
+            seriesName,
+            files: uploadedFiles,
+            modality,
+          },
+        ]);
+
+        console.log(
+          `Successfully processed ZIP: ${uploadedFiles.length}/${dicomFiles.length} files uploaded`,
+        );
       }
-      
     } catch (error) {
-      console.error('Error processing ZIP file:', error);
-      console.error('Error details:', {
+      console.error("Error processing ZIP file:", error);
+      console.error("Error details:", {
         message: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
         zipFileName: zipFile?.name,
         zipFileSize: zipFile?.size,
       });
-      
-      let errorMessage = 'Error processing ZIP file.\n\n';
-      
+
+      let errorMessage = "Error processing ZIP file.\n\n";
+
       if (error instanceof Error) {
         errorMessage += `Error: ${error.message}\n\n`;
-        
+
         // Common error scenarios
-        if (error.message.includes('Invalid or unsupported zip file')) {
-          errorMessage += 'The file appears to be corrupted or not a valid ZIP file. Try:\n';
-          errorMessage += '• Re-creating the ZIP file\n';
-          errorMessage += '• Using a different ZIP compression tool\n';
-          errorMessage += '• Checking if the file downloaded completely';
-        } else if (error.message.includes('Cannot read properties')) {
-          errorMessage += 'There was an issue reading the ZIP file contents. Try:\n';
-          errorMessage += '• Using a standard ZIP format (not RAR, 7z, etc.)\n';
-          errorMessage += '• Ensuring the ZIP file isn\'t password protected\n';
-          errorMessage += '• Creating a new ZIP file with different software';
-        } else if (error.message.includes('fetch')) {
-          errorMessage += 'There was an issue uploading to cloud storage. Try:\n';
-          errorMessage += '• Checking your internet connection\n';
-          errorMessage += '• Trying with a smaller ZIP file first\n';
-          errorMessage += '• Refreshing the page and trying again';
+        if (error.message.includes("Invalid or unsupported zip file")) {
+          errorMessage +=
+            "The file appears to be corrupted or not a valid ZIP file. Try:\n";
+          errorMessage += "• Re-creating the ZIP file\n";
+          errorMessage += "• Using a different ZIP compression tool\n";
+          errorMessage += "• Checking if the file downloaded completely";
+        } else if (error.message.includes("Cannot read properties")) {
+          errorMessage +=
+            "There was an issue reading the ZIP file contents. Try:\n";
+          errorMessage += "• Using a standard ZIP format (not RAR, 7z, etc.)\n";
+          errorMessage += "• Ensuring the ZIP file isn't password protected\n";
+          errorMessage += "• Creating a new ZIP file with different software";
+        } else if (error.message.includes("fetch")) {
+          errorMessage +=
+            "There was an issue uploading to cloud storage. Try:\n";
+          errorMessage += "• Checking your internet connection\n";
+          errorMessage += "• Trying with a smaller ZIP file first\n";
+          errorMessage += "• Refreshing the page and trying again";
         } else {
-          errorMessage += 'Please check the browser console for more details and try:\n';
-          errorMessage += '• Using a different ZIP file\n';
-          errorMessage += '• Refreshing the page\n';
-          errorMessage += '• Creating a new ZIP with standard compression';
+          errorMessage +=
+            "Please check the browser console for more details and try:\n";
+          errorMessage += "• Using a different ZIP file\n";
+          errorMessage += "• Refreshing the page\n";
+          errorMessage += "• Creating a new ZIP with standard compression";
         }
       } else {
-        errorMessage += 'Please check the browser console for details.';
+        errorMessage += "Please check the browser console for details.";
       }
-      
+
       alert(errorMessage);
     } finally {
       setZipProcessing(false);
       setDicomUploading(false);
-      setUploadProgress({ current: 0, total: 0, fileName: '', startTime: 0 });
+      setUploadProgress({ current: 0, total: 0, fileName: "", startTime: 0 });
       // Reset the input
-      event.target.value = '';
+      event.target.value = "";
     }
   };
 
   const removeDicomSeries = (index: number) => {
-    setDicomSeries(prev => {
+    setDicomSeries((prev) => {
       const newSeries = [...prev];
       newSeries.splice(index, 1);
       return newSeries;
@@ -2014,16 +2083,16 @@ export default function EMRUploadPage() {
     // Add DICOM files to patient data
     const payloadWithDicom = {
       ...patientData,
-      dicomSeries: (dicomSeries || []).map(series => ({
+      dicomSeries: (dicomSeries || []).map((series) => ({
         seriesName: series.seriesName,
         modality: series.modality,
-        files: series.files.map(file => ({
+        files: series.files.map((file) => ({
           name: file.name,
-          url: file.url
-        }))
-      }))
+          url: file.url,
+        })),
+      })),
     };
-    
+
     const payload = JSON.stringify(payloadWithDicom);
     formData.set("payload", payload);
     const result = await saveEmr({ ok: true }, formData);
@@ -2813,7 +2882,10 @@ export default function EMRUploadPage() {
                 {/* DICOM ZIP Upload Section */}
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="dicom-zip-upload" className="text-sm font-medium">
+                    <Label
+                      htmlFor="dicom-zip-upload"
+                      className="text-sm font-medium"
+                    >
                       DICOM Series (ZIP file containing DCM slices)
                     </Label>
                     <Input
@@ -2824,15 +2896,15 @@ export default function EMRUploadPage() {
                       disabled={dicomUploading}
                       className="mt-1"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="mt-1 text-xs text-gray-500">
                       Upload a ZIP file containing DICOM slices. Files can be:
                       <br />• .dcm or .dicom files
-                      <br />• Files without extensions (common for DICOM)  
+                      <br />• Files without extensions (common for DICOM)
                       <br />• Numeric names like "1", "2", "3" etc.
                       <br />• Any files larger than 1KB that contain DICOM data
                     </p>
                     {zipProcessing && (
-                      <p className="text-sm text-orange-600 mt-2">
+                      <p className="mt-2 text-sm text-orange-600">
                         📦 Extracting DICOM files from ZIP archive...
                       </p>
                     )}
@@ -2844,40 +2916,60 @@ export default function EMRUploadPage() {
                         {uploadProgress.total > 0 && (
                           <div className="space-y-1">
                             <div className="flex justify-between text-xs text-gray-600">
-                              <span>Progress: {uploadProgress.current} of {uploadProgress.total}</span>
-                              <span>{Math.round((uploadProgress.current / uploadProgress.total) * 100)}%</span>
+                              <span>
+                                Progress: {uploadProgress.current} of{" "}
+                                {uploadProgress.total}
+                              </span>
+                              <span>
+                                {Math.round(
+                                  (uploadProgress.current /
+                                    uploadProgress.total) *
+                                    100,
+                                )}
+                                %
+                              </span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                            <div className="h-2 w-full rounded-full bg-gray-200">
+                              <div
+                                className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                                style={{
+                                  width: `${(uploadProgress.current / uploadProgress.total) * 100}%`,
+                                }}
                               ></div>
                             </div>
                             <div className="flex justify-between text-xs">
                               {uploadProgress.fileName && (
-                                <p className="text-gray-500 truncate flex-1 mr-2">
+                                <p className="mr-2 flex-1 truncate text-gray-500">
                                   Uploading: {uploadProgress.fileName}
                                 </p>
                               )}
-                              {uploadProgress.current > 0 && uploadProgress.startTime > 0 && (
-                                <p className="text-gray-400 whitespace-nowrap">
-                                  {(() => {
-                                    const elapsed = (Date.now() - uploadProgress.startTime) / 1000;
-                                    const rate = uploadProgress.current / elapsed;
-                                    const remaining = (uploadProgress.total - uploadProgress.current) / rate;
-                                    return remaining > 60 
-                                      ? `~${Math.ceil(remaining / 60)}m left` 
-                                      : `~${Math.ceil(remaining)}s left`;
-                                  })()}
-                                </p>
-                              )}
+                              {uploadProgress.current > 0 &&
+                                uploadProgress.startTime > 0 && (
+                                  <p className="whitespace-nowrap text-gray-400">
+                                    {(() => {
+                                      const elapsed =
+                                        (Date.now() -
+                                          uploadProgress.startTime) /
+                                        1000;
+                                      const rate =
+                                        uploadProgress.current / elapsed;
+                                      const remaining =
+                                        (uploadProgress.total -
+                                          uploadProgress.current) /
+                                        rate;
+                                      return remaining > 60
+                                        ? `~${Math.ceil(remaining / 60)}m left`
+                                        : `~${Math.ceil(remaining)}s left`;
+                                    })()}
+                                  </p>
+                                )}
                             </div>
                           </div>
                         )}
                       </div>
                     )}
                   </div>
-                  
+
                   {dicomSeries.length > 0 && (
                     <div className="space-y-2">
                       <Label className="text-sm font-medium">
@@ -2887,17 +2979,20 @@ export default function EMRUploadPage() {
                         {dicomSeries.map((series, index) => (
                           <div
                             key={index}
-                            className="rounded-lg border p-4 bg-muted hover:bg-muted/80 transition-colors"
+                            className="bg-muted hover:bg-muted/80 rounded-lg border p-4 transition-colors"
                           >
-                            <div className="flex items-center justify-between mb-2">
+                            <div className="mb-2 flex items-center justify-between">
                               <div className="flex-1">
-                                <p className="text-sm font-medium">{series.seriesName}</p>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded">
+                                <p className="text-sm font-medium">
+                                  {series.seriesName}
+                                </p>
+                                <div className="mt-1 flex items-center gap-2">
+                                  <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800">
                                     {series.modality}
                                   </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {series.files.length} slice{series.files.length !== 1 ? 's' : ''}
+                                  <span className="text-muted-foreground text-xs">
+                                    {series.files.length} slice
+                                    {series.files.length !== 1 ? "s" : ""}
                                   </span>
                                 </div>
                               </div>
@@ -2911,9 +3006,14 @@ export default function EMRUploadPage() {
                                 <X className="h-4 w-4" />
                               </Button>
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              Files: {series.files.slice(0, 3).map(f => f.name).join(', ')}
-                              {series.files.length > 3 && ` ... +${series.files.length - 3} more`}
+                            <div className="text-muted-foreground text-xs">
+                              Files:{" "}
+                              {series.files
+                                .slice(0, 3)
+                                .map((f) => f.name)
+                                .join(", ")}
+                              {series.files.length > 3 &&
+                                ` ... +${series.files.length - 3} more`}
                             </div>
                           </div>
                         ))}
@@ -3523,4 +3623,3 @@ export default function EMRUploadPage() {
     </div>
   );
 }
-

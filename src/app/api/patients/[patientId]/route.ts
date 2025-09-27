@@ -3,86 +3,6 @@ import { db } from "@/server/db";
 import { getCurrentTenant } from "@/lib/tenant";
 import { logUserAction, ActionType } from "@/lib/logging";
 
-// Narrow delegate shim for Prisma with structural types (no any)
-type InsurancePolicyRecord = {
-  isPrimary: boolean;
-  providerName: string;
-  policyNumber: string;
-  groupNumber: string | null;
-};
-
-type EmergencyContactRecord = { name: string; relation: string; phone: string };
-
-type AllergyRecord = {
-  substance: string;
-  reaction: string | null;
-  severity: string;
-  notedOn: Date | null;
-};
-
-type MedicationRecord = {
-  name: string;
-  dose: string | null;
-  frequency: string | null;
-  active: boolean;
-};
-
-type SocialHistoryRecord = {
-  tobaccoUse: boolean | null;
-  alcoholUse: boolean | null;
-  drugUse: boolean | null;
-  occupation: string | null;
-};
-
-type PastMedicalRecord = { date: Date | null; type: string | null; description: string };
-
-type ImmunizationRecord = { vaccine: string; administeredOn: Date; notes: string | null };
-
-type FamilyHistoryRecord = { relation: string; condition: string; notes: string | null };
-
-type VitalRecord = {
-  type: string;
-  numericValue: number | null;
-  systolic: number | null;
-  diastolic: number | null;
-  recordedAt: Date;
-};
-
-type NoteRecord = { createdAt: Date; content: string };
-
-type PatientRecord = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  mrn: string;
-  dateOfBirth: Date;
-  sex: string;
-  bloodType: string | null;
-  phoneNumber: string | null;
-  email: string | null;
-  addressLine1: string | null;
-  addressLine2: string | null;
-  city: string | null;
-  state: string | null;
-  postalCode: string | null;
-  insurancePolicies: InsurancePolicyRecord[];
-  emergencyContacts: EmergencyContactRecord[];
-  allergies: AllergyRecord[];
-  medications: MedicationRecord[];
-  socialHistory: SocialHistoryRecord | null;
-  pastMedical: PastMedicalRecord[];
-  immunizations: ImmunizationRecord[];
-  familyHistory: FamilyHistoryRecord[];
-  vitals: VitalRecord[];
-  notes: NoteRecord[];
-};
-
-const prisma = db as unknown as {
-  tenant: { findFirst: (args?: unknown) => Promise<{ id: string; subdomain: string; hospitalName: string } | null> };
-  patient: { findFirst: (args: unknown) => Promise<PatientRecord & { imaging: any[] } | null> };
-};
-
-
 interface PatientParams {
   patientId: string;
 }
@@ -432,34 +352,51 @@ export async function GET(
         })),
 
       upcomingAppointments: [], // Could implement appointments table if needed
-      
+
       // DICOM Files from ImagingStudy table
       dicomFiles: (() => {
-        console.log(`🔍 Found ${patient.imaging.length} imaging studies for patient ${patient.id}`);
-        return patient.imaging.map((study: any) => {
-        // Try to parse imageUrl as JSON array (for series), fallback to single URL
-        let imageUrls: Array<{ name: string; url: string }> = [];
-        try {
-          imageUrls = JSON.parse(study.imageUrl || '[]');
-        } catch {
-          // Fallback for single URL format
-          if (study.imageUrl) {
-            imageUrls = [{ name: study.description || 'DICOM Image', url: study.imageUrl }];
-          }
-        }
+        console.log(
+          `🔍 Found ${patient.imaging.length} imaging studies for patient ${patient.id}`,
+        );
+        return patient.imaging.map(
+          (study: {
+            id: string;
+            description: string | null;
+            modality: string;
+            performedOn: Date | null;
+            imageUrl: string | null;
+            report: string | null;
+            patientId: string;
+          }) => {
+            // Try to parse imageUrl as JSON array (for series), fallback to single URL
+            let imageUrls: Array<{ name: string; url: string }> = [];
+            try {
+              imageUrls = JSON.parse(study.imageUrl ?? "[]");
+            } catch {
+              // Fallback for single URL format
+              if (study.imageUrl) {
+                imageUrls = [
+                  {
+                    name: study.description ?? "DICOM Image",
+                    url: study.imageUrl,
+                  },
+                ];
+              }
+            }
 
-        const dicomFile = {
-          id: study.id,
-          name: study.description ?? `${study.modality} Study`,
-          modality: study.modality,
-          description: study.description,
-          performedOn: study.performedOn?.toISOString().split('T')[0],
-          images: imageUrls, // Array of images in the series
-          url: imageUrls[0]?.url || '', // First image URL for backward compatibility
-        };
-        console.log(`📋 DICOM file processed:`, dicomFile);
-        return dicomFile;
-      });
+            const dicomFile = {
+              id: study.id,
+              name: study.description ?? `${study.modality} Study`,
+              modality: study.modality,
+              description: study.description,
+              performedOn: study.performedOn?.toISOString().split("T")[0],
+              images: imageUrls, // Array of images in the series
+              url: imageUrls[0]?.url ?? "", // First image URL for backward compatibility
+            };
+            console.log(`📋 DICOM file processed:`, dicomFile);
+            return dicomFile;
+          },
+        );
       })(),
     };
 
