@@ -417,6 +417,120 @@ export async function saveEmrFromForm(
       });
     }
 
+    // Medications - Add new medications, don't duplicate existing ones
+    if (data.medications.length > 0) {
+      const existingMedications = await db.medication.findMany({
+        where: { patientId: patient.id, active: true },
+        select: { name: true, dose: true, frequency: true }
+      });
+      
+      const medicationsToCreate = data.medications
+        .filter(med => {
+          if (!med.name.trim()) return false;
+          // Check if this medication already exists for this patient
+          return !existingMedications.some(existing => 
+            existing.name === med.name && 
+            existing.dose === (med.dosage || null) &&
+            existing.frequency === (med.schedule || null)
+          );
+        })
+        .map(med => ({
+          patientId: patient.id,
+          name: med.name,
+          dose: med.dosage || null,
+          frequency: med.schedule || null,
+          active: true,
+        }));
+      
+      if (medicationsToCreate.length > 0) {
+        await db.medication.createMany({ data: medicationsToCreate });
+      }
+    }
+
+    // Past Medical Conditions - Add new conditions, avoid duplicates
+    if (data.pastConditions.length > 0) {
+      const existingConditions = await db.pastMedicalEvent.findMany({
+        where: { patientId: patient.id },
+        select: { type: true, description: true }
+      });
+      
+      const conditionsToCreate = data.pastConditions
+        .filter(condition => {
+          if (!condition.notes.trim()) return false;
+          // Check if this condition already exists for this patient
+          return !existingConditions.some(existing => 
+            existing.type === (condition.bodyPart || 'Unknown') && 
+            existing.description === condition.notes
+          );
+        })
+        .map(condition => ({
+          patientId: patient.id,
+          type: condition.bodyPart || 'Unknown',
+          description: condition.notes,
+          date: condition.date ? new Date(condition.date) : null,
+        }));
+      
+      if (conditionsToCreate.length > 0) {
+        await db.pastMedicalEvent.createMany({ data: conditionsToCreate });
+      }
+    }
+
+    // Immunizations - Add new immunizations, avoid duplicates
+    if (data.immunizations.length > 0) {
+      const existingImmunizations = await db.immunization.findMany({
+        where: { patientId: patient.id },
+        select: { vaccine: true, notes: true }
+      });
+      
+      const immunizationsToCreate = data.immunizations
+        .filter(immunization => {
+          if (!immunization.notes.trim()) return false;
+          // Check if this immunization already exists for this patient
+          return !existingImmunizations.some(existing => 
+            existing.vaccine === immunization.notes && 
+            existing.notes === immunization.notes
+          );
+        })
+        .map(immunization => ({
+          patientId: patient.id,
+          vaccine: immunization.notes, // Using notes as vaccine name for now
+          administeredOn: immunization.date ? new Date(immunization.date) : new Date(),
+          notes: immunization.notes,
+        }));
+      
+      if (immunizationsToCreate.length > 0) {
+        await db.immunization.createMany({ data: immunizationsToCreate });
+      }
+    }
+
+    // Family History - Add new family history, avoid duplicates
+    if (data.familyHistory.length > 0) {
+      const existingFamilyHistory = await db.familyHistoryCondition.findMany({
+        where: { patientId: patient.id },
+        select: { relation: true, condition: true }
+      });
+      
+      const familyHistoryToCreate = data.familyHistory
+        .filter(history => {
+          if (!history.notes.trim()) return false;
+          // Check if this family history already exists for this patient
+          return !existingFamilyHistory.some(existing => 
+            existing.relation === (history.bodyPart || 'Unknown') && 
+            existing.condition === history.notes
+          );
+        })
+        .map(history => ({
+          patientId: patient.id,
+          relation: history.bodyPart || 'Unknown',
+          condition: history.notes,
+          notes: history.date ? `Date: ${history.date}` : null,
+        }));
+      
+      if (familyHistoryToCreate.length > 0) {
+        await db.familyHistoryCondition.createMany({ data: familyHistoryToCreate });
+      }
+    }
+
     // Advance care plan
     if (data.dnr || data.preventiveCare) {
       await db.advanceCarePlan.create({

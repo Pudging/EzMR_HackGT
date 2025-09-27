@@ -1,7 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SearchBar } from "@/components/search-bar";
 import { useSearch } from "@/hooks/use-search";
+import { usePatientData } from "@/hooks/usePatientData";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,9 +38,23 @@ import {
   Users,
   FileDigit,
   Shield,
+  ArrowLeft,
+  AlertCircle,
 } from "lucide-react";
 
+interface SelectedPatient {
+  id: string;
+  name: string;
+  patientId: string;
+  dob: string;
+  sex: string;
+  bloodType?: string;
+}
+
 export default function DashboardPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [selectedPatient, setSelectedPatient] = useState<SelectedPatient | null>(null);
   const {
     currentMatch,
     totalMatches,
@@ -47,13 +64,97 @@ export default function DashboardPage() {
     clearSearch,
   } = useSearch();
 
-  // Mock session data for demo purposes
-  const session = {
-    user: {
-      name: "John Michael Doe",
-      email: "john.doe@email.com",
-    },
-  };
+  // Load full patient data
+  const { patientData, loading: patientDataLoading, error: patientDataError } = usePatientData(selectedPatient?.patientId || "");
+
+  useEffect(() => {
+    // Check for selected patient in sessionStorage or URL params
+    const patientFromStorage = sessionStorage.getItem('selectedPatient');
+    const patientIdFromUrl = searchParams.get('patientId');
+    
+    if (patientFromStorage) {
+      const patient = JSON.parse(patientFromStorage);
+      setSelectedPatient(patient);
+    } else if (patientIdFromUrl) {
+      // Mock data lookup by ID - in real app this would be an API call
+      const mockPatients: SelectedPatient[] = [
+        {
+          id: "pat_1",
+          name: "Kevin Ketong Gao",
+          patientId: "1", 
+          dob: "1995-03-15",
+          sex: "Male",
+          bloodType: "O+"
+        }
+      ];
+      
+      const patient = mockPatients.find(p => p.patientId === patientIdFromUrl);
+      if (patient) {
+        setSelectedPatient(patient);
+        sessionStorage.setItem('selectedPatient', JSON.stringify(patient));
+      }
+    }
+  }, [searchParams]);
+
+  // Redirect to patient lookup if no patient selected
+  if (!selectedPatient) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="max-w-md mx-4">
+          <CardHeader className="text-center">
+            <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <CardTitle>No Patient Selected</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              Please select a patient before accessing the dashboard.
+            </p>
+            <Button onClick={() => router.push('/patient-lookup')}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Go to Patient Lookup
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show loading state while patient data loads
+  if (patientDataLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="max-w-md mx-4">
+          <CardContent className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading patient data...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show error if patient data failed to load
+  if (patientDataError || !patientData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="max-w-md mx-4">
+          <CardHeader className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <CardTitle>Error Loading Patient Data</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              {patientDataError || 'Failed to load patient information'}
+            </p>
+            <Button onClick={() => router.push('/patient-lookup')}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Patient Lookup
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background min-h-screen">
@@ -67,10 +168,10 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h1 className="text-foreground text-lg font-semibold">
-                  Patient Dashboard
+                  Patient Dashboard - {selectedPatient.name}
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  Medical Record Overview
+                  ID: {selectedPatient.patientId} • DOB: {selectedPatient.dob} • {selectedPatient.sex}
                 </p>
               </div>
             </div>
@@ -83,6 +184,13 @@ export default function DashboardPage() {
                 totalMatches={totalMatches}
                 isSearching={isSearching}
               />
+              <Button 
+                variant="outline" 
+                onClick={() => router.push('/patient-lookup')}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Change Patient
+              </Button>
             </div>
           </div>
         </div>
@@ -100,7 +208,7 @@ export default function DashboardPage() {
               <div className="flex items-center space-x-2">
                 <FileDigit className="text-primary h-4 w-4" />
                 <span className="text-primary text-sm font-medium">
-                  MRN: A-13511
+                  MRN: {patientData.patientId}
                 </span>
               </div>
             </div>
@@ -120,7 +228,7 @@ export default function DashboardPage() {
                         Patient Photo
                       </p>
                       <p className="text-muted-foreground text-xs">
-                        ID: A-13511
+                        ID: {patientData.patientId}
                       </p>
                     </div>
                     {/* Upload overlay */}
@@ -150,7 +258,7 @@ export default function DashboardPage() {
                     <User className="text-primary h-5 w-5" />
                     <div>
                       <p className="text-foreground text-sm font-medium">
-                        {session?.user?.name ?? "John Michael Doe"}
+                        {patientData.name}
                       </p>
                       <p className="text-muted-foreground text-xs">Full Name</p>
                     </div>
@@ -159,7 +267,7 @@ export default function DashboardPage() {
                     <Calendar className="text-primary h-5 w-5" />
                     <div>
                       <p className="text-foreground text-sm font-medium">
-                        03/15/1985
+                        {patientData.dob}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Date of Birth
@@ -170,7 +278,7 @@ export default function DashboardPage() {
                     <Users className="text-primary h-5 w-5" />
                     <div>
                       <p className="text-foreground text-sm font-medium">
-                        Male
+                        {patientData.sex}
                       </p>
                       <p className="text-muted-foreground text-xs">Sex</p>
                     </div>
@@ -183,27 +291,32 @@ export default function DashboardPage() {
                     <Phone className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        (555) 123-4567
+                        {patientData.phone || "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Primary Phone
                       </p>
-                      <p className="text-muted-foreground text-sm">
-                        (555) 987-6543
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Secondary Phone
-                      </p>
+                      {patientData.secondaryPhone && (
+                        <>
+                          <p className="text-muted-foreground text-sm">
+                            {patientData.secondaryPhone}
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            Secondary Phone
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <MapPin className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        1234 Oak Street
+                        {patientData.address?.line1 || "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-sm">
-                        Apt 5B, Springfield, IL 62701
+                        {patientData.address?.line2 && `${patientData.address.line2}, `}
+                        {patientData.address?.city}, {patientData.address?.state} {patientData.address?.postalCode}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Home Address
@@ -214,7 +327,7 @@ export default function DashboardPage() {
                     <Mail className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        {session?.user?.email ?? "john.doe@email.com"}
+                        {patientData.email || "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Email Address
@@ -229,41 +342,45 @@ export default function DashboardPage() {
                     <CreditCard className="text-primary mt-0.5 h-5 w-5" />
                     <div className="flex-1">
                       <p className="text-foreground text-sm font-medium">
-                        Blue Cross Blue Shield
+                        {patientData.insurance?.primary?.provider || "Not provided"}
                       </p>
                       <p className="text-muted-foreground text-sm">
-                        Policy: BC123456789
+                        Policy: {patientData.insurance?.primary?.policyNumber || "N/A"}
                       </p>
                       <p className="text-muted-foreground text-xs">
                         Primary Insurance
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <Shield className="text-primary mt-0.5 h-5 w-5" />
-                    <div className="flex-1">
-                      <p className="text-foreground text-sm font-medium">
-                        Medicare Part A
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        Policy: MED-987654321
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Secondary Insurance
-                      </p>
+                  {patientData.insurance?.secondary && (
+                    <div className="flex items-start space-x-3">
+                      <Shield className="text-primary mt-0.5 h-5 w-5" />
+                      <div className="flex-1">
+                        <p className="text-foreground text-sm font-medium">
+                          {patientData.insurance.secondary.provider}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          Policy: {patientData.insurance.secondary.policyNumber}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          Secondary Insurance
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <FileDigit className="text-primary mt-0.5 h-5 w-5" />
-                    <div className="flex-1">
-                      <p className="text-foreground text-sm font-medium">
-                        GRP-789456
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Group Number
-                      </p>
+                  )}
+                  {patientData.insurance?.primary?.groupNumber && (
+                    <div className="flex items-start space-x-3">
+                      <FileDigit className="text-primary mt-0.5 h-5 w-5" />
+                      <div className="flex-1">
+                        <p className="text-foreground text-sm font-medium">
+                          {patientData.insurance.primary.groupNumber}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          Group Number
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Emergency Contacts */}
@@ -348,40 +465,54 @@ export default function DashboardPage() {
                       <Users className="text-primary mr-2 h-4 w-4" />
                       Social History
                     </h3>
-                    <div className="space-y-1">
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Smoking Status:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
-                          Former smoker (quit 2019)
-                        </span>
+                    {patientData.socialHistory ? (
+                      <div className="space-y-1">
+                        {patientData.socialHistory.tobacco && (
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Smoking Status:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
+                              {patientData.socialHistory.tobacco}
+                            </span>
+                          </div>
+                        )}
+                        {patientData.socialHistory.alcohol && (
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Alcohol Use:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
+                              {patientData.socialHistory.alcohol}
+                            </span>
+                          </div>
+                        )}
+                        {patientData.socialHistory.drugs && (
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Drug Use:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
+                              {patientData.socialHistory.drugs}
+                            </span>
+                          </div>
+                        )}
+                        {patientData.socialHistory.occupation && (
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Occupation:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
+                              {patientData.socialHistory.occupation}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Alcohol Use:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
-                          Social drinker (1-2 drinks/week)
-                        </span>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-muted-foreground text-sm">No social history recorded</p>
                       </div>
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Drug Use:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
-                          None reported
-                        </span>
-                      </div>
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Occupation:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
-                          Software Engineer
-                        </span>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Immunization History */}
@@ -390,68 +521,33 @@ export default function DashboardPage() {
                       <Shield className="text-primary mr-2 h-4 w-4" />
                       Immunization History
                     </h3>
-                    <div className="space-y-1">
-                      <div className="bg-secondary rounded border p-2">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-foreground text-sm font-medium">
-                              COVID-19 Vaccine
-                            </p>
-                            <p className="text-muted-foreground text-xs">
-                              Pfizer - Booster
-                            </p>
+                    {patientData.immunizations && patientData.immunizations.length > 0 ? (
+                      <div className="space-y-1">
+                        {patientData.immunizations.map((immunization, index) => (
+                          <div key={index} className="bg-secondary rounded border p-2">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <p className="text-foreground text-sm font-medium">
+                                  {immunization.vaccine}
+                                </p>
+                                {immunization.notes && (
+                                  <p className="text-muted-foreground text-xs">
+                                    {immunization.notes}
+                                  </p>
+                                )}
+                              </div>
+                              <span className="text-primary text-xs font-medium">
+                                {new Date(immunization.administeredOn).toLocaleDateString()}
+                              </span>
+                            </div>
                           </div>
-                          <span className="text-primary text-xs font-medium">
-                            Dec 15, 2023
-                          </span>
-                        </div>
+                        ))}
                       </div>
-                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              Influenza Vaccine
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                              Seasonal
-                            </p>
-                          </div>
-                          <span className="text-xs font-medium text-green-600">
-                            Oct 20, 2024
-                          </span>
-                        </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-muted-foreground text-sm">No immunization records</p>
                       </div>
-                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              Tetanus/Diphtheria
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                              Tdap
-                            </p>
-                          </div>
-                          <span className="text-xs font-medium text-green-600">
-                            Mar 10, 2022
-                          </span>
-                        </div>
-                      </div>
-                      <div className="rounded border border-yellow-200 bg-yellow-50 p-2 dark:border-yellow-800 dark:bg-yellow-900/20">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              Hepatitis B
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                              Series incomplete
-                            </p>
-                          </div>
-                          <span className="text-xs font-medium text-yellow-600">
-                            Due: Jan 2025
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Allergies */}
@@ -461,48 +557,72 @@ export default function DashboardPage() {
                       Allergies
                     </h3>
                     <div className="space-y-1">
-                      <div className="rounded border border-red-200 bg-red-50 p-2 dark:border-red-800 dark:bg-red-900/20">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              Penicillin
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                              Severe - Rash, difficulty breathing
-                            </p>
+                      {patientData.allergies && patientData.allergies.length > 0 ? (
+                        patientData.allergies.map((allergy, index) => {
+                          // Determine border and background colors based on severity
+                          const getSeverityStyle = (severity: string) => {
+                            switch (severity.toLowerCase()) {
+                              case 'severe':
+                                return {
+                                  border: 'border-red-200 dark:border-red-800',
+                                  bg: 'bg-red-50 dark:bg-red-900/20',
+                                  textColor: 'text-red-600'
+                                };
+                              case 'moderate':
+                                return {
+                                  border: 'border-orange-200 dark:border-orange-800',
+                                  bg: 'bg-orange-50 dark:bg-orange-900/20',
+                                  textColor: 'text-orange-600'
+                                };
+                              case 'mild':
+                                return {
+                                  border: 'border-yellow-200 dark:border-yellow-800',
+                                  bg: 'bg-yellow-50 dark:bg-yellow-900/20',
+                                  textColor: 'text-yellow-600'
+                                };
+                              default:
+                                return {
+                                  border: 'border-gray-200 dark:border-gray-700',
+                                  bg: 'bg-gray-50 dark:bg-gray-900/20',
+                                  textColor: 'text-gray-600'
+                                };
+                            }
+                          };
+                          
+                          const style = getSeverityStyle(allergy.severity);
+                          
+                          return (
+                            <div key={index} className={`rounded border ${style.border} ${style.bg} p-2`}>
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {allergy.substance}
+                                  </p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    {allergy.severity} - {allergy.reaction}
+                                  </p>
+                                </div>
+                                <span className={`text-xs font-medium ${style.textColor}`}>
+                                  {allergy.notedOn ? new Date(allergy.notedOn).toLocaleDateString() : 'Date unknown'}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                No Known Allergies
+                              </p>
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                                No allergies recorded
+                              </p>
+                            </div>
                           </div>
-                          <span className="text-xs font-medium text-red-600">
-                            Known since childhood
-                          </span>
                         </div>
-                      </div>
-                      <div className="rounded border border-yellow-200 bg-yellow-50 p-2 dark:border-yellow-800 dark:bg-yellow-900/20">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              Shellfish
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                              Mild - Nausea, stomach upset
-                            </p>
-                          </div>
-                          <span className="text-xs font-medium text-yellow-600">
-                            Noted 2020
-                          </span>
-                        </div>
-                      </div>
-                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              No Known Allergies
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                              Other than listed above
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -515,76 +635,29 @@ export default function DashboardPage() {
                       <Activity className="mr-2 h-4 w-4 text-blue-600" />
                       Past Injuries & Conditions
                     </h3>
-                    <div className="space-y-1">
-                      <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            Head:
-                          </span>
-                          <span className="text-xs font-medium text-blue-600">
-                            Jan 15, 2023
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Mild concussion from sports injury. Full recovery, no
-                          lasting effects.
-                        </p>
+                    {patientData.pastConditions && patientData.pastConditions.length > 0 ? (
+                      <div className="space-y-1">
+                        {patientData.pastConditions.map((condition, index) => (
+                          <div key={index} className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
+                            <div className="mb-1 flex items-start justify-between">
+                              <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                                {condition.bodyPart}:
+                              </span>
+                              <span className="text-xs font-medium text-blue-600">
+                                {condition.date ? new Date(condition.date).toLocaleDateString() : 'Unknown date'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                              {condition.notes}
+                            </p>
+                          </div>
+                        ))}
                       </div>
-                      <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            Right Knee:
-                          </span>
-                          <span className="text-xs font-medium text-blue-600">
-                            Jun 8, 2021
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          ACL sprain from skiing accident. Physical therapy
-                          completed successfully.
-                        </p>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-muted-foreground text-sm">No past medical conditions recorded</p>
                       </div>
-                      <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            Left Wrist:
-                          </span>
-                          <span className="text-xs font-medium text-blue-600">
-                            Sep 22, 2020
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Fracture from fall. Cast for 6 weeks, full recovery.
-                        </p>
-                      </div>
-                      <div className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                            Chest:
-                          </span>
-                          <span className="text-xs font-medium text-blue-600">
-                            Mar 12, 2019
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Pneumonia, treated with antibiotics. Full recovery.
-                        </p>
-                      </div>
-                      <div className="rounded border border-gray-200 bg-gray-50 p-2 dark:border-gray-600 dark:bg-gray-700">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                            Other:
-                          </span>
-                          <span className="text-xs font-medium text-gray-600">
-                            Various dates
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Childhood asthma (resolved by age 12), seasonal
-                          allergies (mild).
-                        </p>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Family Medical History */}
@@ -593,75 +666,27 @@ export default function DashboardPage() {
                       <Users className="mr-2 h-4 w-4 text-purple-600" />
                       Family Medical History
                     </h3>
-                    <div className="space-y-1">
-                      <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            Father:
-                          </span>
-                          <span className="text-xs font-medium text-purple-600">
-                            Age 65
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Hypertension (controlled), Type 2 Diabetes (diet
-                          controlled), No cardiac history.
-                        </p>
+                    {patientData.familyHistory && patientData.familyHistory.length > 0 ? (
+                      <div className="space-y-1">
+                        {patientData.familyHistory.map((history, index) => (
+                          <div key={index} className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
+                            <div className="mb-1 flex items-start justify-between">
+                              <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                                {history.relation}:
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                              {history.condition}
+                              {history.notes && ` - ${history.notes}`}
+                            </p>
+                          </div>
+                        ))}
                       </div>
-                      <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            Mother:
-                          </span>
-                          <span className="text-xs font-medium text-purple-600">
-                            Age 62
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Breast cancer (2018, treated successfully),
-                          Osteoporosis, No cardiac history.
-                        </p>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-muted-foreground text-sm">No family medical history recorded</p>
                       </div>
-                      <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            Maternal Grandmother:
-                          </span>
-                          <span className="text-xs font-medium text-purple-600">
-                            Deceased at 78
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Heart disease, Stroke at age 75.
-                        </p>
-                      </div>
-                      <div className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                            Paternal Grandfather:
-                          </span>
-                          <span className="text-xs font-medium text-purple-600">
-                            Deceased at 72
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          Prostate cancer, Hypertension.
-                        </p>
-                      </div>
-                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
-                        <div className="mb-1 flex items-start justify-between">
-                          <span className="text-sm font-medium text-green-800 dark:text-green-200">
-                            Siblings:
-                          </span>
-                          <span className="text-xs font-medium text-green-600">
-                            2 sisters
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                          No significant medical history reported.
-                        </p>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -900,7 +925,9 @@ export default function DashboardPage() {
                     Blood Pressure & Type
                   </p>
                   <p className="text-foreground text-xl font-bold">
-                    120/80 • O+
+                    {patientData.vitals?.bloodPressure 
+                      ? `${patientData.vitals.bloodPressure.systolic}/${patientData.vitals.bloodPressure.diastolic}`
+                      : "N/A"} • {patientData.bloodType || "N/A"}
                   </p>
                   <p className="text-xs text-green-600">Normal</p>
                 </div>
@@ -916,7 +943,9 @@ export default function DashboardPage() {
                   <p className="text-muted-foreground text-sm font-medium">
                     Heart Rate
                   </p>
-                  <p className="text-foreground text-xl font-bold">72 bpm</p>
+                  <p className="text-foreground text-xl font-bold">
+                    {patientData.vitals?.heartRate || "N/A"} bpm
+                  </p>
                   <p className="text-xs text-blue-600">Normal</p>
                 </div>
                 <Heart className="h-8 w-8 text-blue-600" />
@@ -931,7 +960,9 @@ export default function DashboardPage() {
                   <p className="text-muted-foreground text-sm font-medium">
                     Temperature
                   </p>
-                  <p className="text-foreground text-xl font-bold">98.6°F</p>
+                  <p className="text-foreground text-xl font-bold">
+                    {patientData.vitals?.temperature || "N/A"}°F
+                  </p>
                   <p className="text-xs text-orange-600">Normal</p>
                 </div>
                 <Thermometer className="h-8 w-8 text-orange-600" />
@@ -947,9 +978,11 @@ export default function DashboardPage() {
                     Weight & Height
                   </p>
                   <p className="text-foreground text-xl font-bold">
-                    165 lbs • 5'10"
+                    {patientData.vitals?.weight || "N/A"} • {patientData.vitals?.height || "N/A"}
                   </p>
-                  <p className="text-xs text-purple-600">BMI: 23.4</p>
+                  <p className="text-xs text-purple-600">
+                    BMI: {patientData.vitals?.bmi || "N/A"}
+                  </p>
                 </div>
                 <Weight className="h-8 w-8 text-purple-600" />
               </div>
@@ -1159,97 +1192,6 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Upcoming Appointments */}
-            <Card className="border">
-              <CardHeader className="border-b">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-card-foreground flex items-center">
-                      <Calendar className="text-primary mr-2 h-5 w-5" />
-                      Upcoming Appointments
-                    </CardTitle>
-                    <CardDescription>
-                      Scheduled medical appointments and visits
-                    </CardDescription>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Schedule
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="divide-border divide-y">
-                  <div className="hover:bg-accent p-4 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
-                          <Stethoscope className="text-primary h-6 w-6" />
-                        </div>
-                        <div>
-                          <p className="text-foreground font-semibold">
-                            Follow-up Consultation
-                          </p>
-                          <p className="text-muted-foreground text-sm">
-                            Dr. Sarah Smith, MD • Internal Medicine
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            Tomorrow • December 20, 2024 • 2:00 PM
-                          </p>
-                          <div className="mt-1 flex items-center space-x-2">
-                            <MapPin className="text-muted-foreground h-3 w-3" />
-                            <span className="text-muted-foreground text-xs">
-                              Main Medical Center, Room 205
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
-                          Confirmed
-                        </span>
-                        <Button size="sm">Join Meeting</Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="hover:bg-accent p-4 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
-                          <Calendar className="text-primary h-6 w-6" />
-                        </div>
-                        <div>
-                          <p className="text-foreground font-semibold">
-                            Dental Checkup
-                          </p>
-                          <p className="text-muted-foreground text-sm">
-                            Dr. James Wilson, DDS • Dentistry
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            December 28, 2024 • 10:00 AM
-                          </p>
-                          <div className="mt-1 flex items-center space-x-2">
-                            <MapPin className="text-muted-foreground h-3 w-3" />
-                            <span className="text-muted-foreground text-xs">
-                              Dental Clinic, Suite 101
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
-                          Scheduled
-                        </span>
-                        <Button variant="outline" size="sm">
-                          Details
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Right Column - Medical Info & Actions */}
@@ -1264,90 +1206,32 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-3">
-                  <div className="bg-card flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <p className="text-foreground font-medium">
-                        Lisinopril 10mg
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        Once daily
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Refills: 2 remaining
-                      </p>
+                  {patientData.medications?.filter(med => med.active).map((medication, index) => (
+                    <div key={index} className="bg-card flex items-center justify-between rounded-lg border p-3">
+                      <div>
+                        <p className="text-foreground font-medium">
+                          {medication.name} {medication.dose && `${medication.dose}`}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          {medication.frequency || "As prescribed"}
+                        </p>
+                        {medication.refills !== undefined && (
+                          <p className="text-muted-foreground text-xs">
+                            Refills: {medication.refills} remaining
+                          </p>
+                        )}
+                      </div>
+                      <Clock className="text-muted-foreground h-4 w-4" />
                     </div>
-                    <Clock className="text-muted-foreground h-4 w-4" />
-                  </div>
-                  <div className="bg-card flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <p className="text-foreground font-medium">
-                        Vitamin D3 1000IU
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        Once daily
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Refills: 3 remaining
-                      </p>
+                  )) || (
+                    <div className="text-center py-4">
+                      <p className="text-muted-foreground">No current medications</p>
                     </div>
-                    <Clock className="text-muted-foreground h-4 w-4" />
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="mt-3 w-full">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Medication
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Health Alerts */}
-            <Card className="border">
-              <CardHeader className="border-b">
-                <CardTitle className="text-foreground flex items-center">
-                  <Bell className="mr-2 h-5 w-5" />
-                  Health Alerts & Reminders
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <div className="rounded-lg border border-green-200 bg-green-50 p-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                      <p className="text-sm font-medium text-green-800">
-                        Annual Physical Complete
-                      </p>
-                    </div>
-                    <p className="mt-1 text-xs text-green-600">
-                      Last checkup: Dec 10, 2024
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                      <p className="text-sm font-medium text-blue-800">
-                        Upcoming Appointment
-                      </p>
-                    </div>
-                    <p className="mt-1 text-xs text-blue-600">
-                      Tomorrow at 2:00 PM
-                    </p>
-                  </div>
-
-                  <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
-                      <p className="text-sm font-medium text-yellow-800">
-                        Medication Reminder
-                      </p>
-                    </div>
-                    <p className="mt-1 text-xs text-yellow-600">
-                      Take Vitamin D at 8:00 AM daily
-                    </p>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
+
           </div>
         </div>
 
@@ -1376,59 +1260,29 @@ export default function DashboardPage() {
                     Recent Notes
                   </h3>
 
-                  <div className="space-y-3">
-                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
-                      <div className="mb-2 flex items-start justify-between">
-                        <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                          Dr. Sarah Smith, MD
-                        </span>
-                        <span className="text-xs font-medium text-blue-600">
-                          Dec 19, 2024
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        Patient continues to show excellent progress with DNRS
-                        protocol. Reports significant improvement in daily
-                        functioning and reduced anxiety levels. Compliance with
-                        exercise routine has been consistent. Recommend
-                        continuing current phase for another month before
-                        advancing.
-                      </p>
+                  {patientData.recentNotes && patientData.recentNotes.length > 0 ? (
+                    <div className="space-y-3">
+                      {patientData.recentNotes.map((note, index) => (
+                        <div key={index} className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+                          <div className="mb-2 flex items-start justify-between">
+                            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                              {note.provider}
+                            </span>
+                            <span className="text-xs font-medium text-blue-600">
+                              {new Date(note.date).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
+                            {note.content}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-
-                    <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20">
-                      <div className="mb-2 flex items-start justify-between">
-                        <span className="text-sm font-medium text-green-800 dark:text-green-200">
-                          Dr. Michael Johnson, MD
-                        </span>
-                        <span className="text-xs font-medium text-green-600">
-                          Dec 10, 2024
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        Annual physical examination completed. All vital signs
-                        within normal ranges. Patient maintains healthy
-                        lifestyle habits. No new concerns identified. Continue
-                        current preventive care schedule.
-                      </p>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-muted-foreground text-sm">No recent notes available</p>
                     </div>
-
-                    <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 dark:border-purple-800 dark:bg-purple-900/20">
-                      <div className="mb-2 flex items-start justify-between">
-                        <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                          Dr. Emily Brown, MD
-                        </span>
-                        <span className="text-xs font-medium text-purple-600">
-                          Dec 5, 2024
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        Chest X-ray results normal. No acute findings. Patient
-                        reports good respiratory function. Continue monitoring
-                        as part of routine preventive care.
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Progress Summary */}
@@ -1437,33 +1291,8 @@ export default function DashboardPage() {
                     <BarChart3 className="text-primary mr-2 h-4 w-4" />
                     Progress Summary
                   </h3>
-
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-3 dark:border-indigo-800 dark:bg-indigo-900/20">
-                      <h4 className="mb-2 text-sm font-semibold text-indigo-800 dark:text-indigo-200">
-                        DNRS Progress
-                      </h4>
-                      <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-                        <li>• 8 months of consistent participation</li>
-                        <li>• 40% reduction in reported symptoms</li>
-                        <li>• Improved sleep quality and duration</li>
-                        <li>• Enhanced stress management capabilities</li>
-                        <li>• Better overall quality of life scores</li>
-                      </ul>
-                    </div>
-
-                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-800 dark:bg-emerald-900/20">
-                      <h4 className="mb-2 text-sm font-semibold text-emerald-800 dark:text-emerald-200">
-                        Health Maintenance
-                      </h4>
-                      <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-                        <li>• All vaccinations up to date</li>
-                        <li>• Regular exercise routine maintained</li>
-                        <li>• Healthy dietary habits consistent</li>
-                        <li>• No new health concerns identified</li>
-                        <li>• Excellent medication compliance</li>
-                      </ul>
-                    </div>
+                  <div className="text-center py-4">
+                    <p className="text-muted-foreground text-sm">No progress data available</p>
                   </div>
                 </div>
 
@@ -1473,38 +1302,11 @@ export default function DashboardPage() {
                     <Eye className="text-primary mr-2 h-4 w-4" />
                     General Observations
                   </h3>
-
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
-                    <div className="space-y-2">
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        Patient demonstrates excellent engagement with treatment
-                        protocols and shows proactive approach to health
-                        management. Communication during visits has been clear
-                        and collaborative. No barriers to care identified.
-                      </p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        Family support system appears strong, with spouse
-                        actively involved in care coordination. Patient
-                        expresses satisfaction with current treatment plan and
-                        shows motivation to continue progress.
-                      </p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        No adverse reactions to current medications. Patient
-                        reports good tolerance of all prescribed treatments.
-                        Lifestyle modifications have been successfully
-                        implemented and maintained.
-                      </p>
-                    </div>
+                  <div className="text-center py-4">
+                    <p className="text-muted-foreground text-sm">No observations recorded</p>
                   </div>
                 </div>
 
-                {/* Add Note Button */}
-                <div className="flex justify-end pt-4">
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add New Note
-                  </Button>
-                </div>
               </div>
             </CardContent>
           </Card>

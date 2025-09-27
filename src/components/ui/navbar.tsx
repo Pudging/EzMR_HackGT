@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 const links = [
   { href: "/", label: "Home" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/patient-lookup", label: "Patient Lookup" },
   { href: "/patient-assessment", label: "Patient Assessment" },
   { href: "/emr-upload", label: "EMR Upload" },
-  { href: "/id-scan", label: "ID Scan" },
 ];
 
 export function Navbar() {
