@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db";
 import { getCurrentTenant } from "@/lib/tenant";
+import { logUserAction, ActionType } from "@/lib/logging";
 
 type ClinicalNoteRecord = {
   content: string;
@@ -143,9 +144,24 @@ export async function GET(
       `📋 Found assessment data for ${Object.keys(assessmentData).length} body parts`,
     );
 
+    await logUserAction({
+      action: ActionType.ACCESS,
+      resource: "assessment",
+      resourceId: patient.id,
+      request,
+      success: true,
+      metadata: { mrn: patient.mrn },
+    });
+
     return NextResponse.json(assessmentData);
   } catch (error) {
     console.error("Error fetching patient assessment data:", error);
+    await logUserAction({
+      action: ActionType.ACCESS,
+      resource: "assessment",
+      request,
+      success: false,
+    });
     return NextResponse.json(
       { error: "Failed to fetch assessment data" },
       { status: 500 },
@@ -241,9 +257,24 @@ export async function POST(
 
     console.log(`✅ Saved ${notes.length} assessment notes`);
 
+    await logUserAction({
+      action: ActionType.UPDATE,
+      resource: "assessment",
+      resourceId: patient.id,
+      request,
+      success: true,
+      metadata: { notesCreated: notes.length },
+    });
+
     return NextResponse.json({ success: true, notesCreated: notes.length });
   } catch (error) {
     console.error("Error saving patient assessment data:", error);
+    await logUserAction({
+      action: ActionType.UPDATE,
+      resource: "assessment",
+      request,
+      success: false,
+    });
     return NextResponse.json(
       { error: "Failed to save assessment data" },
       { status: 500 },

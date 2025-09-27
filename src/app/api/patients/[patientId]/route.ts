@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db";
 import { getCurrentTenant } from "@/lib/tenant";
+import { logUserAction, ActionType } from "@/lib/logging";
 
 interface PatientParams {
   patientId: string;
@@ -350,9 +351,24 @@ export async function GET(
       upcomingAppointments: [], // Could implement appointments table if needed
     };
 
+    await logUserAction({
+      action: ActionType.ACCESS,
+      resource: "patient",
+      resourceId: patient.id,
+      request,
+      success: true,
+      metadata: { mrn: patient.mrn },
+    });
+
     return NextResponse.json(transformedData);
   } catch (error) {
     console.error("Error fetching patient data:", error);
+    await logUserAction({
+      action: ActionType.ACCESS,
+      resource: "patient",
+      request,
+      success: false,
+    });
     return NextResponse.json(
       { error: "Failed to fetch patient data" },
       { status: 500 },
