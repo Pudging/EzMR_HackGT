@@ -45,7 +45,6 @@ import {
   ArrowLeft,
   AlertCircle,
   Monitor,
-  Upload,
 } from "lucide-react";
 
 interface SelectedPatient {

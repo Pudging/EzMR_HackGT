@@ -3177,13 +3177,16 @@ export default function EMRUploadPage() {
                     Bloodwork, X-rays, Genetic tests, Medical documents
                   </div>
                   {process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ? (
-                    <CldUploadButton
-                      className="mt-4 inline-flex h-10 items-center justify-center px-4 py-2 text-sm font-medium transition-colors border-2 border-white bg-white text-black uppercase hover:bg-neutral-200 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                    <div 
+                      className="mt-4 overflow-hidden"
                       style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace'
                       }}
-                      uploadPreset="emr-upload"
+                    >
+                      <CldUploadButton
+                        className="inline-flex h-10 items-center justify-center px-4 py-2 text-sm font-medium transition-colors border-2 border-white bg-white text-black uppercase hover:bg-neutral-200 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        uploadPreset="emr-upload"
                       options={{
                         sources: ["local", "camera"],
                         multiple: true,
@@ -3215,6 +3218,7 @@ export default function EMRUploadPage() {
                     >
                       Choose Files
                     </CldUploadButton>
+                    </div>
                   ) : (
                     <div className="mt-4 text-center">
                       <div className="rounded-md border border-yellow-200 bg-yellow-50 p-4">
