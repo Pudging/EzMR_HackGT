@@ -208,20 +208,35 @@ function DashboardPageContent() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-black min-h-screen text-white">
       {/* Page Header */}
-      <header className="bg-background border-b">
+      <header className="border-b-4 border-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
-                <Stethoscope className="text-primary-foreground h-5 w-5" />
+              <div 
+                className="flex h-10 w-10 items-center justify-center border-2 border-white overflow-hidden"
+                style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
+              >
+                <Stethoscope className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-foreground text-lg font-semibold">
+                <h1 
+                  className="text-white text-lg font-black uppercase tracking-tight drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   Patient Dashboard - {selectedPatient.name}
                 </h1>
-                <p className="text-muted-foreground text-sm">
+                <p 
+                  className="text-neutral-300 text-sm drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   ID: {selectedPatient.patientId} • DOB: {selectedPatient.dob} •{" "}
                   {selectedPatient.sex}
                 </p>
@@ -238,6 +253,11 @@ function DashboardPageContent() {
               />
               <Button
                 variant="outline"
+                className="border-2 border-white bg-transparent text-white uppercase hover:bg-white hover:text-black"
+                style={{ 
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                }}
                 onClick={() => router.push("/patient-lookup")}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -251,15 +271,30 @@ function DashboardPageContent() {
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Patient Information Header */}
-        <div className="bg-card mb-4 rounded-lg border shadow-sm">
-          <div className="border-b px-4 py-3">
+        <div 
+          className="mb-4 border-2 border-white overflow-hidden"
+          style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+        >
+          <div className="border-b-2 border-white px-4 py-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-card-foreground text-lg font-semibold">
+              <h2 
+                className="text-white text-lg font-black uppercase tracking-wide drop-shadow-lg"
+                style={{ 
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                }}
+              >
                 Patient Information
               </h2>
               <div className="flex items-center space-x-2">
-                <FileDigit className="text-primary h-4 w-4" />
-                <span className="text-primary text-sm font-medium">
+                <FileDigit className="h-4 w-4 text-white" />
+                <span 
+                  className="text-white text-sm font-black uppercase drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   MRN: {patientData.patientId}
                 </span>
               </div>
@@ -271,9 +306,15 @@ function DashboardPageContent() {
               {/* Patient Photo */}
               <div className="flex justify-center lg:justify-start">
                 <div className="group relative">
-                  <div className="border-muted bg-muted hover:border-primary flex h-[326px] w-[298px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 shadow-sm transition-colors">
-                    <div className="bg-primary/10 mb-2 flex h-36 w-36 items-center justify-center rounded-full">
-                      <User className="text-primary h-20 w-20" />
+                  <div 
+                    className="flex h-[326px] w-[298px] cursor-pointer flex-col items-center justify-center border-2 border-white transition-colors hover:border-opacity-80 overflow-hidden"
+                    style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+                  >
+                    <div 
+                      className="mb-2 flex h-36 w-36 items-center justify-center border-2 border-white overflow-hidden"
+                      style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))' }}
+                    >
+                      <User className="h-20 w-20 text-white" />
                     </div>
                     <div className="text-center">
                       <p className="text-muted-foreground text-xs font-medium">
@@ -508,15 +549,30 @@ function DashboardPageContent() {
         {/* Past Medical History Section */}
         <div className="mb-6" id="section-pastConditions">
           {/* Past Medical History Section - Full width */}
-          <div className="bg-card rounded-lg border shadow-sm">
-            <div className="border-b px-4 py-3">
+          <div 
+            className="border-2 border-white overflow-hidden"
+            style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+          >
+            <div className="border-b-2 border-white px-4 py-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-card-foreground text-lg font-semibold">
+                <h2 
+                  className="text-white text-lg font-black uppercase tracking-wide drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   Past Medical History
                 </h2>
                 <div className="flex items-center space-x-2">
-                  <FileText className="text-primary h-4 w-4" />
-                  <span className="text-primary text-sm font-medium">
+                  <FileText className="h-4 w-4 text-white" />
+                  <span 
+                    className="text-white text-sm font-black uppercase drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
                     Complete History
                   </span>
                 </div>
@@ -528,11 +584,18 @@ function DashboardPageContent() {
                 <div className="space-y-4">
                   {/* Social History */}
                   <div
-                    className="rounded-lg border p-3"
+                    className="border-2 border-white p-3 overflow-hidden"
+                    style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))' }}
                     id="section-socialHistory"
                   >
-                    <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
-                      <Users className="text-primary mr-2 h-4 w-4" />
+                    <h3 
+                      className="text-md text-white mb-2 flex items-center font-black uppercase tracking-wide drop-shadow-lg"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
+                      <Users className="mr-2 h-4 w-4 text-white" />
                       Social History
                     </h3>
                     {patientData.socialHistory ? (
@@ -589,10 +652,17 @@ function DashboardPageContent() {
 
                   {/* Immunization History */}
                   <div
-                    className="rounded-lg border p-3"
+                    className="border-2 border-white p-3 overflow-hidden"
                     id="section-immunizations"
+                    style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
                   >
-                    <h3 className="text-md text-foreground mb-2 flex items-center font-semibold">
+                    <h3 
+                      className="text-md text-foreground mb-2 flex items-center font-black uppercase drop-shadow-lg"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       <Shield className="text-primary mr-2 h-4 w-4" />
                       Immunization History
                     </h3>
@@ -603,20 +673,39 @@ function DashboardPageContent() {
                           (immunization, index) => (
                             <div
                               key={index}
-                              className="bg-secondary rounded border p-2"
+                              className="bg-secondary border-2 border-white p-2 overflow-hidden"
+                              style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
                             >
                               <div className="flex items-start justify-between">
                                 <div>
-                                  <p className="text-foreground text-sm font-medium">
+                                  <p 
+                                    className="text-foreground text-sm font-black uppercase drop-shadow-lg"
+                                    style={{ 
+                                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                    }}
+                                  >
                                     {immunization.vaccine}
                                   </p>
                                   {immunization.notes && (
-                                    <p className="text-muted-foreground text-xs">
+                                    <p 
+                                      className="text-muted-foreground text-xs drop-shadow-lg"
+                                      style={{ 
+                                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                      }}
+                                    >
                                       {immunization.notes}
                                     </p>
                                   )}
                                 </div>
-                                <span className="text-primary text-xs font-medium">
+                                <span 
+                                  className="text-primary text-xs font-black uppercase drop-shadow-lg"
+                                  style={{ 
+                                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                  }}
+                                >
                                   {new Date(
                                     immunization.administeredOn,
                                   ).toLocaleDateString()}
@@ -628,17 +717,32 @@ function DashboardPageContent() {
                       </div>
                     ) : (
                       <div className="text-center py-4">
-                        <p className="text-muted-foreground text-sm">No immunization records</p>
+                        <p 
+                          className="text-muted-foreground text-sm drop-shadow-lg"
+                          style={{ 
+                            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                          }}
+                        >
+                          No immunization records
+                        </p>
                       </div>
                     )}
                   </div>
 
                   {/* Allergies */}
                   <div
-                    className="rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                    className="border-2 border-white p-3 overflow-hidden"
                     id="section-allergies"
+                    style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
                   >
-                    <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
+                    <h3 
+                      className="text-md mb-2 flex items-center font-black uppercase drop-shadow-lg text-gray-900 dark:text-gray-100"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       <Bell className="mr-2 h-4 w-4 text-red-600" />
                       Allergies
                     </h3>
@@ -684,19 +788,36 @@ function DashboardPageContent() {
                           return (
                             <div
                               key={index}
-                              className={`rounded border ${style.border} ${style.bg} p-2`}
+                              className={`border-2 border-white ${style.bg} p-2 overflow-hidden`}
+                              style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
                             >
                               <div className="flex items-start justify-between">
                                 <div>
-                                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                  <p 
+                                    className="text-sm font-black uppercase drop-shadow-lg text-gray-900 dark:text-gray-100"
+                                    style={{ 
+                                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                    }}
+                                  >
                                     {allergy.substance}
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                                  </p>
+                                  <p 
+                                    className="text-xs drop-shadow-lg text-gray-600 dark:text-gray-400"
+                                    style={{ 
+                                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                    }}
+                                  >
                                     {allergy.severity} - {allergy.reaction}
                                   </p>
                                 </div>
                                 <span
-                                  className={`text-xs font-medium ${style.textColor}`}
+                                  className={`text-xs font-black uppercase drop-shadow-lg ${style.textColor}`}
+                                  style={{ 
+                                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                  }}
                                 >
                                   {allergy.notedOn
                                     ? new Date(
@@ -709,14 +830,29 @@ function DashboardPageContent() {
                           );
                         })
                       ) : (
-                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
+                      <div 
+                        className="border-2 border-white border-green-200 bg-green-50 p-2 overflow-hidden dark:border-green-800 dark:bg-green-900/20"
+                        style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
+                      >
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <p 
+                              className="text-sm font-black uppercase drop-shadow-lg text-gray-900 dark:text-gray-100"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
                               No Known Allergies
                             </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
-                                No allergies recorded
+                            <p 
+                              className="text-xs drop-shadow-lg text-gray-600 dark:text-gray-400"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
+                              No allergies recorded
                             </p>
                           </div>
                         </div>
@@ -729,8 +865,17 @@ function DashboardPageContent() {
                 {/* Right Column */}
                 <div className="space-y-4">
                   {/* Past Injuries and Conditions */}
-                  <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-                    <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
+                  <div 
+                    className="border-2 border-white p-3 overflow-hidden"
+                    style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
+                  >
+                    <h3 
+                      className="text-md mb-2 flex items-center font-black uppercase drop-shadow-lg text-gray-900 dark:text-gray-100"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       <Activity className="mr-2 h-4 w-4 text-blue-600" />
                       Past Injuries & Conditions
                     </h3>
@@ -740,13 +885,26 @@ function DashboardPageContent() {
                         {patientData.pastConditions.map((condition, index) => (
                           <div
                             key={index}
-                            className="rounded border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20"
+                            className="border-2 border-white border-blue-200 bg-blue-50 p-2 overflow-hidden dark:border-blue-800 dark:bg-blue-900/20"
+                            style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
                           >
                             <div className="mb-1 flex items-start justify-between">
-                              <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                              <span 
+                                className="text-sm font-black uppercase drop-shadow-lg text-blue-800 dark:text-blue-200"
+                                style={{ 
+                                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                }}
+                              >
                                 {condition.bodyPart}:
                               </span>
-                              <span className="text-xs font-medium text-blue-600">
+                              <span 
+                                className="text-xs font-black uppercase drop-shadow-lg text-blue-600"
+                                style={{ 
+                                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                }}
+                              >
                                 {condition.date
                                   ? new Date(
                                       condition.date,
@@ -754,15 +912,27 @@ function DashboardPageContent() {
                                   : "Unknown date"}
                               </span>
                             </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                            <p 
+                              className="text-xs drop-shadow-lg text-gray-600 dark:text-gray-400"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
                               {condition.notes}
-                        </p>
-                      </div>
+                            </p>
+                          </div>
                         ))}
                         </div>
                     ) : (
                       <div className="py-4 text-center">
-                        <p className="text-muted-foreground text-sm">
+                        <p 
+                          className="text-muted-foreground text-sm drop-shadow-lg"
+                          style={{ 
+                            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                          }}
+                        >
                           No past medical conditions recorded
                         </p>
                       </div>
@@ -771,10 +941,17 @@ function DashboardPageContent() {
 
                   {/* Family Medical History */}
                   <div
-                    className="rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                    className="border-2 border-white p-3 overflow-hidden"
                     id="section-familyHistory"
+                    style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
                   >
-                    <h3 className="text-md mb-2 flex items-center font-semibold text-gray-900 dark:text-gray-100">
+                    <h3 
+                      className="text-md mb-2 flex items-center font-black uppercase drop-shadow-lg text-gray-900 dark:text-gray-100"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       <Users className="mr-2 h-4 w-4 text-purple-600" />
                       Family Medical History
                     </h3>
@@ -784,23 +961,42 @@ function DashboardPageContent() {
                         {patientData.familyHistory.map((history, index) => (
                           <div
                             key={index}
-                            className="rounded border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-900/20"
+                            className="border-2 border-white border-purple-200 bg-purple-50 p-2 overflow-hidden dark:border-purple-800 dark:bg-purple-900/20"
+                            style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
                           >
                             <div className="mb-1 flex items-start justify-between">
-                              <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                              <span 
+                                className="text-sm font-black uppercase drop-shadow-lg text-purple-800 dark:text-purple-200"
+                                style={{ 
+                                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                                }}
+                              >
                                 {history.relation}:
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                              </span>
+                            </div>
+                            <p 
+                              className="text-xs drop-shadow-lg text-gray-600 dark:text-gray-400"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
                               {history.condition}
                               {history.notes && ` - ${history.notes}`}
-                        </p>
-                      </div>
+                            </p>
+                          </div>
                         ))}
                         </div>
                     ) : (
                       <div className="py-4 text-center">
-                        <p className="text-muted-foreground text-sm">
+                        <p 
+                          className="text-muted-foreground text-sm drop-shadow-lg"
+                          style={{ 
+                            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                          }}
+                        >
                           No family medical history recorded
                         </p>
                       </div>
@@ -814,15 +1010,30 @@ function DashboardPageContent() {
 
         {/* Care Plans Section */}
         <div className="mb-6">
-          <div className="bg-card rounded-lg border shadow-sm">
-            <div className="border-b px-4 py-3">
+          <div 
+            className="border-2 border-white overflow-hidden"
+            style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+          >
+            <div className="border-b-2 border-white px-4 py-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-card-foreground text-lg font-semibold">
+                <h2 
+                  className="text-white text-lg font-black uppercase tracking-wide drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   Care Plans
                 </h2>
                 <div className="flex items-center space-x-2">
-                  <FileText className="text-primary h-4 w-4" />
-                  <span className="text-primary text-sm font-medium">
+                  <FileText className="h-4 w-4 text-white" />
+                  <span 
+                    className="text-white text-sm font-black uppercase drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
                     Active Plans
                   </span>
                 </div>
@@ -831,18 +1042,42 @@ function DashboardPageContent() {
             <div className="px-4 py-3">
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* DNRS Section */}
-                <div className="rounded-lg border p-4">
-                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
-                    <Activity className="text-primary mr-2 h-5 w-5" />
+                <div 
+                  className="border-2 border-white p-4 overflow-hidden"
+                  style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))' }}
+                >
+                  <h3 
+                    className="text-md text-white mb-3 flex items-center font-black uppercase tracking-wide drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
+                    <Activity className="mr-2 h-5 w-5 text-white" />
                     DNRS (Dynamic Neuromuscular Rehabilitation System)
                   </h3>
                   <div className="space-y-3">
-                    <div className="bg-secondary rounded-lg border p-3">
+                    <div 
+                      className="border-2 border-white p-3 overflow-hidden"
+                      style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
+                    >
                       <div className="mb-2 flex items-start justify-between">
-                        <span className="text-foreground text-sm font-medium">
+                        <span 
+                          className="text-white text-sm font-black uppercase drop-shadow-lg"
+                          style={{ 
+                            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                          }}
+                        >
                           Current Status:
                         </span>
-                        <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs font-medium">
+                        <span 
+                          className="border-2 border-white text-white px-2 py-1 text-xs font-black uppercase overflow-hidden"
+                          style={{ 
+                            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                            clipPath: 'polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))'
+                          }}
+                        >
                           Active
                         </span>
                       </div>
@@ -906,39 +1141,93 @@ function DashboardPageContent() {
                 </div>
 
                 {/* Preventive Care Section */}
-                <div className="rounded-lg border p-4">
-                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
+                <div 
+                  className="border-2 border-white p-4 overflow-hidden"
+                  style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
+                >
+                  <h3 
+                    className="text-md text-foreground mb-3 flex items-center font-black uppercase drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
                     <Shield className="text-primary mr-2 h-5 w-5" />
                     Preventive Care
                   </h3>
                   <div className="space-y-3">
                     {/* Upcoming Screenings */}
-                    <div className="bg-secondary rounded-lg border p-3">
-                      <h4 className="text-foreground mb-2 text-sm font-semibold">
+                    <div 
+                      className="bg-secondary border-2 border-white p-3 overflow-hidden"
+                      style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
+                    >
+                      <h4 
+                        className="text-foreground mb-2 text-sm font-black uppercase drop-shadow-lg"
+                        style={{ 
+                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                        }}
+                      >
                         Upcoming Screenings
                       </h4>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-xs">
+                          <span 
+                            className="text-muted-foreground text-xs drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Annual Physical
                           </span>
-                          <span className="text-primary text-xs font-medium">
+                          <span 
+                            className="text-primary text-xs font-black uppercase drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Due: Dec 2025
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-xs">
+                          <span 
+                            className="text-muted-foreground text-xs drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Blood Pressure Check
                           </span>
-                          <span className="text-primary text-xs font-medium">
+                          <span 
+                            className="text-primary text-xs font-black uppercase drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Due: Mar 2025
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-xs">
+                          <span 
+                            className="text-muted-foreground text-xs drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Cholesterol Panel
                           </span>
-                          <span className="text-primary text-xs font-medium">
+                          <span 
+                            className="text-primary text-xs font-black uppercase drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Due: Jun 2025
                           </span>
                         </div>
@@ -946,32 +1235,77 @@ function DashboardPageContent() {
                     </div>
 
                     {/* Completed Screenings */}
-                    <div className="bg-secondary rounded-lg border p-3">
-                      <h4 className="text-foreground mb-2 text-sm font-semibold">
+                    <div 
+                      className="bg-secondary border-2 border-white p-3 overflow-hidden"
+                      style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
+                    >
+                      <h4 
+                        className="text-foreground mb-2 text-sm font-black uppercase drop-shadow-lg"
+                        style={{ 
+                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                        }}
+                      >
                         Recently Completed
                       </h4>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-xs">
+                          <span 
+                            className="text-muted-foreground text-xs drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             COVID-19 Booster
                           </span>
-                          <span className="text-primary text-xs font-medium">
+                          <span 
+                            className="text-primary text-xs font-black uppercase drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Dec 15, 2024
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-xs">
+                          <span 
+                            className="text-muted-foreground text-xs drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Influenza Vaccine
                           </span>
-                          <span className="text-primary text-xs font-medium">
+                          <span 
+                            className="text-primary text-xs font-black uppercase drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Oct 20, 2024
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-xs">
+                          <span 
+                            className="text-muted-foreground text-xs drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Annual Physical
                           </span>
-                          <span className="text-primary text-xs font-medium">
+                          <span 
+                            className="text-primary text-xs font-black uppercase drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             Dec 10, 2024
                           </span>
                         </div>
@@ -1116,13 +1450,29 @@ function DashboardPageContent() {
         {/* Patient Assessment Section */}
         {patientData?.assessmentData &&
           Object.keys(patientData.assessmentData).length > 0 && (
-            <Card className="border" id="section-assessment">
-              <CardHeader className="border-b">
-                <CardTitle className="text-foreground flex items-center">
-                  <Stethoscope className="mr-2 h-5 w-5" />
+            <Card 
+              className="border-2 border-white overflow-hidden"
+              id="section-assessment"
+              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            >
+              <CardHeader className="border-b-2 border-white">
+                <CardTitle 
+                  className="text-white flex items-center font-black uppercase tracking-wide drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
+                  <Stethoscope className="mr-2 h-5 w-5 text-white" />
                   Physical Assessment
                 </CardTitle>
-                <CardDescription>
+                <CardDescription 
+                  className="text-neutral-300 drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   Latest physical examination findings by body region
                 </CardDescription>
               </CardHeader>
@@ -1143,17 +1493,31 @@ function DashboardPageContent() {
                       return (
                         <div
                           key={bodyPart}
-                          className="bg-card text-card-foreground rounded-lg border p-4"
+                          className="bg-card text-card-foreground border-2 border-white p-4 overflow-hidden"
+                          style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
                         >
                           <div className="mb-2 flex items-center">
-                            <div className="bg-primary/10 mr-3 flex h-8 w-8 items-center justify-center rounded-lg">
+                            <div className="bg-primary/10 mr-3 flex h-8 w-8 items-center justify-center overflow-hidden"
+                                 style={{ clipPath: 'polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))' }}>
                               <Activity className="text-primary h-4 w-4" />
                             </div>
-                            <h4 className="text-sm font-semibold">
+                            <h4 
+                              className="text-sm font-black uppercase drop-shadow-lg"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
                               {bodyPartLabel}
                             </h4>
                           </div>
-                          <p className="text-muted-foreground text-sm leading-relaxed">
+                          <p 
+                            className="text-muted-foreground text-sm leading-relaxed drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             {notes}
                           </p>
                         </div>
@@ -1178,24 +1542,55 @@ function DashboardPageContent() {
           {/* Left Column - Medical Records */}
           <div className="space-y-6 lg:col-span-2">
             {/* Recent Medical Records */}
-            <Card className="border">
-              <CardHeader className="border-b">
+            <Card 
+              className="border-2 border-white overflow-hidden"
+              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            >
+              <CardHeader className="border-b-2 border-white">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-foreground flex items-center">
-                      <FileText className="mr-2 h-5 w-5" />
+                    <CardTitle 
+                      className="text-white flex items-center font-black uppercase tracking-wide drop-shadow-lg"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
+                      <FileText className="mr-2 h-5 w-5 text-white" />
                       Medical Records
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription 
+                      className="text-neutral-300 drop-shadow-lg"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       Latest medical documents and test results
                     </CardDescription>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="border-2 border-white bg-transparent text-white uppercase hover:bg-white hover:text-black"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))'
+                      }}
+                    >
                       <Download className="mr-2 h-4 w-4" />
                       Export
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="border-2 border-white bg-transparent text-white uppercase hover:bg-white hover:text-black"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))'
+                      }}
+                    >
                       <Printer className="mr-2 h-4 w-4" />
                       Print
                     </Button>
@@ -1421,10 +1816,20 @@ function DashboardPageContent() {
           {/* Right Column - Medical Info & Actions */}
           <div className="space-y-6">
             {/* Current Medications */}
-            <Card className="border" id="section-medications">
-              <CardHeader className="border-b">
-                <CardTitle className="text-foreground flex items-center">
-                  <Pill className="mr-2 h-5 w-5" />
+            <Card 
+              className="border-2 border-white overflow-hidden"
+              id="section-medications"
+              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            >
+              <CardHeader className="border-b-2 border-white">
+                <CardTitle 
+                  className="text-white flex items-center font-black uppercase tracking-wide drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
+                  <Pill className="mr-2 h-5 w-5 text-white" />
                   Current Medications
                 </CardTitle>
               </CardHeader>
@@ -1435,27 +1840,52 @@ function DashboardPageContent() {
                     .map((medication, index) => (
                       <div
                         key={index}
-                        className="bg-card flex items-center justify-between rounded-lg border p-3"
+                        className="flex items-center justify-between border-2 border-white p-3 overflow-hidden"
+                        style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
                       >
                         <div>
-                          <p className="text-foreground font-medium">
+                          <p 
+                            className="text-white font-black uppercase drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             {medication.name}{" "}
                             {medication.dose && `${medication.dose}`}
                           </p>
-                          <p className="text-muted-foreground text-sm">
+                          <p 
+                            className="text-neutral-300 text-sm drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             {medication.frequency ?? "As prescribed"}
                           </p>
                           {medication.refills !== undefined && (
-                            <p className="text-muted-foreground text-xs">
+                            <p 
+                              className="text-neutral-400 text-xs drop-shadow-lg"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
                               Refills: {medication.refills} remaining
                             </p>
                           )}
                         </div>
-                        <Clock className="text-muted-foreground h-4 w-4" />
+                        <Clock className="text-white h-4 w-4" />
                       </div>
                     )) ?? (
                     <div className="py-4 text-center">
-                      <p className="text-muted-foreground">
+                      <p 
+                        className="text-neutral-300 drop-shadow-lg"
+                        style={{ 
+                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                        }}
+                      >
                         No current medications
                       </p>
                     </div>
@@ -1468,15 +1898,30 @@ function DashboardPageContent() {
 
         {/* General Notes Section */}
         <div className="my-6">
-          <Card className="border shadow-sm">
-            <CardHeader className="border-b">
+          <Card 
+            className="border-2 border-white overflow-hidden shadow-sm"
+            style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+          >
+            <CardHeader className="border-b-2 border-white">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-card-foreground">
+                <CardTitle 
+                  className="text-white font-black uppercase tracking-wide drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   General Notes
                 </CardTitle>
                 <div className="flex items-center space-x-2">
-                  <FileText className="text-primary h-4 w-4" />
-                  <span className="text-primary text-sm font-medium">
+                  <FileText className="text-white h-4 w-4" />
+                  <span 
+                    className="text-white text-sm font-black uppercase drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
                     Progress & Observations
                   </span>
                 </div>
@@ -1486,8 +1931,14 @@ function DashboardPageContent() {
               <div className="space-y-4">
                 {/* Recent Notes */}
                 <div className="space-y-3">
-                  <h3 className="text-md text-foreground flex items-center font-semibold">
-                    <Clock className="text-primary mr-2 h-4 w-4" />
+                  <h3 
+                    className="text-md text-white flex items-center font-black uppercase drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
+                    <Clock className="text-white mr-2 h-4 w-4" />
                     Recent Notes
                   </h3>
 
@@ -1497,25 +1948,50 @@ function DashboardPageContent() {
                       {patientData.recentNotes.map((note, index) => (
                         <div
                           key={index}
-                          className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20"
+                          className="border-2 border-white p-4 overflow-hidden"
+                          style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
                         >
                           <div className="mb-2 flex items-start justify-between">
-                            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                            <span 
+                              className="text-sm font-black uppercase text-white drop-shadow-lg"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
                               {note.provider}
-                        </span>
-                        <span className="text-xs font-medium text-blue-600">
+                            </span>
+                            <span 
+                              className="text-xs font-black uppercase text-neutral-300 drop-shadow-lg"
+                              style={{ 
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                              }}
+                            >
                               {new Date(note.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                            </span>
+                          </div>
+                          <p 
+                            className="text-sm text-neutral-200 drop-shadow-lg"
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            }}
+                          >
                             {note.content}
-                      </p>
-                    </div>
+                          </p>
+                        </div>
                       ))}
                       </div>
                   ) : (
                     <div className="py-4 text-center">
-                      <p className="text-muted-foreground text-sm">
+                      <p 
+                        className="text-neutral-300 text-sm drop-shadow-lg"
+                        style={{ 
+                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                        }}
+                      >
                         No recent notes available
                       </p>
                     </div>
@@ -1523,26 +1999,50 @@ function DashboardPageContent() {
                 </div>
 
                 {/* Progress Summary */}
-                <div className="border-border border-t pt-4">
-                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
-                    <BarChart3 className="text-primary mr-2 h-4 w-4" />
+                <div className="border-t-2 border-white pt-4">
+                  <h3 
+                    className="text-md text-white mb-3 flex items-center font-black uppercase drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
+                    <BarChart3 className="text-white mr-2 h-4 w-4" />
                     Progress Summary
                   </h3>
                   <div className="py-4 text-center">
-                    <p className="text-muted-foreground text-sm">
+                    <p 
+                      className="text-neutral-300 text-sm drop-shadow-lg"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       No progress data available
                     </p>
                   </div>
                 </div>
 
                 {/* General Observations */}
-                <div className="border-border border-t pt-4">
-                  <h3 className="text-md text-foreground mb-3 flex items-center font-semibold">
-                    <Eye className="text-primary mr-2 h-4 w-4" />
+                <div className="border-t-2 border-white pt-4">
+                  <h3 
+                    className="text-md text-white mb-3 flex items-center font-black uppercase drop-shadow-lg"
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    }}
+                  >
+                    <Eye className="text-white mr-2 h-4 w-4" />
                     General Observations
                   </h3>
                   <div className="py-4 text-center">
-                    <p className="text-muted-foreground text-sm">
+                    <p 
+                      className="text-neutral-300 text-sm drop-shadow-lg"
+                      style={{ 
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       No observations recorded
                     </p>
                   </div>

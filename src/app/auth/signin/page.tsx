@@ -79,25 +79,57 @@ export default function SignInPage({
   }
 
   return (
-    <div className="bg-background flex min-h-screen items-center justify-center p-4">
+    <div className="bg-black flex min-h-screen items-center justify-center p-4 text-white">
       <div className="w-full max-w-md">
         {/* Header Section */}
         <div className="mb-8 text-center">
-          <div className="bg-primary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full">
-            <Sparkles className="text-primary-foreground h-8 w-8" />
+          <div 
+            className="mb-4 inline-flex h-16 w-16 items-center justify-center border-2 border-white overflow-hidden"
+            style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
+          >
+            <Sparkles className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-foreground mb-2 text-3xl font-bold">EzMR</h1>
-          <p className="text-muted-foreground">
+          <h1 
+            className="mb-2 text-3xl font-black uppercase tracking-tight text-white drop-shadow-lg"
+            style={{ 
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+            }}
+          >
+            EzMR
+          </h1>
+          <p 
+            className="text-neutral-300 drop-shadow-lg"
+            style={{ 
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+            }}
+          >
             Welcome! Please sign in to continue
           </p>
         </div>
 
-        <Card>
-          <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-foreground text-center text-2xl font-bold">
+        <Card 
+          className="border-2 border-white shadow-none overflow-hidden"
+          style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+        >
+          <CardHeader className="space-y-1 pb-6 border-b-2 border-white">
+            <CardTitle 
+              className="text-center text-2xl font-black uppercase tracking-wide text-white drop-shadow-lg"
+              style={{ 
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              }}
+            >
               Sign in to your account
             </CardTitle>
-            <CardDescription className="text-muted-foreground text-center">
+            <CardDescription 
+              className="text-center text-neutral-300 drop-shadow-lg"
+              style={{ 
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              }}
+            >
               Enter your email address and we'll send you a magic link
             </CardDescription>
           </CardHeader>
@@ -106,7 +138,11 @@ export default function SignInPage({
               <div className="space-y-2">
                 <Label
                   htmlFor="email"
-                  className="text-foreground text-sm font-medium"
+                  className="text-white text-sm font-black uppercase drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
                 >
                   Email address
                 </Label>
@@ -117,7 +153,11 @@ export default function SignInPage({
                   autoComplete="email"
                   required
                   placeholder="Enter your email address"
-                  className="h-12 w-full"
+                  className="h-12 w-full border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                  }}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
@@ -125,7 +165,11 @@ export default function SignInPage({
               </div>
               <Button
                 type="submit"
-                className="h-12 w-full"
+                className="h-12 w-full border-2 border-white bg-white text-black font-black uppercase hover:bg-neutral-200"
+                style={{ 
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                }}
                 disabled={isLoading || !email.trim()}
               >
                 {isLoading ? (
@@ -156,27 +200,39 @@ export default function SignInPage({
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t-2 border-white" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background text-muted-foreground px-2">
+                <span 
+                  className="bg-black text-neutral-300 px-2 drop-shadow-lg"
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  }}
+                >
                   Secure authentication
                 </span>
               </div>
             </div>
 
-            <div className="text-muted-foreground text-center text-sm">
+            <div 
+              className="text-neutral-300 text-center text-sm drop-shadow-lg"
+              style={{ 
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              }}
+            >
               By signing in, you agree to our{" "}
               <a
                 href="#"
-                className="hover:text-foreground underline transition-colors"
+                className="hover:text-white underline transition-colors text-white"
               >
                 Terms of Service
               </a>{" "}
               and{" "}
               <a
                 href="#"
-                className="hover:text-foreground underline transition-colors"
+                className="hover:text-white underline transition-colors text-white"
               >
                 Privacy Policy
               </a>
@@ -185,7 +241,13 @@ export default function SignInPage({
         </Card>
 
         <div className="mt-6 text-center">
-          <p className="text-muted-foreground text-sm">
+          <p 
+            className="text-neutral-300 text-sm drop-shadow-lg"
+            style={{ 
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+            }}
+          >
             New to EzMR? Your account will be created automatically when you
             sign in.
           </p>
