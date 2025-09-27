@@ -11,26 +11,6 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
-      {/* Navigation */}
-      <nav className="flex items-center justify-between p-6">
-        <div className="flex items-center space-x-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600">
-            <Sparkles className="h-6 w-6 text-white" />
-          </div>
-          <span className="text-xl font-bold text-gray-900 dark:text-white">
-            EzMR
-          </span>
-        </div>
-
-        {session ? (
-          <UserNav />
-        ) : (
-          <Link href="/auth/signin">
-            <Button variant="outline">Sign In</Button>
-          </Link>
-        )}
-      </nav>
-
       {/* Main Content */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
