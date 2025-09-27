@@ -80,7 +80,7 @@ export default function DashboardPage() {
               />
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {session?.user?.name?.split(' ')[0] || 'Demo User'}
+                  {session?.user?.name?.split(' ')[0] ?? 'Demo User'}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">Patient Portal</p>
               </div>
@@ -990,7 +990,7 @@ export default function DashboardPage() {
         </div>
 
         {/* General Notes Section */}
-        <div className="mb-6">
+        <div className="mb-6 mt-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
