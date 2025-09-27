@@ -47,12 +47,17 @@ export default function PatientLookupPage() {
         body: JSON.stringify({ query, type }),
       });
 
+      if (!response.ok) {
+        console.error('Search request failed with status:', response.status);
+        return [];
+      }
+
       const result = await response.json();
       
-      if (result.success) {
+      if (result.success && result.patients) {
         return result.patients;
       } else {
-        console.error('Search failed:', result.error);
+        console.error('Search failed:', result.error ?? 'Unknown error');
         return [];
       }
     } catch (error) {
@@ -93,48 +98,15 @@ export default function PatientLookupPage() {
             setScanResult(result.name);
             console.log("Searching for patients matching:", result.name);
 
-            // Search for patient by extracted name with flexible matching
-            const matchingPatients = mockPatients.filter((p) => {
-              const patientName = p.name.toLowerCase();
-              const extractedName = result.name.toLowerCase();
-
-              // Split names into parts
-              const patientParts = patientName.split(" ");
-              const extractedParts = extractedName.split(" ");
-
-              // Check if all extracted parts match patient name parts
-              const matches = extractedParts.every((extractedPart: string) => {
-                // For each extracted part, check if it matches any patient part
-                return patientParts.some((patientPart) => {
-                  // Direct match
-                  if (patientPart === extractedPart) return true;
-
-                  // Middle initial match (e.g., "k" matches "ketong")
-                  if (
-                    extractedPart.length === 1 &&
-                    patientPart.startsWith(extractedPart)
-                  )
-                    return true;
-
-                  // Partial match (e.g., "kev" matches "kevin")
-                  if (
-                    patientPart.startsWith(extractedPart) ||
-                    extractedPart.startsWith(patientPart)
-                  )
-                    return true;
-
-                  return false;
-                });
-              });
-
-              return matches;
-            });
-
-            console.log(
-              "Matching patients found:",
-              matchingPatients.map((p) => p.name),
-            );
-            setSearchResults(matchingPatients);
+            // Search for patient by extracted name using the database
+            try {
+              const searchResults = await searchPatients(result.name, 'name');
+              console.log("Matching patients found:", searchResults);
+              setSearchResults(searchResults);
+            } catch (error) {
+              console.error("Error searching patients:", error);
+              setScanError("Failed to search for patients");
+            }
           } else {
             setScanError(result.error ?? "Failed to scan ID");
           }

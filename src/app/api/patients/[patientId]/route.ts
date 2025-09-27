@@ -152,9 +152,6 @@ export async function GET(
             notes: true,
           },
         },
-        imaging: {
-          orderBy: { performedOn: "desc" },
-        },
       },
     });
 
