@@ -177,13 +177,32 @@ export const useVoiceToText = (options: UseVoiceToTextOptions = {}): UseVoiceToT
   const stopListening = useCallback(() => {
     if (!recognitionRef.current || !isListening) return;
 
-    recognitionRef.current.stop();
+    try {
+      recognitionRef.current.stop();
+    } catch (error) {
+      // Suppress audio-related errors during cleanup
+      console.debug('Speech recognition stop error (harmless):', error);
+    }
   }, [isListening]);
 
   const resetTranscript = useCallback(() => {
     setTranscript('');
     setInterimTranscript('');
   }, []);
+
+  // Cleanup on unmount to prevent AbortError
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current && isListening) {
+        try {
+          recognitionRef.current.stop();
+        } catch (error) {
+          // Suppress audio-related errors during cleanup
+          console.debug('Speech recognition cleanup error (harmless):', error);
+        }
+      }
+    };
+  }, [isListening]);
 
   return {
     isSupported,

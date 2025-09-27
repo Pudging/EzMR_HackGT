@@ -63,6 +63,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    breakGlassAccessLogs BreakGlassAccessLog[]
 }
 
 model VerificationToken {
@@ -80,4 +81,454 @@ model Tenant {
     hospitalName String
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
+    patients     Patient[]
+}
+
+/// ---------------------------------------------
+/// EMS / EMR Domain Models
+/// ---------------------------------------------
+
+enum Sex {
+    MALE
+    FEMALE
+    OTHER
+    UNKNOWN
+}
+
+enum BloodType {
+    A_POS
+    A_NEG
+    B_POS
+    B_NEG
+    AB_POS
+    AB_NEG
+    O_POS
+    O_NEG
+    UNKNOWN
+}
+
+enum AllergySeverity {
+    MILD
+    MODERATE
+    SEVERE
+    LIFE_THREATENING
+    UNKNOWN
+}
+
+enum MedicationRoute {
+    PO
+    IV
+    IM
+    SUBCUT
+    SL
+    TOPICAL
+    INHALATION
+    PR
+    OTHER
+}
+
+enum ProblemStatus {
+    ACTIVE
+    RESOLVED
+    REMISSION
+    UNKNOWN
+}
+
+enum EncounterNoteType {
+    SOAP
+    PROGRESS
+    DISCHARGE
+    SUMMARY
+    OTHER
+}
+
+enum VitalType {
+    HEIGHT
+    WEIGHT
+    BMI
+    BLOOD_PRESSURE
+    HEART_RATE
+    RESPIRATION_RATE
+    SPO2
+    TEMPERATURE
+}
+
+enum ImagingModality {
+    XRAY
+    MRI
+    CT
+    ULTRASOUND
+    PET
+    OTHER
+}
+
+enum LabCategory {
+    BLOODWORK
+    GENETIC
+    OTHER
+}
+
+enum BillingCodeType {
+    ICD10
+    CPT
+    HCPCS
+}
+
+enum NoteSection {
+    HEAD
+    ARM
+    HEART
+    EXTRA
+    OTHER
+}
+
+model Patient {
+    id            String    @id @default(cuid())
+    tenantId      String
+    tenant        Tenant    @relation(fields: [tenantId], references: [id])
+
+    mrn           String
+    firstName     String
+    lastName      String
+    dateOfBirth   DateTime
+    sex           Sex
+    bloodType     BloodType?
+
+    addressLine1  String?
+    addressLine2  String?
+    city          String?
+    state         String?
+    postalCode    String?
+    country       String?
+
+    phoneNumber   String?
+    email         String?
+
+    insurancePolicies InsurancePolicy[]
+    emergencyContacts  EmergencyContact[]
+
+    allergies     Allergy[]
+    medications   Medication[]
+    problems      Problem[]
+    pastMedical   PastMedicalEvent[]
+    familyHistory FamilyHistoryCondition[]
+    socialHistory SocialHistory?
+    immunizations Immunization[]
+    vitals        VitalSign[]
+    growth        GrowthMeasurement[]
+
+    documents     Document[]
+    imaging       ImagingStudy[]
+    forms         PatientForm[]
+    carePlans     AdvanceCarePlan[]
+
+    encounters    Encounter[]
+    notes         ClinicalNote[]
+
+    labs          LabResult[]
+    charges       Charge[]
+    payments      Payment[]
+    authorizations Authorization[]
+    referrals     Referral[]
+    eligibilityChecks EligibilityCheck[]
+    breakGlassAccessLogs BreakGlassAccessLog[]
+
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+
+    @@unique([tenantId, mrn])
+    @@index([lastName, firstName])
+}
+
+model EmergencyContact {
+    id          String   @id @default(cuid())
+    patientId   String
+    patient     Patient  @relation(fields: [patientId], references: [id])
+    name        String
+    relation    String
+    phone       String
+    address     String?
+}
+
+model InsurancePolicy {
+    id              String   @id @default(cuid())
+    patientId       String
+    patient         Patient  @relation(fields: [patientId], references: [id])
+    providerName    String
+    policyNumber    String
+    groupNumber     String?
+    planName        String?
+    effectiveDate   DateTime?
+    expiryDate      DateTime?
+
+    isPrimary       Boolean  @default(false)
+
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    @@index([policyNumber])
+}
+
+model AdvanceCarePlan {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    dnr           Boolean  @default(false)
+    molst         Boolean  @default(false)
+    notes         String?
+    documentUrl   String?
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}
+
+model Allergy {
+    id            String          @id @default(cuid())
+    patientId     String
+    patient       Patient         @relation(fields: [patientId], references: [id])
+    substance     String
+    reaction      String?
+    severity      AllergySeverity @default(UNKNOWN)
+    notedOn       DateTime?
+    active        Boolean         @default(true)
+}
+
+model Medication {
+    id            String           @id @default(cuid())
+    patientId     String
+    patient       Patient          @relation(fields: [patientId], references: [id])
+    name          String
+    dose          String?
+    route         MedicationRoute?
+    frequency     String?
+    startDate     DateTime?
+    endDate       DateTime?
+    notes         String?
+    active        Boolean          @default(true)
+}
+
+model Problem {
+    id            String        @id @default(cuid())
+    patientId     String
+    patient       Patient       @relation(fields: [patientId], references: [id])
+    code          String?
+    description   String
+    status        ProblemStatus @default(ACTIVE)
+    onsetDate     DateTime?
+    resolvedDate  DateTime?
+}
+
+model PastMedicalEvent {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    type          String   // e.g., chronic illness, surgery, hospitalization
+    description   String
+    date          DateTime?
+}
+
+model FamilyHistoryCondition {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    relation      String   // e.g., father, mother, sibling
+    condition     String
+    notes         String?
+}
+
+model SocialHistory {
+    id              String   @id @default(cuid())
+    patientId       String   @unique
+    patient         Patient  @relation(fields: [patientId], references: [id])
+    tobaccoUse      String?
+    alcoholUse      String?
+    drugUse         String?
+    occupation      String?
+    livingSituation String?
+    notes           String?
+    updatedAt       DateTime @updatedAt
+}
+
+model Immunization {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    vaccine       String
+    manufacturer  String?
+    lotNumber     String?
+    administeredOn DateTime
+    site          String?
+    route         String?
+    notes         String?
+}
+
+model VitalSign {
+    id            String    @id @default(cuid())
+    patientId     String
+    patient       Patient   @relation(fields: [patientId], references: [id])
+    type          VitalType
+    recordedAt    DateTime  @default(now())
+    unit          String?
+    numericValue  Float?
+    stringValue   String?
+    systolic      Int?
+    diastolic     Int?
+}
+
+model GrowthMeasurement {
+    id                 String   @id @default(cuid())
+    patientId          String
+    patient            Patient  @relation(fields: [patientId], references: [id])
+    measuredAt         DateTime @default(now())
+    heightCm           Float?
+    weightKg           Float?
+    bmi                Float?
+    heightPercentile   Float?
+    weightPercentile   Float?
+    bmiPercentile      Float?
+    notes              String?
+}
+
+model Document {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    title         String
+    url           String
+    contentType   String?
+    uploadedAt    DateTime @default(now())
+    notes         String?
+}
+
+model ImagingStudy {
+    id            String          @id @default(cuid())
+    patientId     String
+    patient       Patient         @relation(fields: [patientId], references: [id])
+    modality      ImagingModality
+    description   String?
+    performedOn   DateTime?
+    imageUrl      String?
+    report        String?
+}
+
+model PatientForm {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    name          String
+    url           String
+    submittedAt   DateTime @default(now())
+    notes         String?
+}
+
+model Encounter {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    occurredAt    DateTime @default(now())
+    location      String?
+    reason        String?
+    providerName  String?
+    billingItems  EncounterBillingItem[]
+    notes         ClinicalNote[]
+    charges       Charge[]
+}
+
+model ClinicalNote {
+    id            String           @id @default(cuid())
+    patientId     String
+    patient       Patient          @relation(fields: [patientId], references: [id])
+    encounterId   String?
+    encounter     Encounter?       @relation(fields: [encounterId], references: [id])
+    section       NoteSection      @default(OTHER)
+    type          EncounterNoteType @default(OTHER)
+    content       String
+    createdAt     DateTime         @default(now())
+}
+
+model LabResult {
+    id            String      @id @default(cuid())
+    patientId     String
+    patient       Patient     @relation(fields: [patientId], references: [id])
+    category      LabCategory @default(OTHER)
+    testName      String
+    resultValue   String?
+    numericValue  Float?
+    unit          String?
+    referenceRange String?
+    collectedAt   DateTime?
+    resultedAt    DateTime?
+    notes         String?
+}
+
+model EncounterBillingItem {
+    id            String          @id @default(cuid())
+    encounterId   String
+    encounter     Encounter       @relation(fields: [encounterId], references: [id])
+    codeType      BillingCodeType
+    code          String
+    description   String?
+    amount        Float?
+}
+
+model Charge {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    encounterId   String?
+    encounter     Encounter? @relation(fields: [encounterId], references: [id])
+    amount        Float
+    description   String?
+    createdAt     DateTime @default(now())
+    payments      Payment[]
+}
+
+model Payment {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    chargeId      String?
+    charge        Charge?  @relation(fields: [chargeId], references: [id])
+    amount        Float
+    method        String?
+    receivedAt    DateTime @default(now())
+}
+
+model Authorization {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    payer         String?
+    number        String?
+    validFrom     DateTime?
+    validTo       DateTime?
+    notes         String?
+}
+
+model Referral {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    referredTo    String
+    reason        String?
+    date          DateTime @default(now())
+}
+
+model EligibilityCheck {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    checkedAt     DateTime @default(now())
+    result        String?
+    details       String?
+}
+
+model BreakGlassAccessLog {
+    id            String   @id @default(cuid())
+    patientId     String
+    patient       Patient  @relation(fields: [patientId], references: [id])
+    triggeredById String?
+    triggeredBy   User?    @relation(fields: [triggeredById], references: [id])
+    reason        String?
+    justifiedAt   DateTime?
+    createdAt     DateTime @default(now())
 }

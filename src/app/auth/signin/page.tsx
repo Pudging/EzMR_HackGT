@@ -17,10 +17,11 @@ export default async function SignInPage({
   searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const session = await auth();
+  const { callbackUrl } = await searchParams;
 
   // If user is already authenticated, redirect them
   if (session) {
-    redirect((await searchParams).callbackUrl ?? "/");
+    redirect(callbackUrl ?? "/");
   }
 
   return (
@@ -53,7 +54,7 @@ export default async function SignInPage({
               action={async () => {
                 "use server";
                 await signIn("google", {
-                  redirectTo: (await searchParams).callbackUrl ?? "/",
+                  redirectTo: callbackUrl ?? "/",
                 });
               }}
             >

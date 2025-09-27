@@ -22,11 +22,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
-      <body>
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <ThemeProvider>
           <AuthSessionProvider>
             <Navbar />
-            <main className="">{children}</main>
+            <main className="container mx-auto px-4">{children}</main>
           </AuthSessionProvider>
         </ThemeProvider>
       </body>

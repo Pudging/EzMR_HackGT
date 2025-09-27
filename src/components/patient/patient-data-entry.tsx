@@ -36,30 +36,30 @@ const BODY_PARTS = [
 ];
 
 const BODY_PART_LABELS = {
-  head: "HEAD",
-  neck: "NECK",
-  chest: "CHEST",
-  heart: "HEART",
-  "left-lung": "LEFT LUNG",
-  "right-lung": "RIGHT LUNG",
-  abdomen: "ABDOMEN",
-  stomach: "STOMACH",
-  liver: "LIVER",
-  "left-kidney": "LEFT KIDNEY",
-  "right-kidney": "RIGHT KIDNEY",
-  "left-shoulder": "LEFT SHOULDER",
-  "right-shoulder": "RIGHT SHOULDER",
-  "left-arm": "LEFT ARM",
-  "right-arm": "RIGHT ARM",
-  "left-forearm": "LEFT FOREARM",
-  "right-forearm": "RIGHT FOREARM",
-  "left-thigh": "LEFT THIGH",
-  "right-thigh": "RIGHT THIGH",
-  "left-shin": "LEFT SHIN",
-  "right-shin": "RIGHT SHIN",
-  spine: "SPINE",
-  pelvis: "PELVIS",
-  other: "OTHER",
+  head: "Head",
+  neck: "Neck",
+  chest: "Chest",
+  heart: "Heart",
+  "left-lung": "Left Lung",
+  "right-lung": "Right Lung",
+  abdomen: "Abdomen",
+  stomach: "Stomach",
+  liver: "Liver",
+  "left-kidney": "Left Kidney",
+  "right-kidney": "Right Kidney",
+  "left-shoulder": "Left Shoulder",
+  "right-shoulder": "Right Shoulder",
+  "left-arm": "Left Arm",
+  "right-arm": "Right Arm",
+  "left-forearm": "Left Forearm",
+  "right-forearm": "Right Forearm",
+  "left-thigh": "Left Thigh",
+  "right-thigh": "Right Thigh",
+  "left-shin": "Left Shin",
+  "right-shin": "Right Shin",
+  spine: "Spine",
+  pelvis: "Pelvis",
+  other: "Other",
 };
 
 export function PatientDataEntry({
@@ -144,10 +144,12 @@ export function PatientDataEntry({
   }, [selectedBodyPart]);
 
   return (
-    <div className="relative h-full bg-black">
+    <div className="bg-card relative h-full rounded-xl">
       {/* Header */}
-      <div className="border-b border-white p-4">
-        <h3 className="font-mono text-lg text-white">PATIENT ASSESSMENT</h3>
+      <div className="border-border border-b p-4">
+        <h3 className="text-card-foreground font-mono text-lg">
+          Patient Assessment
+        </h3>
       </div>
 
       {/* Scrollable Content */}
@@ -159,17 +161,17 @@ export function PatientDataEntry({
         {BODY_PARTS.map((bodyPart) => (
           <div
             key={bodyPart}
-            className="border border-white"
+            className="border-border border"
             ref={(el) => {
               bodyPartRefs.current[bodyPart] = el;
             }}
           >
             {/* Collapsed Box Header */}
             <div
-              className={`cursor-pointer bg-black p-4 font-mono text-white transition-all duration-200 ${
+              className={`bg-card text-card-foreground cursor-pointer p-4 font-mono transition-all duration-200 ${
                 selectedBodyPart === bodyPart
-                  ? "border-2 border-red-500 bg-red-900/20"
-                  : "hover:bg-gray-900"
+                  ? "border-destructive bg-destructive/20 border-2"
+                  : "hover:bg-muted"
               }`}
               onClick={() => toggleBox(bodyPart)}
             >
@@ -189,7 +191,7 @@ export function PatientDataEntry({
                 <div className="flex items-center space-x-2">
                   {patientData[bodyPart] && <span className="text-xs">●</span>}
                   <span className="font-mono text-xs">
-                    {patientData[bodyPart] ? "DATA" : "EMPTY"}
+                    {patientData[bodyPart] ? "Data" : "Empty"}
                   </span>
                 </div>
               </div>
@@ -204,11 +206,11 @@ export function PatientDataEntry({
 
             {/* Expanded Box Content */}
             {expandedBoxes.has(bodyPart) && (
-              <div className="border-t border-black bg-white text-black">
+              <div className="border-border bg-background text-foreground border-t">
                 <div className="p-4">
                   <div className="space-y-3">
                     <div className="font-mono text-xs font-bold">
-                      ASSESSMENT NOTES:
+                      Assessment Notes:
                     </div>
                     <Textarea
                       placeholder={`Enter assessment details for ${BODY_PART_LABELS[bodyPart as keyof typeof BODY_PART_LABELS].toLowerCase()}...`}
@@ -216,20 +218,20 @@ export function PatientDataEntry({
                       onChange={(e) =>
                         handleTextChange(bodyPart, e.target.value)
                       }
-                      className="min-h-[120px] resize-none border-2 border-black bg-gray-100 font-mono text-sm"
+                      className="border-border bg-input min-h-[120px] resize-none border-2 font-mono text-sm"
                     />
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleSave(bodyPart)}
-                        className="flex-1 bg-black px-4 py-2 font-mono text-sm text-white transition-colors hover:bg-gray-800"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 px-4 py-2 font-mono text-sm transition-colors"
                       >
-                        SAVE
+                        Save
                       </button>
                       <button
                         onClick={() => handleClear(bodyPart)}
-                        className="border border-black px-4 py-2 font-mono text-sm text-black transition-colors hover:bg-gray-100"
+                        className="border-border text-foreground hover:bg-muted border px-4 py-2 font-mono text-sm transition-colors"
                       >
-                        CLEAR
+                        Clear
                       </button>
                     </div>
                   </div>
@@ -241,16 +243,16 @@ export function PatientDataEntry({
 
         {/* Other Category */}
         <div
-          className="border border-white"
+          className="border-border border"
           ref={(el) => {
             bodyPartRefs.current.other = el;
           }}
         >
           <div
-            className={`cursor-pointer bg-black p-4 font-mono text-white transition-all duration-200 ${
+            className={`bg-card text-card-foreground cursor-pointer p-4 font-mono transition-all duration-200 ${
               selectedBodyPart === "other"
-                ? "border-2 border-red-500 bg-red-900/20"
-                : "hover:bg-gray-900"
+                ? "border-destructive bg-destructive/20 border-2"
+                : "hover:bg-muted"
             }`}
             onClick={() => toggleBox("other")}
           >
@@ -259,12 +261,12 @@ export function PatientDataEntry({
                 <span className="text-sm font-bold">
                   [{expandedBoxes.has("other") ? "-" : "+"}]
                 </span>
-                <span className="font-medium">OTHER</span>
+                <span className="font-medium">Other</span>
               </div>
               <div className="flex items-center space-x-2">
                 {patientData.other && <span className="text-xs">●</span>}
                 <span className="font-mono text-xs">
-                  {patientData.other ? "DATA" : "EMPTY"}
+                  {patientData.other ? "Data" : "Empty"}
                 </span>
               </div>
             </div>
@@ -281,30 +283,30 @@ export function PatientDataEntry({
           </div>
 
           {expandedBoxes.has("other") && (
-            <div className="border-t border-black bg-white text-black">
+            <div className="border-border bg-background text-foreground border-t">
               <div className="p-4">
                 <div className="space-y-3">
                   <div className="font-mono text-xs font-bold">
-                    OTHER MEDICAL NOTES:
+                    Other Medical Notes:
                   </div>
                   <Textarea
                     placeholder="Enter other medical observations, medications, allergies, etc..."
                     value={editingText.other ?? ""}
                     onChange={(e) => handleTextChange("other", e.target.value)}
-                    className="min-h-[120px] resize-none border-2 border-black bg-gray-100 font-mono text-sm"
+                    className="border-border bg-input min-h-[120px] resize-none border-2 font-mono text-sm"
                   />
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleSave("other")}
-                      className="flex-1 bg-black px-4 py-2 font-mono text-sm text-white transition-colors hover:bg-gray-800"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 px-4 py-2 font-mono text-sm transition-colors"
                     >
-                      SAVE
+                      Save
                     </button>
                     <button
                       onClick={() => handleClear("other")}
-                      className="border border-black px-4 py-2 font-mono text-sm text-black transition-colors hover:bg-gray-100"
+                      className="border-border text-foreground hover:bg-muted border px-4 py-2 font-mono text-sm transition-colors"
                     >
-                      CLEAR
+                      Clear
                     </button>
                   </div>
                 </div>
