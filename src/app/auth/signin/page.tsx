@@ -14,13 +14,13 @@ import { GoogleLogo } from "@/components/ui/google-logo";
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: { callbackUrl?: string };
+  searchParams: Promise<{ callbackUrl?: string }>;
 }) {
   const session = await auth();
 
   // If user is already authenticated, redirect them
   if (session) {
-    redirect(searchParams.callbackUrl ?? "/");
+    redirect((await searchParams).callbackUrl ?? "/");
   }
 
   return (
@@ -53,7 +53,7 @@ export default async function SignInPage({
               action={async () => {
                 "use server";
                 await signIn("google", {
-                  redirectTo: searchParams.callbackUrl ?? "/",
+                  redirectTo: (await searchParams).callbackUrl ?? "/",
                 });
               }}
             >
