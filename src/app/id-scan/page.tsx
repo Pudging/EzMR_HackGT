@@ -36,7 +36,7 @@ export default function IDScanPage() {
       console.log('Requesting camera permission...');
       
       // Check if getUserMedia is available
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error('Camera API not supported in this browser');
       }
       
@@ -103,7 +103,7 @@ export default function IDScanPage() {
     // Convert canvas to blob
     canvas.toBlob((blob) => {
       if (blob) {
-        processImage(blob);
+        void processImage(blob);
       }
     }, 'image/jpeg', 0.8);
   };
@@ -129,8 +129,8 @@ export default function IDScanPage() {
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to process image');
+        const errorData = (await response.json()) as { error?: string };
+        throw new Error(errorData.error ?? 'Failed to process image');
       }
       
       const result = await response.json();
@@ -138,16 +138,16 @@ export default function IDScanPage() {
       
       if (result.success && result.data) {
         // Store raw OCR text for debugging
-        setRawOCRText(result.data.rawText || '');
+        setRawOCRText(result.data.rawText ?? '');
         
         // Use the structured data from Google Vision
         setExtractedData({
-          fullName: result.data.fullName || 'Name not detected',
-          age: result.data.age || 0,
-          dateOfBirth: result.data.dateOfBirth || 'DOB not detected',
-          height: result.data.height || 'Height not detected',
-          weight: result.data.weight || 'Weight not detected',
-          confidence: result.data.confidence || 0
+          fullName: result.data.fullName ?? 'Name not detected',
+          age: result.data.age ?? 0,
+          dateOfBirth: result.data.dateOfBirth ?? 'DOB not detected',
+          height: result.data.height ?? 'Height not detected',
+          weight: result.data.weight ?? 'Weight not detected',
+          confidence: result.data.confidence ?? 0
         });
       } else {
         throw new Error('Invalid response from OCR service');
@@ -196,7 +196,7 @@ export default function IDScanPage() {
       
       // Process the uploaded image
       console.log('Processing uploaded file...');
-      processImage(file);
+      void processImage(file);
     } else {
       console.log('No file selected');
       setSelectedFile(null);
@@ -233,7 +233,7 @@ export default function IDScanPage() {
   // Auto-request camera permission on page load
   useEffect(() => {
     if (!uploadMode && hasPermission === null) {
-      requestCameraPermission();
+      void requestCameraPermission();
     }
   }, [uploadMode, hasPermission]);
 
