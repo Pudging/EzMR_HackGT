@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Volume2, RotateCcw } from 'lucide-react';
-import { useVoiceToText } from '@/hooks/useVoiceToText';
+import { useCedarVoiceToText } from '@/hooks/useCedarVoiceToText';
 
 interface VoiceToTextProps {
   onTranscriptUpdate: (transcript: string) => void;
@@ -23,7 +23,7 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
     stopListening,
     resetTranscript,
     error
-  } = useVoiceToText({
+  } = useCedarVoiceToText({
     continuous: true,
     interimResults: true,
     language: 'en-US',
