@@ -23,7 +23,7 @@ export function Navbar() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link
           href="/"
-          className="text-sm font-semibold tracking-tight text-foreground"
+          className="text-2xl font-bold tracking-tight text-foreground"
         >
           EzMR
         </Link>
@@ -34,7 +34,7 @@ export function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`text-xs transition-colors ${
+                  className={`text-sm font-medium transition-colors ${
                     isActive
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground"
