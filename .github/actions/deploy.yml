@@ -16,4 +16,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Call Webhook
-        run: curl "htthttps://api.vercel.com/v1/integrations/deploy/prj_bw7kuDL29TlVzDGTwlSbuc3OXjmY/PVb66uSfIMNdX"
+        run: curl "https://api.vercel.com/v1/integrations/deploy/prj_bw7kuDL29TlVzDGTwlSbuc3OXjmY/PVb66uSfIM"
