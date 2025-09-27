@@ -10,21 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  User, 
-  Stethoscope, 
-  ArrowLeft, 
-  AlertCircle, 
-  Search, 
-  Shield, 
-  Pill, 
-  Heart, 
-  Activity, 
+import {
+  User,
+  Stethoscope,
+  ArrowLeft,
+  AlertCircle,
+  Shield,
+  Pill,
+  Activity,
   Calendar,
-  Phone,
-  MapPin,
-  Mail,
-  CreditCard,
   Users,
   FileDigit,
   Bell,
@@ -33,7 +27,7 @@ import {
   Unlock,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
 } from "lucide-react";
 
 type PatientData = Record<string, string>;
@@ -53,7 +47,7 @@ interface SelectedPatient {
 
 interface Allergy {
   substance: string;
-  severity: 'mild' | 'moderate' | 'severe';
+  severity: "mild" | "moderate" | "severe";
   reaction: string;
   notedOn: string;
 }
@@ -69,7 +63,7 @@ interface Medication {
 interface MedicalCondition {
   condition: string;
   diagnosisDate: string;
-  status: 'active' | 'resolved' | 'chronic';
+  status: "active" | "resolved" | "chronic";
   notes: string;
 }
 
@@ -94,28 +88,34 @@ export default function PatientAssessmentPage() {
   const [currentIssue, setCurrentIssue] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedPatient, setSelectedPatient] = useState<SelectedPatient | null>(null);
-  const [history, setHistory] = useState<Array<{timestamp: string, note: string}>>([]);
+  const [selectedPatient, setSelectedPatient] =
+    useState<SelectedPatient | null>(null);
+  const [history, setHistory] = useState<
+    Array<{ timestamp: string; note: string }>
+  >([]);
   const [searchText, setSearchText] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analysisResult, setAnalysisResult] = useState<string>("");
   const [highlightedParts, setHighlightedParts] = useState<string[]>([]);
-  const [skeletonFile, setSkeletonFile] = useState<string>("overview-skeleton.glb");
-  
+  const [skeletonFile, setSkeletonFile] = useState<string>(
+    "overview-skeleton.glb",
+  );
+
   // EMS-specific state
   const [allergies, setAllergies] = useState<Allergy[]>([]);
   const [medications, setMedications] = useState<Medication[]>([]);
   const [medicalHistory, setMedicalHistory] = useState<MedicalCondition[]>([]);
   const [advanceCarePlan, setAdvanceCarePlan] = useState<AdvanceCarePlan>({
     dnr: false,
-    molst: false
+    molst: false,
   });
   const [breakGlassOverride, setBreakGlassOverride] = useState<boolean>(false);
   const [breakGlassUsername, setBreakGlassUsername] = useState<string>("");
   const [breakGlassReason, setBreakGlassReason] = useState<string>("");
-  const [showBreakGlassModal, setShowBreakGlassModal] = useState<boolean>(false);
+  const [showBreakGlassModal, setShowBreakGlassModal] =
+    useState<boolean>(false);
   const [auditLog, setAuditLog] = useState<BreakGlassAudit[]>([]);
-  
+
   // Debounce timer for auto-analysis
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -127,17 +127,19 @@ export default function PatientAssessmentPage() {
         const assessmentData = await response.json();
         // Convert body part data to history format
         const historyEntries = Object.entries(assessmentData)
-          .filter(([_, value]) => value && typeof value === 'string' && value.trim())
+          .filter(
+            ([_, value]) => value && typeof value === "string" && value.trim(),
+          )
           .map(([bodyPart, note]) => ({
-            timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
-            note: `${bodyPart}: ${note}`
+            timestamp: new Date().toISOString().slice(0, 16).replace("T", " "),
+            note: `${bodyPart}: ${note as string}`,
           }));
         setHistory(historyEntries);
       } else {
-        console.log('No existing assessment history found');
+        console.log("No existing assessment history found");
       }
     } catch (error) {
-      console.error('Error fetching assessment history:', error);
+      console.error("Error fetching assessment history:", error);
     } finally {
       setIsLoading(false);
     }
@@ -149,25 +151,68 @@ export default function PatientAssessmentPage() {
       // Load mock EMS data - in real app this would be API calls
       const mockData = {
         allergies: [
-          { substance: "Penicillin", severity: "severe" as const, reaction: "Anaphylaxis", notedOn: "2023-01-15" },
-          { substance: "Shellfish", severity: "moderate" as const, reaction: "Hives, difficulty breathing", notedOn: "2022-06-10" }
+          {
+            substance: "Penicillin",
+            severity: "severe" as const,
+            reaction: "Anaphylaxis",
+            notedOn: "2023-01-15",
+          },
+          {
+            substance: "Shellfish",
+            severity: "moderate" as const,
+            reaction: "Hives, difficulty breathing",
+            notedOn: "2022-06-10",
+          },
         ],
         medications: [
-          { name: "Lisinopril", dosage: "10mg", frequency: "Once daily", lastTaken: "2024-12-15", active: true },
-          { name: "Metformin", dosage: "500mg", frequency: "Twice daily", lastTaken: "2024-12-15", active: true },
-          { name: "Atorvastatin", dosage: "20mg", frequency: "Once daily", lastTaken: "2024-12-14", active: true }
+          {
+            name: "Lisinopril",
+            dosage: "10mg",
+            frequency: "Once daily",
+            lastTaken: "2024-12-15",
+            active: true,
+          },
+          {
+            name: "Metformin",
+            dosage: "500mg",
+            frequency: "Twice daily",
+            lastTaken: "2024-12-15",
+            active: true,
+          },
+          {
+            name: "Atorvastatin",
+            dosage: "20mg",
+            frequency: "Once daily",
+            lastTaken: "2024-12-14",
+            active: true,
+          },
         ],
         medicalHistory: [
-          { condition: "Type 2 Diabetes", diagnosisDate: "2020-03-15", status: "chronic" as const, notes: "Well controlled with medication" },
-          { condition: "Hypertension", diagnosisDate: "2019-08-22", status: "chronic" as const, notes: "Stable on ACE inhibitor" },
-          { condition: "Appendectomy", diagnosisDate: "2015-06-10", status: "resolved" as const, notes: "Laparoscopic procedure, no complications" }
+          {
+            condition: "Type 2 Diabetes",
+            diagnosisDate: "2020-03-15",
+            status: "chronic" as const,
+            notes: "Well controlled with medication",
+          },
+          {
+            condition: "Hypertension",
+            diagnosisDate: "2019-08-22",
+            status: "chronic" as const,
+            notes: "Stable on ACE inhibitor",
+          },
+          {
+            condition: "Appendectomy",
+            diagnosisDate: "2015-06-10",
+            status: "resolved" as const,
+            notes: "Laparoscopic procedure, no complications",
+          },
         ],
         advanceCarePlan: {
           dnr: false,
           molst: true,
           molstDate: "2024-01-15",
-          notes: "Full code, comfort measures only if terminal"
-        }
+          notes: "Full code, comfort measures only if terminal",
+        },
       };
 
       setAllergies(mockData.allergies);
@@ -175,14 +220,14 @@ export default function PatientAssessmentPage() {
       setMedicalHistory(mockData.medicalHistory);
       setAdvanceCarePlan(mockData.advanceCarePlan);
     } catch (error) {
-      console.error('Error loading EMS data:', error);
+      console.error("Error loading EMS data:", error);
     }
   };
 
   // Break-glass override functions
   const handleBreakGlassOverride = () => {
     if (!breakGlassUsername.trim() || !breakGlassReason.trim()) {
-      alert('Please provide both username and reason for break-glass override');
+      alert("Please provide both username and reason for break-glass override");
       return;
     }
 
@@ -190,14 +235,14 @@ export default function PatientAssessmentPage() {
       timestamp: new Date().toISOString(),
       username: breakGlassUsername,
       reason: breakGlassReason,
-      patientId: selectedPatient?.patientId || ''
+      patientId: selectedPatient?.patientId ?? "",
     };
 
-    setAuditLog(prev => [auditEntry, ...prev]);
+    setAuditLog((prev) => [auditEntry, ...prev]);
     setBreakGlassOverride(true);
     setShowBreakGlassModal(false);
-    setBreakGlassUsername('');
-    setBreakGlassReason('');
+    setBreakGlassUsername("");
+    setBreakGlassReason("");
   };
 
   const resetBreakGlassOverride = () => {
@@ -206,9 +251,9 @@ export default function PatientAssessmentPage() {
 
   useEffect(() => {
     // Check for selected patient in sessionStorage or URL params
-    const patientFromStorage = sessionStorage.getItem('selectedPatient');
-    const patientIdFromUrl = searchParams.get('patientId');
-    
+    const patientFromStorage = sessionStorage.getItem("selectedPatient");
+    const patientIdFromUrl = searchParams.get("patientId");
+
     if (patientFromStorage) {
       const patient = JSON.parse(patientFromStorage);
       setSelectedPatient(patient);
@@ -222,21 +267,23 @@ export default function PatientAssessmentPage() {
         {
           id: "pat_1",
           name: "Kevin Ketong Gao",
-          patientId: "1", 
+          patientId: "1",
           dob: "1995-03-15",
           sex: "Male",
           bloodType: "O+",
           address: "123 Main St, Atlanta, GA 30309",
           phone: "(555) 123-4567",
           email: "kevin.gao@email.com",
-          emergencyContact: "Jane Doe (Spouse) - (555) 234-5678"
-        }
+          emergencyContact: "Jane Doe (Spouse) - (555) 234-5678",
+        },
       ];
-      
-      const patient = mockPatients.find(p => p.patientId === patientIdFromUrl);
+
+      const patient = mockPatients.find(
+        (p) => p.patientId === patientIdFromUrl,
+      );
       if (patient) {
         setSelectedPatient(patient);
-        sessionStorage.setItem('selectedPatient', JSON.stringify(patient));
+        sessionStorage.setItem("selectedPatient", JSON.stringify(patient));
         // Fetch existing assessment history for this patient
         void fetchPatientHistory(patient.patientId);
         // Load EMS data
@@ -263,40 +310,43 @@ export default function PatientAssessmentPage() {
     if (!currentIssue.trim() || !selectedPatient) return;
 
     setIsSubmitting(true);
-    
+
     // Trigger analysis for 3D highlighting
     setSearchText(currentIssue);
     void analyzeInjury();
-    
+
     try {
       // Add to local history immediately
-      const timestamp = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      const timestamp = new Date().toISOString().slice(0, 16).replace("T", " ");
       const newEntry = { timestamp, note: currentIssue.trim() };
-      setHistory(prev => [newEntry, ...prev]);
-      
+      setHistory((prev) => [newEntry, ...prev]);
+
       // Save to API
-      const response = await fetch(`/api/patients/${selectedPatient.patientId}/assessment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `/api/patients/${selectedPatient.patientId}/assessment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            current_issue: currentIssue.trim(),
+            timestamp: new Date().toISOString(),
+          }),
         },
-        body: JSON.stringify({ 
-          current_issue: currentIssue.trim(),
-          timestamp: new Date().toISOString()
-        }),
-      });
-      
+      );
+
       if (response.ok) {
         setCurrentIssue(""); // Clear input
       } else {
-        console.error('Failed to save current issue');
+        console.error("Failed to save current issue");
         // Remove from local history if API failed
-        setHistory(prev => prev.slice(1));
+        setHistory((prev) => prev.slice(1));
       }
     } catch (error) {
-      console.error('Error saving current issue:', error);
+      console.error("Error saving current issue:", error);
       // Remove from local history if API failed
-      setHistory(prev => prev.slice(1));
+      setHistory((prev) => prev.slice(1));
     } finally {
       setIsSubmitting(false);
     }
@@ -317,49 +367,40 @@ export default function PatientAssessmentPage() {
     setAnalysisResult("Analyzing injury...");
 
     try {
-      const response = await fetch('/api/analyze-injury', {
-        method: 'POST',
+      const response = await fetch("/api/analyze-injury", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text: searchText })
+        body: JSON.stringify({ text: searchText }),
       });
 
       const result = await response.json();
 
       if (result.success) {
         setAnalysisResult(result.message);
-        
+
         // Set highlighted parts for 3D model
         if (result.injuredParts && result.injuredParts.length > 0) {
-          console.log('API returned injured parts:', result.injuredParts);
+          console.log("API returned injured parts:", result.injuredParts);
           setHighlightedParts(result.injuredParts);
         }
-        
+
         // Set skeleton file for 3D model
         if (result.skeletonFile) {
-          console.log('API returned skeleton file:', result.skeletonFile);
+          console.log("API returned skeleton file:", result.skeletonFile);
           setSkeletonFile(result.skeletonFile);
-          console.log('Skeleton file state updated to:', result.skeletonFile);
+          console.log("Skeleton file state updated to:", result.skeletonFile);
         }
       } else {
-        setAnalysisResult(result.message || 'No injuries detected');
+        setAnalysisResult(result.message ?? "No injuries detected");
         setHighlightedParts([]);
       }
     } catch (error) {
-      console.error('Error analyzing injury:', error);
-      setAnalysisResult('Error analyzing injury. Please try again.');
+      console.error("Error analyzing injury:", error);
+      setAnalysisResult("Error analyzing injury. Please try again.");
     } finally {
       setIsAnalyzing(false);
-    }
-  };
-
-  // Handle search text change
-  const handleSearchChange = (text: string) => {
-    setSearchText(text);
-    if (text.trim() === "") {
-      setAnalysisResult("");
-      setHighlightedParts([]);
     }
   };
 
@@ -373,17 +414,17 @@ export default function PatientAssessmentPage() {
   // Redirect to patient lookup if no patient selected
   if (!selectedPatient) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md mx-4">
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <Card className="mx-4 max-w-md">
           <CardHeader className="text-center">
-            <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-yellow-500" />
             <CardTitle>No Patient Selected</CardTitle>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
+          <CardContent className="space-y-4 text-center">
             <p className="text-muted-foreground">
               Please select a patient before accessing the assessment page.
             </p>
-            <Button onClick={() => router.push('/patient-lookup')}>
+            <Button onClick={() => router.push("/patient-lookup")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Go to Patient Lookup
             </Button>
@@ -408,28 +449,29 @@ export default function PatientAssessmentPage() {
                   Patient Assessment - {selectedPatient.name}
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  ID: {selectedPatient.patientId} • DOB: {selectedPatient.dob} • {selectedPatient.sex}
+                  ID: {selectedPatient.patientId} • DOB: {selectedPatient.dob} •{" "}
+                  {selectedPatient.sex}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               {!breakGlassOverride && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setShowBreakGlassModal(true)}
-                  className="text-red-600 border-red-300 hover:bg-red-50"
+                  className="border-red-300 text-red-600 hover:bg-red-50"
                 >
                   <AlertTriangle className="mr-2 h-4 w-4" />
                   Break-Glass Override
                 </Button>
               )}
-            <Button 
-              variant="outline" 
-              onClick={() => router.push('/patient-lookup')}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Change Patient
-            </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/patient-lookup")}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Change Patient
+              </Button>
             </div>
           </div>
         </div>
@@ -439,24 +481,27 @@ export default function PatientAssessmentPage() {
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Break-Glass Override Banner */}
         {breakGlassOverride && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <AlertTriangle className="h-6 w-6 text-red-600" />
                 <div>
-                  <h3 className="text-red-800 font-semibold">Break-Glass Override Active</h3>
-                  <p className="text-red-700 text-sm">
-                    Emergency access granted to {auditLog[0]?.username} - {auditLog[0]?.reason}
+                  <h3 className="font-semibold text-red-800">
+                    Break-Glass Override Active
+                  </h3>
+                  <p className="text-sm text-red-700">
+                    Emergency access granted to {auditLog[0]?.username} -{" "}
+                    {auditLog[0]?.reason}
                   </p>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={resetBreakGlassOverride}
-                className="text-red-600 border-red-300 hover:bg-red-50"
+                className="border-red-300 text-red-600 hover:bg-red-50"
               >
-                <Lock className="h-4 w-4 mr-2" />
+                <Lock className="mr-2 h-4 w-4" />
                 End Override
               </Button>
             </div>
@@ -476,31 +521,45 @@ export default function PatientAssessmentPage() {
               <div className="flex items-center space-x-3">
                 <User className="text-primary h-5 w-5" />
                 <div>
-                  <p className="text-foreground text-sm font-medium">{selectedPatient.name.split(' ')[0]} {selectedPatient.name.split(' ').pop()}</p>
+                  <p className="text-foreground text-sm font-medium">
+                    {selectedPatient.name.split(" ")[0]}{" "}
+                    {selectedPatient.name.split(" ").pop()}
+                  </p>
                   <p className="text-muted-foreground text-xs">Name</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <Calendar className="text-primary h-5 w-5" />
                 <div>
-                  <p className="text-foreground text-sm font-medium">{Math.floor((new Date().getTime() - new Date(selectedPatient.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000))} years</p>
+                  <p className="text-foreground text-sm font-medium">
+                    {Math.floor(
+                      (new Date().getTime() -
+                        new Date(selectedPatient.dob).getTime()) /
+                        (365.25 * 24 * 60 * 60 * 1000),
+                    )}{" "}
+                    years
+                  </p>
                   <p className="text-muted-foreground text-xs">Age</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <Users className="text-primary h-5 w-5" />
                 <div>
-                  <p className="text-foreground text-sm font-medium">{selectedPatient.sex}</p>
+                  <p className="text-foreground text-sm font-medium">
+                    {selectedPatient.sex}
+                  </p>
                   <p className="text-muted-foreground text-xs">Sex</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <FileDigit className="text-primary h-5 w-5" />
                 <div>
-                  <p className="text-foreground text-sm font-medium">MRN: {selectedPatient.patientId}</p>
+                  <p className="text-foreground text-sm font-medium">
+                    MRN: {selectedPatient.patientId}
+                  </p>
                   <p className="text-muted-foreground text-xs">ID</p>
                 </div>
               </div>
@@ -515,33 +574,43 @@ export default function PatientAssessmentPage() {
             <Card>
               <CardHeader className="border-b">
                 <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Bell className="text-red-500 h-5 w-5" />
+                  <Bell className="h-5 w-5 text-red-500" />
                   <span>Severe Allergies</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                {allergies.filter(allergy => allergy.severity === 'severe').length > 0 ? (
+                {allergies.filter((allergy) => allergy.severity === "severe")
+                  .length > 0 ? (
                   <div className="space-y-3">
                     {allergies
-                      .filter(allergy => allergy.severity === 'severe')
+                      .filter((allergy) => allergy.severity === "severe")
                       .map((allergy, index) => (
-                      <div key={index} className="p-3 rounded-lg border border-red-200 bg-red-50">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-semibold text-sm text-red-800">{allergy.substance}</p>
-                            <p className="text-xs text-red-600">{allergy.reaction}</p>
+                        <div
+                          key={index}
+                          className="rounded-lg border border-red-200 bg-red-50 p-3"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-semibold text-red-800">
+                                {allergy.substance}
+                              </p>
+                              <p className="text-xs text-red-600">
+                                {allergy.reaction}
+                              </p>
+                            </div>
+                            <span className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
+                              SEVERE
+                            </span>
                           </div>
-                          <span className="text-xs font-medium px-2 py-1 rounded bg-red-100 text-red-800">
-                            SEVERE
-                          </span>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
-                  <div className="text-center py-4">
-                    <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No severe allergies</p>
+                  <div className="py-4 text-center">
+                    <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
+                    <p className="text-muted-foreground text-sm">
+                      No severe allergies
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -549,12 +618,12 @@ export default function PatientAssessmentPage() {
 
             {/* Status Update Textbox - Second Most Important */}
             <Card>
-            <CardHeader className="border-b">
-              <CardTitle className="text-card-foreground flex items-center space-x-2">
-                <Stethoscope className="text-primary h-5 w-5" />
+              <CardHeader className="border-b">
+                <CardTitle className="text-card-foreground flex items-center space-x-2">
+                  <Stethoscope className="text-primary h-5 w-5" />
                   <span>Patient Status Update</span>
-              </CardTitle>
-            </CardHeader>
+                </CardTitle>
+              </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-4">
                   <Textarea
@@ -576,17 +645,19 @@ export default function PatientAssessmentPage() {
                     }}
                     className="min-h-[100px]"
                   />
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <div className="flex space-x-2">
-                      <Button 
+                      <Button
                         onClick={submitCurrentIssue}
                         disabled={!currentIssue.trim() || isSubmitting}
                         className="px-6"
                       >
-                        {isSubmitting ? "Transmitting to hospital..." : "Send Status Update"}
+                        {isSubmitting
+                          ? "Transmitting to hospital..."
+                          : "Send Status Update"}
                       </Button>
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {currentIssue.length} characters
                     </span>
                   </div>
@@ -598,31 +669,46 @@ export default function PatientAssessmentPage() {
             <Card>
               <CardHeader className="border-b">
                 <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Pill className="text-blue-500 h-5 w-5" />
+                  <Pill className="h-5 w-5 text-blue-500" />
                   <span>Current Medications</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                {medications.filter(med => med.active).length > 0 ? (
+                {medications.filter((med) => med.active).length > 0 ? (
                   <div className="space-y-3">
-                    {medications.filter(med => med.active).map((medication, index) => (
-                      <div key={index} className="p-3 rounded-lg border bg-blue-50">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-semibold text-sm">{medication.name}</p>
-                            <p className="text-xs text-muted-foreground">{medication.dosage} - {medication.frequency}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-xs text-muted-foreground">Last taken:</p>
-                            <p className="text-xs font-medium">{medication.lastTaken}</p>
+                    {medications
+                      .filter((med) => med.active)
+                      .map((medication, index) => (
+                        <div
+                          key={index}
+                          className="rounded-lg border bg-blue-50 p-3"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-semibold">
+                                {medication.name}
+                              </p>
+                              <p className="text-muted-foreground text-xs">
+                                {medication.dosage} - {medication.frequency}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-muted-foreground text-xs">
+                                Last taken:
+                              </p>
+                              <p className="text-xs font-medium">
+                                {medication.lastTaken}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground">No current medications</p>
+                  <div className="py-4 text-center">
+                    <p className="text-muted-foreground text-sm">
+                      No current medications
+                    </p>
                   </div>
                 )}
               </CardContent>
@@ -632,102 +718,133 @@ export default function PatientAssessmentPage() {
             <Card>
               <CardHeader className="border-b">
                 <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Activity className="text-green-500 h-5 w-5" />
+                  <Activity className="h-5 w-5 text-green-500" />
                   <span>Critical Medical Conditions</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                {medicalHistory.filter(condition => condition.status === 'active' || condition.status === 'chronic').length > 0 ? (
+                {medicalHistory.filter(
+                  (condition) =>
+                    condition.status === "active" ||
+                    condition.status === "chronic",
+                ).length > 0 ? (
                   <div className="space-y-3">
                     {medicalHistory
-                      .filter(condition => condition.status === 'active' || condition.status === 'chronic')
+                      .filter(
+                        (condition) =>
+                          condition.status === "active" ||
+                          condition.status === "chronic",
+                      )
                       .map((condition, index) => (
-                      <div key={index} className={`p-3 rounded-lg border ${
-                        condition.status === 'active' ? 'border-red-200 bg-red-50' :
-                        'border-orange-200 bg-orange-50'
-                      }`}>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-semibold text-sm">{condition.condition}</p>
-                            <p className="text-xs text-muted-foreground">{condition.notes}</p>
-                          </div>
-                          <div className="text-right">
-                            <span className={`text-xs font-medium px-2 py-1 rounded ${
-                              condition.status === 'active' ? 'bg-red-100 text-red-800' :
-                              'bg-orange-100 text-orange-800'
-                            }`}>
-                              {condition.status.toUpperCase()}
-                            </span>
-                            <p className="text-xs text-muted-foreground mt-1">{condition.diagnosisDate}</p>
+                        <div
+                          key={index}
+                          className={`rounded-lg border p-3 ${
+                            condition.status === "active"
+                              ? "border-red-200 bg-red-50"
+                              : "border-orange-200 bg-orange-50"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-semibold">
+                                {condition.condition}
+                              </p>
+                              <p className="text-muted-foreground text-xs">
+                                {condition.notes}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span
+                                className={`rounded px-2 py-1 text-xs font-medium ${
+                                  condition.status === "active"
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-orange-100 text-orange-800"
+                                }`}
+                              >
+                                {condition.status.toUpperCase()}
+                              </span>
+                              <p className="text-muted-foreground mt-1 text-xs">
+                                {condition.diagnosisDate}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 ) : (
-                  <div className="text-center py-4">
-                    <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No critical conditions</p>
+                  <div className="py-4 text-center">
+                    <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
+                    <p className="text-muted-foreground text-sm">
+                      No critical conditions
+                    </p>
                   </div>
                 )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
             {/* Advance Care Plans */}
             <Card>
               <CardHeader className="border-b">
                 <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Shield className="text-purple-500 h-5 w-5" />
+                  <Shield className="h-5 w-5 text-purple-500" />
                   <span>Advance Care Plans</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-3">
                   {advanceCarePlan.dnr && (
-                    <div className="flex items-center justify-between p-3 rounded-lg border border-red-200 bg-red-50">
+                    <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50 p-3">
                       <div className="flex items-center space-x-3">
                         <XCircle className="h-5 w-5 text-red-500" />
                         <div>
-                          <p className="font-semibold text-sm">DNR (Do Not Resuscitate)</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-sm font-semibold">
+                            DNR (Do Not Resuscitate)
+                          </p>
+                          <p className="text-muted-foreground text-xs">
                             Effective: {advanceCarePlan.dnrDate}
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs font-medium px-2 py-1 rounded bg-red-100 text-red-800">
+                      <span className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
                         ACTIVE
                       </span>
                     </div>
                   )}
-                  
+
                   {advanceCarePlan.molst && (
-                    <div className="flex items-center justify-between p-3 rounded-lg border border-orange-200 bg-orange-50">
+                    <div className="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50 p-3">
                       <div className="flex items-center space-x-3">
                         <AlertTriangle className="h-5 w-5 text-orange-500" />
                         <div>
-                          <p className="font-semibold text-sm">MOLST (Medical Orders for Life-Sustaining Treatment)</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-sm font-semibold">
+                            MOLST (Medical Orders for Life-Sustaining Treatment)
+                          </p>
+                          <p className="text-muted-foreground text-xs">
                             Effective: {advanceCarePlan.molstDate}
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs font-medium px-2 py-1 rounded bg-orange-100 text-orange-800">
+                      <span className="rounded bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
                         ACTIVE
                       </span>
                     </div>
                   )}
 
                   {advanceCarePlan.notes && (
-                    <div className="p-3 rounded-lg bg-gray-50">
-                      <p className="text-xs text-muted-foreground font-medium mb-1">Notes:</p>
+                    <div className="rounded-lg bg-gray-50 p-3">
+                      <p className="text-muted-foreground mb-1 text-xs font-medium">
+                        Notes:
+                      </p>
                       <p className="text-xs">{advanceCarePlan.notes}</p>
                     </div>
                   )}
 
                   {!advanceCarePlan.dnr && !advanceCarePlan.molst && (
-                    <div className="text-center py-4">
-                      <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No active advance care plans</p>
+                    <div className="py-4 text-center">
+                      <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
+                      <p className="text-muted-foreground text-sm">
+                        No active advance care plans
+                      </p>
                     </div>
                   )}
                 </div>
@@ -747,13 +864,15 @@ export default function PatientAssessmentPage() {
               <CardContent className="flex-1 overflow-hidden p-0">
                 <SkeletonBodyModel
                   selectedBodyPart={null}
-                  onBodyPartSelect={() => {}}
+                  onBodyPartSelect={() => {
+                    void 0;
+                  }}
                   patientData={{}}
                   skeletonFile={skeletonFile}
                   analysisText={currentIssue}
                 />
               </CardContent>
-          </Card>
+            </Card>
           </div>
         </div>
 
@@ -766,21 +885,24 @@ export default function PatientAssessmentPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="max-h-48 overflow-y-auto space-y-3">
+            <div className="max-h-48 space-y-3 overflow-y-auto">
               {history.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
+                <div className="text-muted-foreground py-8 text-center">
                   <p className="text-sm">No status updates recorded yet</p>
-                  <p className="text-xs mt-1">Send status updates to build history</p>
+                  <p className="mt-1 text-xs">
+                    Send status updates to build history
+                  </p>
                 </div>
               ) : (
                 history.map((entry, index) => (
-                  <div key={index} className="border-l-2 border-primary pl-3 py-2">
-                    <div className="text-xs text-muted-foreground font-mono">
+                  <div
+                    key={index}
+                    className="border-primary border-l-2 py-2 pl-3"
+                  >
+                    <div className="text-muted-foreground font-mono text-xs">
                       [{entry.timestamp}]
                     </div>
-                    <div className="text-sm mt-1">
-                      {entry.note}
-                    </div>
+                    <div className="mt-1 text-sm">{entry.note}</div>
                   </div>
                 ))
               )}
@@ -791,21 +913,26 @@ export default function PatientAssessmentPage() {
 
       {/* Break-Glass Override Modal */}
       {showBreakGlassModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex items-center space-x-3 mb-4">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6">
+            <div className="mb-4 flex items-center space-x-3">
               <AlertTriangle className="h-6 w-6 text-red-500" />
-              <h3 className="text-lg font-semibold text-red-800">Break-Glass Override</h3>
+              <h3 className="text-lg font-semibold text-red-800">
+                Break-Glass Override
+              </h3>
             </div>
             <div className="space-y-4">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-sm text-red-800 font-medium mb-2">⚠️ Emergency Access Required</p>
+              <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+                <p className="mb-2 text-sm font-medium text-red-800">
+                  ⚠️ Emergency Access Required
+                </p>
                 <p className="text-xs text-red-700">
-                  This action will grant emergency access to patient data without explicit consent. 
-                  This access will be logged and audited. Use only in life-critical situations.
+                  This action will grant emergency access to patient data
+                  without explicit consent. This access will be logged and
+                  audited. Use only in life-critical situations.
                 </p>
               </div>
-              
+
               <div className="space-y-3">
                 <div>
                   <Label htmlFor="username">Username</Label>
@@ -827,17 +954,17 @@ export default function PatientAssessmentPage() {
                   />
                 </div>
               </div>
-              
+
               <div className="flex space-x-3 pt-4">
-                <Button 
+                <Button
                   onClick={handleBreakGlassOverride}
                   className="flex-1 bg-red-600 hover:bg-red-700"
                 >
-                  <Unlock className="h-4 w-4 mr-2" />
+                  <Unlock className="mr-2 h-4 w-4" />
                   Grant Emergency Access
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setShowBreakGlassModal(false)}
                   className="flex-1"
                 >

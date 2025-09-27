@@ -224,26 +224,28 @@ export default function EMRUploadPage() {
     medication: "",
     location: "",
   });
-  const [pharmacyResults, setPharmacyResults] = useState<Array<{
-    name: string;
-    address: string;
-    phone: string;
-    distance: string;
-    availability: string;
-    hours: string;
-    type: "pharmacy" | "hospital";
-    city?: string;
-    state?: string;
-    zipcode?: string;
-    osmData?: boolean;
-  }>>([]);
+  const [pharmacyResults, setPharmacyResults] = useState<
+    Array<{
+      name: string;
+      address: string;
+      phone: string;
+      distance: string;
+      availability: string;
+      hours: string;
+      type: "pharmacy" | "hospital";
+      city?: string;
+      state?: string;
+      zipcode?: string;
+      osmData?: boolean;
+    }>
+  >([]);
   const [isSearchingPharmacy, setIsSearchingPharmacy] = useState(false);
   const [hasSearchedPharmacy, setHasSearchedPharmacy] = useState(false);
 
   // Pickup request state
   const [pickupRequestModal, setPickupRequestModal] = useState<{
     isOpen: boolean;
-    pharmacy: typeof pharmacyResults[0] | null;
+    pharmacy: (typeof pharmacyResults)[0] | null;
     medication: string;
     dosage: string;
     schedule: string;
@@ -260,18 +262,20 @@ export default function EMRUploadPage() {
     schedule: "",
     additionalNotes: "",
   });
-  const [pickupRequests, setPickupRequests] = useState<Array<{
-    id: string;
-    pharmacyName: string;
-    medication: string;
-    patientName: string;
-    dosage: string;
-    schedule: string;
-    additionalNotes: string;
-    status: "pending" | "confirmed" | "ready" | "completed";
-    requestedAt: Date;
-    estimatedReady: Date;
-  }>>([]);
+  const [pickupRequests, setPickupRequests] = useState<
+    Array<{
+      id: string;
+      pharmacyName: string;
+      medication: string;
+      patientName: string;
+      dosage: string;
+      schedule: string;
+      additionalNotes: string;
+      status: "pending" | "confirmed" | "ready" | "completed";
+      requestedAt: Date;
+      estimatedReady: Date;
+    }>
+  >([]);
 
   // Add functions
   const addMedication = () => {
@@ -319,7 +323,7 @@ export default function EMRUploadPage() {
   };
 
   // OpenStreetMap Overpass API integration
-  const OVERPASS_API_URL = 'https://overpass-api.de/api/interpreter';
+  const OVERPASS_API_URL = "https://overpass-api.de/api/interpreter";
 
   // Geocode location using Nominatim (OpenStreetMap's geocoding service)
   const geocodeWithNominatim = async (location: string) => {
@@ -327,31 +331,35 @@ export default function EMRUploadPage() {
       const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1&countrycodes=us`;
       const response = await fetch(nominatimUrl, {
         headers: {
-          'User-Agent': 'EMR-Pharmacy-Search/1.0'
-        }
+          "User-Agent": "EMR-Pharmacy-Search/1.0",
+        },
       });
       const data = await response.json();
-      
+
       if (data && data.length > 0) {
         return {
           lat: parseFloat(data[0].lat),
           lon: parseFloat(data[0].lon),
-          displayName: data[0].display_name
+          displayName: data[0].display_name,
         };
       }
       return null;
     } catch (error) {
-      console.error('Error geocoding with Nominatim:', error);
+      console.error("Error geocoding with Nominatim:", error);
       return null;
     }
   };
 
   // Search for pharmacies using Overpass API
-  const findPharmaciesWithOSM = async (lat: number, lon: number, radiusKm: number = 10) => {
+  const findPharmaciesWithOSM = async (
+    lat: number,
+    lon: number,
+    radiusKm = 10,
+  ) => {
     try {
       // Convert radius from km to degrees (approximate)
       const radiusDegrees = radiusKm / 111; // 1 degree ≈ 111 km
-      
+
       // Create bounding box
       const minLat = lat - radiusDegrees;
       const maxLat = lat + radiusDegrees;
@@ -370,142 +378,220 @@ export default function EMRUploadPage() {
       `;
 
       const response = await fetch(OVERPASS_API_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `data=${encodeURIComponent(overpassQuery)}`
+        body: `data=${encodeURIComponent(overpassQuery)}`,
       });
 
       const data = await response.json();
-      
+
       if (data.elements && data.elements.length > 0) {
         const validPharmacies = data.elements
-          .map((element: any) => {
-            // Get coordinates
-            let elementLat = element.lat;
-            let elementLon = element.lon;
-            
-            // For ways and relations, use center coordinates
-            if (element.center) {
-              elementLat = element.center.lat;
-              elementLon = element.center.lon;
-            }
+          .map(
+            (element: {
+              lat?: number;
+              lon?: number;
+              center?: { lat: number; lon: number };
+              tags?: Record<string, string>;
+            }) => {
+              // Get coordinates
+              let elementLat = element.lat;
+              let elementLon = element.lon;
 
-            // Calculate distance (simplified Haversine formula)
-            const distance = calculateDistance(lat, lon, elementLat, elementLon);
-
-            // Get name and address information
-            const name = element.tags?.name || element.tags?.brand || "Local Pharmacy";
-            const address = buildAddress(element.tags, elementLat, elementLon);
-            const phone = element.tags?.["contact:phone"] || element.tags?.phone || "(555) 123-4567";
-            
-            // Only include pharmacies with valid US addresses
-            if (!address) {
-              return null;
-            }
-            
-            // Determine if it's a hospital pharmacy
-            const isHospital = name.toLowerCase().includes('hospital') || 
-                             name.toLowerCase().includes('medical center') ||
-                             element.tags?.["amenity"] === "hospital";
-
-            // Format hours - prioritize pharmacy hours over general store hours
-            let hours = "Hours not available";
-            
-            // Check for pharmacy-specific hours first
-            if (element.tags?.["opening_hours:pharmacy"]) {
-              hours = parsePharmacyHours(element.tags["opening_hours:pharmacy"]);
-            } else if (element.tags?.["pharmacy:opening_hours"]) {
-              hours = parsePharmacyHours(element.tags["pharmacy:opening_hours"]);
-            } else if (element.tags?.["opening_hours:prescription"]) {
-              hours = parsePharmacyHours(element.tags["opening_hours:prescription"]);
-            } else if (element.tags?.["opening_hours"]) {
-              // Parse combined hours to extract pharmacy hours only
-              const parsedHours = parsePharmacyHours(element.tags.opening_hours);
-              
-              // Only use general opening hours if no pharmacy-specific hours are available
-              // and it's clearly a pharmacy (not a general store with pharmacy section)
-              const isPharmacyOnly = element.tags?.["shop"] === "pharmacy" || 
-                                   element.tags?.["amenity"] === "pharmacy" ||
-                                   name.toLowerCase().includes('pharmacy') ||
-                                   name.toLowerCase().includes('rx');
-              
-              if (isPharmacyOnly) {
-                hours = parsedHours;
-              } else if (parsedHours !== element.tags.opening_hours) {
-                // If we successfully parsed pharmacy hours from combined string, use them
-                hours = parsedHours;
-              } else {
-                // For general stores, don't show store hours, show pharmacy hours as unavailable
-                hours = "Pharmacy hours not specified";
+              // For ways and relations, use center coordinates
+              if (element.center) {
+                elementLat = element.center.lat;
+                elementLon = element.center.lon;
               }
-            } else if (isHospital) {
-              hours = "24/7";
-            }
 
-            return {
-              name: name,
-              address: address,
-              phone: phone,
-              distance: `${distance.toFixed(1)} miles`,
-              availability: Math.random() > 0.2 ? 
-                (Math.random() > 0.7 ? "Limited Stock" : "In Stock") : 
-                "Out of Stock",
-              hours: hours,
-              type: isHospital ? "hospital" as const : "pharmacy" as const,
-              city: "",
-              state: "",
-              zipcode: "",
-              osmData: true
-            };
-          })
-          .filter((pharmacy: any) => pharmacy !== null) // Remove null entries
-          .sort((a: any, b: any) => parseFloat(a.distance) - parseFloat(b.distance)); // Sort by distance
-        
+              // Calculate distance (simplified Haversine formula)
+              const distance = calculateDistance(
+                lat,
+                lon,
+                elementLat ?? 0,
+                elementLon ?? 0,
+              );
+
+              // Get name and address information
+              const name =
+                element.tags?.name ?? element.tags?.brand ?? "Local Pharmacy";
+              const address = buildAddress(
+                element.tags,
+                elementLat ?? 0,
+                elementLon ?? 0,
+              );
+              const phone =
+                element.tags?.["contact:phone"] ??
+                element.tags?.phone ??
+                "(555) 123-4567";
+
+              // Only include pharmacies with valid US addresses
+              if (!address) {
+                return null;
+              }
+
+              // Determine if it's a hospital pharmacy
+              const isHospital =
+                name.toLowerCase().includes("hospital") ||
+                name.toLowerCase().includes("medical center") ||
+                element.tags?.amenity === "hospital";
+
+              // Format hours - prioritize pharmacy hours over general store hours
+              let hours = "Hours not available";
+
+              // Check for pharmacy-specific hours first
+              if (element.tags?.["opening_hours:pharmacy"]) {
+                hours = parsePharmacyHours(
+                  element.tags["opening_hours:pharmacy"],
+                );
+              } else if (element.tags?.["pharmacy:opening_hours"]) {
+                hours = parsePharmacyHours(
+                  element.tags["pharmacy:opening_hours"],
+                );
+              } else if (element.tags?.["opening_hours:prescription"]) {
+                hours = parsePharmacyHours(
+                  element.tags["opening_hours:prescription"],
+                );
+              } else if (element.tags?.opening_hours) {
+                // Parse combined hours to extract pharmacy hours only
+                const parsedHours = parsePharmacyHours(
+                  element.tags.opening_hours,
+                );
+
+                // Only use general opening hours if no pharmacy-specific hours are available
+                // and it's clearly a pharmacy (not a general store with pharmacy section)
+                const isPharmacyOnly =
+                  element.tags?.shop === "pharmacy" ||
+                  element.tags?.amenity === "pharmacy" ||
+                  name.toLowerCase().includes("pharmacy") ||
+                  name.toLowerCase().includes("rx");
+
+                if (isPharmacyOnly) {
+                  hours = parsedHours;
+                } else if (parsedHours !== element.tags.opening_hours) {
+                  // If we successfully parsed pharmacy hours from combined string, use them
+                  hours = parsedHours;
+                } else {
+                  // For general stores, don't show store hours, show pharmacy hours as unavailable
+                  hours = "Pharmacy hours not specified";
+                }
+              } else if (isHospital) {
+                hours = "24/7";
+              }
+
+              return {
+                name: name,
+                address: address,
+                phone: phone,
+                distance: `${distance.toFixed(1)} miles`,
+                availability:
+                  Math.random() > 0.2
+                    ? Math.random() > 0.7
+                      ? "Limited Stock"
+                      : "In Stock"
+                    : "Out of Stock",
+                hours: hours,
+                type: isHospital
+                  ? ("hospital" as const)
+                  : ("pharmacy" as const),
+                city: "",
+                state: "",
+                zipcode: "",
+                osmData: true,
+              };
+            },
+          )
+          .filter(
+            (
+              pharmacy: {
+                name: string;
+                address: string;
+                phone: string;
+                distance: string;
+                availability: string;
+                hours: string;
+                type: "hospital" | "pharmacy";
+                city: string;
+                state: string;
+                zipcode: string;
+                osmData: boolean;
+              } | null,
+            ): pharmacy is {
+              name: string;
+              address: string;
+              phone: string;
+              distance: string;
+              availability: string;
+              hours: string;
+              type: "hospital" | "pharmacy";
+              city: string;
+              state: string;
+              zipcode: string;
+              osmData: boolean;
+            } => pharmacy !== null,
+          ) // Remove null entries
+          .sort(
+            (a: { distance: string }, b: { distance: string }) =>
+              parseFloat(a.distance) - parseFloat(b.distance),
+          ); // Sort by distance
+
         return validPharmacies;
       }
-      
+
       return [];
     } catch (error) {
-      console.error('Error searching pharmacies with OSM:', error);
+      console.error("Error searching pharmacies with OSM:", error);
       return [];
     }
   };
 
   // Calculate distance between two coordinates using Haversine formula
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ): number => {
     const R = 3959; // Earth's radius in miles
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
   // Build address from OSM tags and validate US format
-  const buildAddress = (tags: any, lat: number, lon: number): string | null => {
+  const buildAddress = (
+    tags: Record<string, string> | undefined,
+    _lat: number,
+    _lon: number,
+  ): string | null => {
     const addressParts = [];
-    
+
     // Build address from OSM tags
     if (tags?.["addr:housenumber"]) addressParts.push(tags["addr:housenumber"]);
     if (tags?.["addr:street"]) addressParts.push(tags["addr:street"]);
     if (tags?.["addr:city"]) addressParts.push(tags["addr:city"]);
     if (tags?.["addr:state"]) addressParts.push(tags["addr:state"]);
     if (tags?.["addr:postcode"]) addressParts.push(tags["addr:postcode"]);
-    
+
     // Validate US address format
     if (addressParts.length >= 3) {
-      const address = addressParts.join(', ');
-      
+      const address = addressParts.join(", ");
+
       // Check if it looks like a proper US address
       if (isValidUSAddress(address)) {
         return address;
       }
     }
-    
+
     // Return null if no valid US address format
     return null;
   };
@@ -513,19 +599,20 @@ export default function EMRUploadPage() {
   // Validate if address follows US format
   const isValidUSAddress = (address: string): boolean => {
     // Must have at least street, city, and state
-    const parts = address.split(',').map(part => part.trim());
-    
+    const parts = address.split(",").map((part) => part.trim());
+
     if (parts.length < 3) return false;
-    
+
     // Check for common US address patterns
     const hasStreet = parts[0] && /\d+/.test(parts[0]); // Should have house number
     const hasCity = parts.length >= 2 && parts[1] && parts[1].length > 1;
-    const hasState = parts.length >= 3 && parts[2] && /^[A-Z]{2}$/.test(parts[2].trim());
-    
+    const _hasState =
+      parts.length >= 3 && parts[2] && /^[A-Z]{2}$/.test(parts[2].trim());
+
     // Additional validation - ensure it's not just coordinates
     const hasCoordinates = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test(address);
     if (hasCoordinates) return false;
-    
+
     // Must have at least street number and city
     return Boolean(hasStreet && hasCity);
   };
@@ -533,66 +620,73 @@ export default function EMRUploadPage() {
   // Parse combined OSM hours to extract pharmacy hours only
   const parsePharmacyHours = (hoursString: string): string => {
     if (!hoursString) return "Hours not available";
-    
+
     // Clean up the input string
     const cleanInput = hoursString.trim();
-    
+
     // Pattern 1: Look for pharmacy hours with double pipe separator (most common)
     // Format: "Store hours || Pharmacy hours open \"Pharmacy\""
-    const pipeMatch = cleanInput.match(/\|\|\s*([^"]+?)\s*open\s+"Pharmacy"/i);
-    if (pipeMatch && pipeMatch[1]) {
+    const pipeRegex = /\|\|\s*([^"]+?)\s*open\s+"Pharmacy"/i;
+    const pipeMatch = pipeRegex.exec(cleanInput);
+    if (pipeMatch?.[1]) {
       const pharmacyHours = pipeMatch[1].trim();
       return pharmacyHours || "Hours not available";
     }
-    
+
     // Pattern 2: Look for pharmacy hours after "open \"Pharmacy\""
     // Format: "open \"Pharmacy\" Mo-Fr 08:00-21:00; Sa, Su 09:00-18:00"
-    const afterPharmacyMatch = cleanInput.match(/open\s+"Pharmacy"\s*([^|]+?)(?:\s*$|\s*\|\|)/i);
-    if (afterPharmacyMatch && afterPharmacyMatch[1]) {
+    const afterPharmacyRegex = /open\s+"Pharmacy"\s*([^|]+?)(?:\s*$|\s*\|\|)/i;
+    const afterPharmacyMatch = afterPharmacyRegex.exec(cleanInput);
+    if (afterPharmacyMatch?.[1]) {
       const pharmacyHours = afterPharmacyMatch[1].trim();
       return pharmacyHours || "Hours not available";
     }
-    
+
     // Pattern 3: Look for pharmacy hours directly before "open \"Pharmacy\""
     // Format: "Mo-Fr 08:00-21:00; Sa, Su 09:00-18:00 open \"Pharmacy\""
-    const beforePharmacyMatch = cleanInput.match(/([A-Za-z\-\d\s:,;]+?)\s*open\s+"Pharmacy"/i);
-    if (beforePharmacyMatch && beforePharmacyMatch[1]) {
+    const beforePharmacyRegex = /([A-Za-z\-\d\s:,;]+?)\s*open\s+"Pharmacy"/i;
+    const beforePharmacyMatch = beforePharmacyRegex.exec(cleanInput);
+    if (beforePharmacyMatch?.[1]) {
       const pharmacyHours = beforePharmacyMatch[1].trim();
       return pharmacyHours || "Hours not available";
     }
-    
+
     // Pattern 4: Look for pharmacy hours with colon separator
     // Format: "Store: 24/7 || Pharmacy: Mo-Fr 08:00-21:00; Sa, Su 09:00-18:00"
-    const colonMatch = cleanInput.match(/Pharmacy:\s*([^|]+?)(?:\s*$|\s*\|\|)/i);
-    if (colonMatch && colonMatch[1]) {
+    const colonRegex = /Pharmacy:\s*([^|]+?)(?:\s*$|\s*\|\|)/i;
+    const colonMatch = colonRegex.exec(cleanInput);
+    if (colonMatch?.[1]) {
       const pharmacyHours = colonMatch[1].trim();
       return pharmacyHours || "Hours not available";
     }
-    
+
     // Pattern 5: Look for pharmacy hours with parentheses
     // Format: "Store (24/7) || Pharmacy (Mo-Fr 08:00-21:00; Sa, Su 09:00-18:00)"
-    const parenthesesMatch = cleanInput.match(/Pharmacy\s*\(([^)]+)\)/i);
-    if (parenthesesMatch && parenthesesMatch[1]) {
+    const parenthesesRegex = /Pharmacy\s*\(([^)]+)\)/i;
+    const parenthesesMatch = parenthesesRegex.exec(cleanInput);
+    if (parenthesesMatch?.[1]) {
       const pharmacyHours = parenthesesMatch[1].trim();
       return pharmacyHours || "Hours not available";
     }
-    
+
     // Pattern 6: Look for pharmacy hours with dash separator
     // Format: "Store - 24/7 || Pharmacy - Mo-Fr 08:00-21:00; Sa, Su 09:00-18:00"
-    const dashMatch = cleanInput.match(/Pharmacy\s*-\s*([^|]+?)(?:\s*$|\s*\|\|)/i);
-    if (dashMatch && dashMatch[1]) {
+    const dashRegex = /Pharmacy\s*-\s*([^|]+?)(?:\s*$|\s*\|\|)/i;
+    const dashMatch = dashRegex.exec(cleanInput);
+    if (dashMatch?.[1]) {
       const pharmacyHours = dashMatch[1].trim();
       return pharmacyHours || "Hours not available";
     }
-    
+
     // Pattern 7: Look for pharmacy hours with semicolon separator
     // Format: "Store hours; Pharmacy: Mo-Fr 08:00-21:00; Sa, Su 09:00-18:00"
-    const semicolonMatch = cleanInput.match(/Pharmacy:\s*([^;]+?)(?:\s*$|\s*;)/i);
-    if (semicolonMatch && semicolonMatch[1]) {
+    const semicolonRegex = /Pharmacy:\s*([^;]+?)(?:\s*$|\s*;)/i;
+    const semicolonMatch = semicolonRegex.exec(cleanInput);
+    if (semicolonMatch?.[1]) {
       const pharmacyHours = semicolonMatch[1].trim();
       return pharmacyHours || "Hours not available";
     }
-    
+
     // If no pharmacy-specific hours found, return the original string
     return cleanInput;
   };
@@ -600,7 +694,10 @@ export default function EMRUploadPage() {
   // US ZIP code to city/state mapping
   const getLocationFromZipCode = (zipCode: string) => {
     // Major US ZIP codes mapping to cities and states
-    const zipCodeMap: Record<string, { city: string; state: string; stateCode: string }> = {
+    const zipCodeMap: Record<
+      string,
+      { city: string; state: string; stateCode: string }
+    > = {
       // New York
       "10001": { city: "New York", state: "New York", stateCode: "NY" },
       "10036": { city: "New York", state: "New York", stateCode: "NY" },
@@ -608,211 +705,223 @@ export default function EMRUploadPage() {
       "10029": { city: "New York", state: "New York", stateCode: "NY" },
       "11201": { city: "Brooklyn", state: "New York", stateCode: "NY" },
       "11101": { city: "Queens", state: "New York", stateCode: "NY" },
-      
+
       // Los Angeles
       "90028": { city: "Los Angeles", state: "California", stateCode: "CA" },
       "90048": { city: "Los Angeles", state: "California", stateCode: "CA" },
       "90210": { city: "Beverly Hills", state: "California", stateCode: "CA" },
       "90211": { city: "Beverly Hills", state: "California", stateCode: "CA" },
       "90401": { city: "Santa Monica", state: "California", stateCode: "CA" },
-      
+
       // Chicago
       "60611": { city: "Chicago", state: "Illinois", stateCode: "IL" },
       "60601": { city: "Chicago", state: "Illinois", stateCode: "IL" },
       "60602": { city: "Chicago", state: "Illinois", stateCode: "IL" },
-      
+
       // Houston
       "77002": { city: "Houston", state: "Texas", stateCode: "TX" },
       "77030": { city: "Houston", state: "Texas", stateCode: "TX" },
       "77019": { city: "Houston", state: "Texas", stateCode: "TX" },
-      
+
       // Phoenix
       "85004": { city: "Phoenix", state: "Arizona", stateCode: "AZ" },
       "85003": { city: "Phoenix", state: "Arizona", stateCode: "AZ" },
       "85054": { city: "Phoenix", state: "Arizona", stateCode: "AZ" },
-      
+
       // Miami
       "33101": { city: "Miami", state: "Florida", stateCode: "FL" },
       "33139": { city: "Miami Beach", state: "Florida", stateCode: "FL" },
-      
+
       // Atlanta
       "30309": { city: "Atlanta", state: "Georgia", stateCode: "GA" },
       "30303": { city: "Atlanta", state: "Georgia", stateCode: "GA" },
-      
+
       // Seattle
       "98101": { city: "Seattle", state: "Washington", stateCode: "WA" },
       "98121": { city: "Seattle", state: "Washington", stateCode: "WA" },
-      
+
       // Denver
       "80202": { city: "Denver", state: "Colorado", stateCode: "CO" },
       "80203": { city: "Denver", state: "Colorado", stateCode: "CO" },
-      
+
       // Boston
       "02101": { city: "Boston", state: "Massachusetts", stateCode: "MA" },
       "02108": { city: "Boston", state: "Massachusetts", stateCode: "MA" },
-      
+
       // Philadelphia
       "19102": { city: "Philadelphia", state: "Pennsylvania", stateCode: "PA" },
       "19103": { city: "Philadelphia", state: "Pennsylvania", stateCode: "PA" },
-      
+
       // Dallas
       "75201": { city: "Dallas", state: "Texas", stateCode: "TX" },
       "75202": { city: "Dallas", state: "Texas", stateCode: "TX" },
-      
+
       // San Francisco
       "94102": { city: "San Francisco", state: "California", stateCode: "CA" },
       "94103": { city: "San Francisco", state: "California", stateCode: "CA" },
-      
+
       // Washington DC
-      "20001": { city: "Washington", state: "District of Columbia", stateCode: "DC" },
-      "20002": { city: "Washington", state: "District of Columbia", stateCode: "DC" },
-      
+      "20001": {
+        city: "Washington",
+        state: "District of Columbia",
+        stateCode: "DC",
+      },
+      "20002": {
+        city: "Washington",
+        state: "District of Columbia",
+        stateCode: "DC",
+      },
+
       // Las Vegas
       "89101": { city: "Las Vegas", state: "Nevada", stateCode: "NV" },
       "89109": { city: "Las Vegas", state: "Nevada", stateCode: "NV" },
-      
+
       // Nashville
       "37201": { city: "Nashville", state: "Tennessee", stateCode: "TN" },
       "37203": { city: "Nashville", state: "Tennessee", stateCode: "TN" },
-      
+
       // Portland
       "97201": { city: "Portland", state: "Oregon", stateCode: "OR" },
       "97205": { city: "Portland", state: "Oregon", stateCode: "OR" },
-      
+
       // Austin
       "78701": { city: "Austin", state: "Texas", stateCode: "TX" },
       "78702": { city: "Austin", state: "Texas", stateCode: "TX" },
-      
+
       // San Diego
       "92101": { city: "San Diego", state: "California", stateCode: "CA" },
       "92103": { city: "San Diego", state: "California", stateCode: "CA" },
-      
+
       // Detroit
       "48201": { city: "Detroit", state: "Michigan", stateCode: "MI" },
       "48202": { city: "Detroit", state: "Michigan", stateCode: "MI" },
-      
+
       // Minneapolis
       "55401": { city: "Minneapolis", state: "Minnesota", stateCode: "MN" },
       "55402": { city: "Minneapolis", state: "Minnesota", stateCode: "MN" },
-      
+
       // Kansas City
       "64106": { city: "Kansas City", state: "Missouri", stateCode: "MO" },
       "64111": { city: "Kansas City", state: "Missouri", stateCode: "MO" },
-      
+
       // New Orleans
       "70112": { city: "New Orleans", state: "Louisiana", stateCode: "LA" },
       "70130": { city: "New Orleans", state: "Louisiana", stateCode: "LA" },
-      
+
       // Salt Lake City
       "84101": { city: "Salt Lake City", state: "Utah", stateCode: "UT" },
       "84111": { city: "Salt Lake City", state: "Utah", stateCode: "UT" },
-      
+
       // Oklahoma City
       "73102": { city: "Oklahoma City", state: "Oklahoma", stateCode: "OK" },
       "73103": { city: "Oklahoma City", state: "Oklahoma", stateCode: "OK" },
-      
+
       // Memphis
       "38103": { city: "Memphis", state: "Tennessee", stateCode: "TN" },
       "38104": { city: "Memphis", state: "Tennessee", stateCode: "TN" },
-      
+
       // Louisville
       "40202": { city: "Louisville", state: "Kentucky", stateCode: "KY" },
       "40203": { city: "Louisville", state: "Kentucky", stateCode: "KY" },
-      
+
       // Baltimore
       "21201": { city: "Baltimore", state: "Maryland", stateCode: "MD" },
       "21202": { city: "Baltimore", state: "Maryland", stateCode: "MD" },
-      
+
       // Milwaukee
       "53202": { city: "Milwaukee", state: "Wisconsin", stateCode: "WI" },
       "53203": { city: "Milwaukee", state: "Wisconsin", stateCode: "WI" },
-      
+
       // Albuquerque
       "87102": { city: "Albuquerque", state: "New Mexico", stateCode: "NM" },
       "87104": { city: "Albuquerque", state: "New Mexico", stateCode: "NM" },
-      
+
       // Tucson
       "85701": { city: "Tucson", state: "Arizona", stateCode: "AZ" },
       "85702": { city: "Tucson", state: "Arizona", stateCode: "AZ" },
-      
+
       // Fresno
       "93721": { city: "Fresno", state: "California", stateCode: "CA" },
       "93701": { city: "Fresno", state: "California", stateCode: "CA" },
-      
+
       // Sacramento
       "95814": { city: "Sacramento", state: "California", stateCode: "CA" },
       "95816": { city: "Sacramento", state: "California", stateCode: "CA" },
-      
+
       // Mesa
       "85201": { city: "Mesa", state: "Arizona", stateCode: "AZ" },
       "85202": { city: "Mesa", state: "Arizona", stateCode: "AZ" },
-      
+
       // Kansas City (Kansas)
       "66101": { city: "Kansas City", state: "Kansas", stateCode: "KS" },
       "66102": { city: "Kansas City", state: "Kansas", stateCode: "KS" },
-      
+
       // Atlanta (expanded)
       "30305": { city: "Atlanta", state: "Georgia", stateCode: "GA" },
       "30306": { city: "Atlanta", state: "Georgia", stateCode: "GA" },
-      
+
       // Omaha
       "68102": { city: "Omaha", state: "Nebraska", stateCode: "NE" },
       "68105": { city: "Omaha", state: "Nebraska", stateCode: "NE" },
-      
+
       // Raleigh
       "27601": { city: "Raleigh", state: "North Carolina", stateCode: "NC" },
       "27603": { city: "Raleigh", state: "North Carolina", stateCode: "NC" },
-      
+
       // Miami (expanded)
       "33125": { city: "Miami", state: "Florida", stateCode: "FL" },
       "33132": { city: "Miami", state: "Florida", stateCode: "FL" },
-      
+
       // Cleveland
       "44101": { city: "Cleveland", state: "Ohio", stateCode: "OH" },
       "44102": { city: "Cleveland", state: "Ohio", stateCode: "OH" },
-      
+
       // Tulsa
       "74103": { city: "Tulsa", state: "Oklahoma", stateCode: "OK" },
       "74104": { city: "Tulsa", state: "Oklahoma", stateCode: "OK" },
-      
+
       // Oakland
       "94612": { city: "Oakland", state: "California", stateCode: "CA" },
       "94607": { city: "Oakland", state: "California", stateCode: "CA" },
-      
+
       // Minneapolis (expanded)
       "55403": { city: "Minneapolis", state: "Minnesota", stateCode: "MN" },
       "55404": { city: "Minneapolis", state: "Minnesota", stateCode: "MN" },
-      
+
       // Wichita
       "67202": { city: "Wichita", state: "Kansas", stateCode: "KS" },
       "67203": { city: "Wichita", state: "Kansas", stateCode: "KS" },
-      
+
       // Arlington
       "76001": { city: "Arlington", state: "Texas", stateCode: "TX" },
       "76002": { city: "Arlington", state: "Texas", stateCode: "TX" },
-      
+
       // Tampa
       "33602": { city: "Tampa", state: "Florida", stateCode: "FL" },
       "33603": { city: "Tampa", state: "Florida", stateCode: "FL" },
-      
+
       // New Orleans (expanded)
       "70113": { city: "New Orleans", state: "Louisiana", stateCode: "LA" },
       "70114": { city: "New Orleans", state: "Louisiana", stateCode: "LA" },
-      
+
       // Honolulu
       "96801": { city: "Honolulu", state: "Hawaii", stateCode: "HI" },
       "96802": { city: "Honolulu", state: "Hawaii", stateCode: "HI" },
-      
+
       // Anchorage
       "99501": { city: "Anchorage", state: "Alaska", stateCode: "AK" },
       "99502": { city: "Anchorage", state: "Alaska", stateCode: "AK" },
     };
-    
+
     return zipCodeMap[zipCode];
   };
 
   // Generate pharmacies for any US location
-  const generatePharmaciesForLocation = (city: string, stateCode: string, zipCode: string) => {
+  const generatePharmaciesForLocation = (
+    city: string,
+    stateCode: string,
+    zipCode: string,
+  ) => {
     const pharmacyTemplates = [
       {
         name: "CVS Pharmacy",
@@ -860,17 +969,18 @@ export default function EMRUploadPage() {
 
     return pharmacyTemplates.map((template, index) => ({
       name: template.name,
-      address: zipCode === '00000' 
-        ? `${100 + index * 100} Main St, ${city}, ${stateCode}`
-        : `${100 + index * 100} Main St, ${city}, ${stateCode} ${zipCode}`,
-      phone: `${template.phonePrefix}${String(index + 1).padStart(4, '0')}`,
+      address:
+        zipCode === "00000"
+          ? `${100 + index * 100} Main St, ${city}, ${stateCode}`
+          : `${100 + index * 100} Main St, ${city}, ${stateCode} ${zipCode}`,
+      phone: `${template.phonePrefix}${String(index + 1).padStart(4, "0")}`,
       distance: `${(index * 0.5 + 0.3).toFixed(1)} miles`,
       availability: "In Stock",
       hours: template.hours,
       type: template.type,
       city: city.toLowerCase(),
       state: stateCode.toLowerCase(),
-      zipcode: zipCode === '00000' ? '' : zipCode,
+      zipcode: zipCode === "00000" ? "" : zipCode,
     }));
   };
 
@@ -921,27 +1031,40 @@ export default function EMRUploadPage() {
   // Parse city and state from input
   const parseCityState = (input: string) => {
     const trimmed = input.trim();
-    
+
     // Check if it contains a comma (city, state format)
-    if (trimmed.includes(',')) {
-      const parts = trimmed.split(',').map(part => part.trim());
+    if (trimmed.includes(",")) {
+      const parts = trimmed.split(",").map((part) => part.trim());
       if (parts.length === 2 && parts[0] && parts[1]) {
         return {
           city: parts[0].toLowerCase(),
           state: parts[1].toLowerCase(),
-          isValid: true
+          isValid: true,
         };
       }
     }
-    
-    return { city: '', state: '', isValid: false };
+
+    return { city: "", state: "", isValid: false };
   };
 
   // Real US pharmacy and hospital data
-  const getRealPharmacyData = (searchLocation: string) => {
+  const getRealPharmacyData = (
+    searchLocation: string,
+  ): {
+    name: string;
+    address: string;
+    phone: string;
+    distance: string;
+    availability: string;
+    hours: string;
+    type: "pharmacy" | "hospital";
+    city?: string;
+    state?: string;
+    zipcode?: string;
+  }[] => {
     // Parse location input (zipcode, city, state)
     const location = searchLocation.toLowerCase().trim();
-    
+
     // Major US cities with real pharmacy chains
     const pharmacyData = [
       // New York, NY
@@ -955,7 +1078,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "new york",
         state: "ny",
-        zipcode: "10036"
+        zipcode: "10036",
       },
       {
         name: "Walgreens",
@@ -967,7 +1090,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "new york",
         state: "ny",
-        zipcode: "10019"
+        zipcode: "10019",
       },
       {
         name: "Mount Sinai Hospital Pharmacy",
@@ -979,9 +1102,9 @@ export default function EMRUploadPage() {
         type: "hospital" as const,
         city: "new york",
         state: "ny",
-        zipcode: "10029"
+        zipcode: "10029",
       },
-      
+
       // Los Angeles, CA
       {
         name: "CVS Pharmacy",
@@ -993,7 +1116,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "los angeles",
         state: "ca",
-        zipcode: "90028"
+        zipcode: "90028",
       },
       {
         name: "Walgreens",
@@ -1005,7 +1128,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "los angeles",
         state: "ca",
-        zipcode: "90028"
+        zipcode: "90028",
       },
       {
         name: "Cedars-Sinai Medical Center Pharmacy",
@@ -1017,9 +1140,9 @@ export default function EMRUploadPage() {
         type: "hospital" as const,
         city: "los angeles",
         state: "ca",
-        zipcode: "90048"
+        zipcode: "90048",
       },
-      
+
       // Chicago, IL
       {
         name: "CVS Pharmacy",
@@ -1031,7 +1154,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "chicago",
         state: "il",
-        zipcode: "60611"
+        zipcode: "60611",
       },
       {
         name: "Walgreens",
@@ -1043,7 +1166,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "chicago",
         state: "il",
-        zipcode: "60611"
+        zipcode: "60611",
       },
       {
         name: "Northwestern Memorial Hospital Pharmacy",
@@ -1055,9 +1178,9 @@ export default function EMRUploadPage() {
         type: "hospital" as const,
         city: "chicago",
         state: "il",
-        zipcode: "60611"
+        zipcode: "60611",
       },
-      
+
       // Houston, TX
       {
         name: "CVS Pharmacy",
@@ -1069,7 +1192,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "houston",
         state: "tx",
-        zipcode: "77002"
+        zipcode: "77002",
       },
       {
         name: "Walgreens",
@@ -1081,7 +1204,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "houston",
         state: "tx",
-        zipcode: "77002"
+        zipcode: "77002",
       },
       {
         name: "Houston Methodist Hospital Pharmacy",
@@ -1093,9 +1216,9 @@ export default function EMRUploadPage() {
         type: "hospital" as const,
         city: "houston",
         state: "tx",
-        zipcode: "77030"
+        zipcode: "77030",
       },
-      
+
       // Phoenix, AZ
       {
         name: "CVS Pharmacy",
@@ -1107,7 +1230,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "phoenix",
         state: "az",
-        zipcode: "85004"
+        zipcode: "85004",
       },
       {
         name: "Walgreens",
@@ -1119,7 +1242,7 @@ export default function EMRUploadPage() {
         type: "pharmacy" as const,
         city: "phoenix",
         state: "az",
-        zipcode: "85003"
+        zipcode: "85003",
       },
       {
         name: "Mayo Clinic Hospital Pharmacy",
@@ -1131,18 +1254,22 @@ export default function EMRUploadPage() {
         type: "hospital" as const,
         city: "phoenix",
         state: "az",
-        zipcode: "85054"
-      }
+        zipcode: "85054",
+      },
     ];
 
     // Check if input is a ZIP code (5 digits)
     const isZipCode = /^\d{5}$/.test(location);
-    
+
     if (isZipCode) {
       const locationInfo = getLocationFromZipCode(location);
       if (locationInfo) {
         // Generate pharmacies for the ZIP code's city/state
-        return generatePharmaciesForLocation(locationInfo.city, locationInfo.stateCode, location);
+        return generatePharmaciesForLocation(
+          locationInfo.city,
+          locationInfo.stateCode,
+          location,
+        );
       } else {
         // For unknown ZIP codes, generate generic nearby pharmacies
         return generateGenericPharmacies(location);
@@ -1152,73 +1279,160 @@ export default function EMRUploadPage() {
     // Filter by location if provided (city/state search)
     if (location) {
       const cityStateParse = parseCityState(location);
-      
+
       if (cityStateParse.isValid) {
         // First try to find in predefined pharmacy data
-        const predefinedResults = pharmacyData.filter(pharmacy => 
-          pharmacy.city.toLowerCase().includes(cityStateParse.city) &&
-          (pharmacy.state.toLowerCase().includes(cityStateParse.state) || 
-           pharmacy.state.toLowerCase().includes(cityStateParse.state.replace(/\s+/g, '')))
+        const predefinedResults = pharmacyData.filter(
+          (pharmacy) =>
+            pharmacy.city.toLowerCase().includes(cityStateParse.city) &&
+            (pharmacy.state.toLowerCase().includes(cityStateParse.state) ||
+              pharmacy.state
+                .toLowerCase()
+                .includes(cityStateParse.state.replace(/\s+/g, ""))),
         );
-        
+
         // If found in predefined data, return those results
         if (predefinedResults.length > 0) {
           return predefinedResults;
         }
-        
+
         // If not found, generate pharmacies for this city/state combination
         const stateAbbreviations: Record<string, string> = {
-          'alabama': 'al', 'alaska': 'ak', 'arizona': 'az', 'arkansas': 'ar', 'california': 'ca',
-          'colorado': 'co', 'connecticut': 'ct', 'delaware': 'de', 'florida': 'fl', 'georgia': 'ga',
-          'hawaii': 'hi', 'idaho': 'id', 'illinois': 'il', 'indiana': 'in', 'iowa': 'ia',
-          'kansas': 'ks', 'kentucky': 'ky', 'louisiana': 'la', 'maine': 'me', 'maryland': 'md',
-          'massachusetts': 'ma', 'michigan': 'mi', 'minnesota': 'mn', 'mississippi': 'ms', 'missouri': 'mo',
-          'montana': 'mt', 'nebraska': 'ne', 'nevada': 'nv', 'new hampshire': 'nh', 'new jersey': 'nj',
-          'new mexico': 'nm', 'new york': 'ny', 'north carolina': 'nc', 'north dakota': 'nd', 'ohio': 'oh',
-          'oklahoma': 'ok', 'oregon': 'or', 'pennsylvania': 'pa', 'rhode island': 'ri', 'south carolina': 'sc',
-          'south dakota': 'sd', 'tennessee': 'tn', 'texas': 'tx', 'utah': 'ut', 'vermont': 'vt',
-          'virginia': 'va', 'washington': 'wa', 'west virginia': 'wv', 'wisconsin': 'wi', 'wyoming': 'wy'
+          alabama: "al",
+          alaska: "ak",
+          arizona: "az",
+          arkansas: "ar",
+          california: "ca",
+          colorado: "co",
+          connecticut: "ct",
+          delaware: "de",
+          florida: "fl",
+          georgia: "ga",
+          hawaii: "hi",
+          idaho: "id",
+          illinois: "il",
+          indiana: "in",
+          iowa: "ia",
+          kansas: "ks",
+          kentucky: "ky",
+          louisiana: "la",
+          maine: "me",
+          maryland: "md",
+          massachusetts: "ma",
+          michigan: "mi",
+          minnesota: "mn",
+          mississippi: "ms",
+          missouri: "mo",
+          montana: "mt",
+          nebraska: "ne",
+          nevada: "nv",
+          "new hampshire": "nh",
+          "new jersey": "nj",
+          "new mexico": "nm",
+          "new york": "ny",
+          "north carolina": "nc",
+          "north dakota": "nd",
+          ohio: "oh",
+          oklahoma: "ok",
+          oregon: "or",
+          pennsylvania: "pa",
+          "rhode island": "ri",
+          "south carolina": "sc",
+          "south dakota": "sd",
+          tennessee: "tn",
+          texas: "tx",
+          utah: "ut",
+          vermont: "vt",
+          virginia: "va",
+          washington: "wa",
+          "west virginia": "wv",
+          wisconsin: "wi",
+          wyoming: "wy",
         };
-        
+
         // Get state code (handle both full state names and abbreviations)
         let stateCode = cityStateParse.state;
         const mappedState = stateAbbreviations[cityStateParse.state];
         if (mappedState) {
           stateCode = mappedState;
         }
-        
+
         // Generate pharmacies for this city/state
         return generatePharmaciesForLocation(
-          cityStateParse.city.charAt(0).toUpperCase() + cityStateParse.city.slice(1),
+          cityStateParse.city.charAt(0).toUpperCase() +
+            cityStateParse.city.slice(1),
           stateCode.toUpperCase(),
-          '00000' // Use generic ZIP for generated pharmacies
+          "00000", // Use generic ZIP for generated pharmacies
         );
       } else {
         // If not valid city, state format, check if it's a state-only search
         const stateAbbreviations: Record<string, string> = {
-          'alabama': 'al', 'alaska': 'ak', 'arizona': 'az', 'arkansas': 'ar', 'california': 'ca',
-          'colorado': 'co', 'connecticut': 'ct', 'delaware': 'de', 'florida': 'fl', 'georgia': 'ga',
-          'hawaii': 'hi', 'idaho': 'id', 'illinois': 'il', 'indiana': 'in', 'iowa': 'ia',
-          'kansas': 'ks', 'kentucky': 'ky', 'louisiana': 'la', 'maine': 'me', 'maryland': 'md',
-          'massachusetts': 'ma', 'michigan': 'mi', 'minnesota': 'mn', 'mississippi': 'ms', 'missouri': 'mo',
-          'montana': 'mt', 'nebraska': 'ne', 'nevada': 'nv', 'new hampshire': 'nh', 'new jersey': 'nj',
-          'new mexico': 'nm', 'new york': 'ny', 'north carolina': 'nc', 'north dakota': 'nd', 'ohio': 'oh',
-          'oklahoma': 'ok', 'oregon': 'or', 'pennsylvania': 'pa', 'rhode island': 'ri', 'south carolina': 'sc',
-          'south dakota': 'sd', 'tennessee': 'tn', 'texas': 'tx', 'utah': 'ut', 'vermont': 'vt',
-          'virginia': 'va', 'washington': 'wa', 'west virginia': 'wv', 'wisconsin': 'wi', 'wyoming': 'wy'
+          alabama: "al",
+          alaska: "ak",
+          arizona: "az",
+          arkansas: "ar",
+          california: "ca",
+          colorado: "co",
+          connecticut: "ct",
+          delaware: "de",
+          florida: "fl",
+          georgia: "ga",
+          hawaii: "hi",
+          idaho: "id",
+          illinois: "il",
+          indiana: "in",
+          iowa: "ia",
+          kansas: "ks",
+          kentucky: "ky",
+          louisiana: "la",
+          maine: "me",
+          maryland: "md",
+          massachusetts: "ma",
+          michigan: "mi",
+          minnesota: "mn",
+          mississippi: "ms",
+          missouri: "mo",
+          montana: "mt",
+          nebraska: "ne",
+          nevada: "nv",
+          "new hampshire": "nh",
+          "new jersey": "nj",
+          "new mexico": "nm",
+          "new york": "ny",
+          "north carolina": "nc",
+          "north dakota": "nd",
+          ohio: "oh",
+          oklahoma: "ok",
+          oregon: "or",
+          pennsylvania: "pa",
+          "rhode island": "ri",
+          "south carolina": "sc",
+          "south dakota": "sd",
+          tennessee: "tn",
+          texas: "tx",
+          utah: "ut",
+          vermont: "vt",
+          virginia: "va",
+          washington: "wa",
+          "west virginia": "wv",
+          wisconsin: "wi",
+          wyoming: "wy",
         };
-        
+
         // Check if it's a full state name or abbreviation
-        const isStateSearch = stateAbbreviations[location] || Object.values(stateAbbreviations).includes(location);
-        
+        const isStateSearch =
+          stateAbbreviations[location] ??
+          Object.values(stateAbbreviations).includes(location);
+
         if (isStateSearch) {
-          return pharmacyData.filter(pharmacy => 
-            pharmacy.state.toLowerCase().includes(location) ||
-            stateAbbreviations[location] === pharmacy.state.toLowerCase() ||
-            location === stateAbbreviations[pharmacy.state.toLowerCase()]
+          return pharmacyData.filter(
+            (pharmacy) =>
+              pharmacy.state.toLowerCase().includes(location) ||
+              stateAbbreviations[location] === pharmacy.state.toLowerCase() ||
+              location === stateAbbreviations[pharmacy.state.toLowerCase()],
           );
         }
-        
+
         // If no comma and not a state, return empty (invalid format)
         return [];
       }
@@ -1230,50 +1444,73 @@ export default function EMRUploadPage() {
   // Pharmacy search function
   const searchPharmacies = async () => {
     if (!pharmacySearch.medication.trim()) return;
-    
+
     setIsSearchingPharmacy(true);
     setHasSearchedPharmacy(true);
-    
+
     try {
-      let results: any[] = [];
-      
+      let results: {
+        name: string;
+        address: string;
+        phone: string;
+        distance: string;
+        availability: string;
+        hours: string;
+        type: "hospital" | "pharmacy";
+        city?: string;
+        state?: string;
+        zipcode?: string;
+        osmData?: boolean;
+      }[] = [];
+
       // Try OpenStreetMap first if location is provided
       if (pharmacySearch.location.trim()) {
         const coordinates = await geocodeWithNominatim(pharmacySearch.location);
         if (coordinates) {
-          const osmResults = await findPharmaciesWithOSM(coordinates.lat, coordinates.lon);
+          const osmResults = await findPharmaciesWithOSM(
+            coordinates.lat,
+            coordinates.lon,
+          );
           if (osmResults && osmResults.length > 0) {
             results = osmResults;
           }
         }
       }
-      
+
       // Fallback to our database if OSM didn't return results
       if (results.length === 0) {
         results = getRealPharmacyData(pharmacySearch.location);
-        
+
         // Randomize availability for fallback data
-        results = results.map(pharmacy => ({
+        results = results.map((pharmacy) => ({
           ...pharmacy,
-          availability: Math.random() > 0.2 ? 
-            (Math.random() > 0.7 ? "Limited Stock" : "In Stock") : 
-            "Out of Stock"
+          availability:
+            Math.random() > 0.2
+              ? Math.random() > 0.7
+                ? "Limited Stock"
+                : "In Stock"
+              : "Out of Stock",
+          osmData: false,
         }));
       }
-      
+
       setPharmacyResults(results);
     } catch (error) {
-      console.error('Error searching for pharmacies:', error);
-      
+      console.error("Error searching for pharmacies:", error);
+
       // Fallback to our database on error
       const fallbackResults = getRealPharmacyData(pharmacySearch.location);
-      const randomizedResults = fallbackResults.map(pharmacy => ({
+      const randomizedResults = fallbackResults.map((pharmacy) => ({
         ...pharmacy,
-        availability: Math.random() > 0.2 ? 
-          (Math.random() > 0.7 ? "Limited Stock" : "In Stock") : 
-          "Out of Stock"
+        availability:
+          Math.random() > 0.2
+            ? Math.random() > 0.7
+              ? "Limited Stock"
+              : "In Stock"
+            : "Out of Stock",
+        osmData: false,
       }));
-      
+
       setPharmacyResults(randomizedResults);
     } finally {
       setIsSearchingPharmacy(false);
@@ -1281,12 +1518,17 @@ export default function EMRUploadPage() {
   };
 
   // Pickup request functions
-  const openPickupRequestModal = (pharmacy: typeof pharmacyResults[0], medication: string) => {
+  const openPickupRequestModal = (
+    pharmacy: (typeof pharmacyResults)[0],
+    medication: string,
+  ) => {
     // Try to find dosage and schedule from current medications or new medication being added
-    const existingMed = patientData.medications.find(med => med.name.toLowerCase() === medication.toLowerCase());
-    const dosage = existingMed?.dosage || newMedication.dosage || "";
-    const schedule = existingMed?.schedule || newMedication.schedule || "";
-    
+    const existingMed = patientData.medications.find(
+      (med) => med.name.toLowerCase() === medication.toLowerCase(),
+    );
+    const dosage = existingMed?.dosage ?? newMedication.dosage ?? "";
+    const schedule = existingMed?.schedule ?? newMedication.schedule ?? "";
+
     setPickupRequestModal({
       isOpen: true,
       pharmacy,
@@ -1294,16 +1536,17 @@ export default function EMRUploadPage() {
       dosage,
       schedule,
     });
-    setPickupRequestForm({ 
+    setPickupRequestForm({
       patientName: patientData.name || "",
       dosage: dosage,
       schedule: schedule,
-      additionalNotes: "" 
+      additionalNotes: "",
     });
   };
 
   const submitPickupRequest = async () => {
-    if (!pickupRequestModal.pharmacy || !pickupRequestForm.patientName.trim()) return;
+    if (!pickupRequestModal.pharmacy || !pickupRequestForm.patientName.trim())
+      return;
 
     const newRequest = {
       id: `req_${Date.now()}`,
@@ -1318,28 +1561,32 @@ export default function EMRUploadPage() {
       estimatedReady: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
     };
 
-    setPickupRequests(prev => [...prev, newRequest]);
-    setPickupRequestModal({ isOpen: false, pharmacy: null, medication: "", dosage: "", schedule: "" });
+    setPickupRequests((prev) => [...prev, newRequest]);
+    setPickupRequestModal({
+      isOpen: false,
+      pharmacy: null,
+      medication: "",
+      dosage: "",
+      schedule: "",
+    });
 
     // Simulate pharmacy confirmation after 3 seconds
     setTimeout(() => {
-      setPickupRequests(prev => 
-        prev.map(req => 
-          req.id === newRequest.id 
+      setPickupRequests((prev) =>
+        prev.map((req) =>
+          req.id === newRequest.id
             ? { ...req, status: "confirmed" as const }
-            : req
-        )
+            : req,
+        ),
       );
     }, 3000);
 
     // Simulate medication ready after 2 hours (for demo, we'll do it after 10 seconds)
     setTimeout(() => {
-      setPickupRequests(prev => 
-        prev.map(req => 
-          req.id === newRequest.id 
-            ? { ...req, status: "ready" as const }
-            : req
-        )
+      setPickupRequests((prev) =>
+        prev.map((req) =>
+          req.id === newRequest.id ? { ...req, status: "ready" as const } : req,
+        ),
       );
     }, 10000);
   };
@@ -1866,10 +2113,11 @@ export default function EMRUploadPage() {
                       <span>Find Medication Availability</span>
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      Search for medication availability at nearby pharmacies and hospitals
+                      Search for medication availability at nearby pharmacies
+                      and hospitals
                     </p>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                     <div className="space-y-2">
                       <Label>Medication Name</Label>
@@ -1896,12 +2144,14 @@ export default function EMRUploadPage() {
                         }
                         placeholder="Enter US ZIP code or city, state (e.g., 90210 or Philadelphia, PA)"
                       />
-
                     </div>
                     <div className="flex items-end">
-                      <Button 
-                        onClick={searchPharmacies} 
-                        disabled={isSearchingPharmacy || !pharmacySearch.medication.trim()}
+                      <Button
+                        onClick={searchPharmacies}
+                        disabled={
+                          isSearchingPharmacy ||
+                          !pharmacySearch.medication.trim()
+                        }
                         className="w-full"
                       >
                         {isSearchingPharmacy ? (
@@ -1922,70 +2172,88 @@ export default function EMRUploadPage() {
                   {/* Pharmacy Results */}
                   {pharmacyResults.length > 0 && (
                     <div className="mt-4">
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="mb-3 flex items-center justify-between">
                         <h4 className="text-foreground text-sm font-medium">
                           Available Locations ({pharmacyResults.length})
                         </h4>
-                        {pharmacyResults.length > 0 && pharmacyResults[0]?.osmData && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                            🌍 OpenStreetMap data
-                          </span>
-                        )}
+                        {pharmacyResults.length > 0 &&
+                          pharmacyResults[0]?.osmData && (
+                            <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                              🌍 OpenStreetMap data
+                            </span>
+                          )}
                       </div>
                       <div className="max-h-64 space-y-3 overflow-y-auto">
                         {pharmacyResults.map((pharmacy, index) => (
-                          <div key={index} className="bg-muted/50 rounded-lg border p-4">
+                          <div
+                            key={index}
+                            className="bg-muted/50 rounded-lg border p-4"
+                          >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center space-x-2">
                                   <h5 className="text-foreground font-semibold">
                                     {pharmacy.name}
                                   </h5>
-                                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${
-                                    pharmacy.type === 'hospital' 
-                                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                      : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                  }`}>
-                                    {pharmacy.type === 'hospital' ? 'Hospital' : 'Pharmacy'}
+                                  <span
+                                    className={`rounded-full px-2 py-1 text-xs font-medium ${
+                                      pharmacy.type === "hospital"
+                                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                                        : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                    }`}
+                                  >
+                                    {pharmacy.type === "hospital"
+                                      ? "Hospital"
+                                      : "Pharmacy"}
                                   </span>
                                 </div>
-                                
+
                                 <div className="mt-2 space-y-1">
-                                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                                  <div className="text-muted-foreground flex items-center space-x-2 text-sm">
                                     <MapPin className="h-4 w-4" />
                                     <span>{pharmacy.address}</span>
                                   </div>
-                                  
+
                                   <div className="space-y-1 text-sm">
-                                    <div className="flex items-center space-x-1 text-muted-foreground">
+                                    <div className="text-muted-foreground flex items-center space-x-1">
                                       <Phone className="h-4 w-4" />
                                       <span>{pharmacy.phone}</span>
                                     </div>
-                                    <div className="flex items-center space-x-1 text-muted-foreground">
+                                    <div className="text-muted-foreground flex items-center space-x-1">
                                       <Clock className="h-4 w-4" />
                                       <span>{pharmacy.hours}</span>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              
+
                               <div className="ml-4 text-right">
                                 <div className="text-primary mb-1 text-sm font-medium">
                                   {pharmacy.distance}
                                 </div>
-                                <div className={`rounded-full px-2 py-1 text-xs font-medium mb-2 ${
-                                  pharmacy.availability === 'In Stock'
-                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                    : pharmacy.availability === 'Limited Stock'
-                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                                }`}>
+                                <div
+                                  className={`mb-2 rounded-full px-2 py-1 text-xs font-medium ${
+                                    pharmacy.availability === "In Stock"
+                                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                      : pharmacy.availability ===
+                                          "Limited Stock"
+                                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                                        : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                                  }`}
+                                >
                                   {pharmacy.availability}
                                 </div>
-                                {(pharmacy.availability === 'In Stock' || pharmacy.availability === 'Limited Stock') && (
+                                {(pharmacy.availability === "In Stock" ||
+                                  pharmacy.availability ===
+                                    "Limited Stock") && (
                                   <Button
                                     size="sm"
-                                    onClick={() => openPickupRequestModal(pharmacy, pharmacySearch.medication)}
+                                    onClick={() =>
+                                      openPickupRequestModal(
+                                        pharmacy,
+                                        pharmacySearch.medication,
+                                      )
+                                    }
                                     className="w-full"
                                   >
                                     <Send className="mr-1 h-3 w-3" />
@@ -1997,10 +2265,10 @@ export default function EMRUploadPage() {
                           </div>
                         ))}
                       </div>
-                      
+
                       <div className="mt-3 flex justify-end">
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           size="sm"
                           onClick={() => {
                             setPharmacyResults([]);
@@ -2014,22 +2282,27 @@ export default function EMRUploadPage() {
                   )}
 
                   {/* No Results Found */}
-                  {pharmacyResults.length === 0 && !isSearchingPharmacy && pharmacySearch.medication && hasSearchedPharmacy && (
-                    <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-950/50">
-                      <div className="flex items-center space-x-2">
-                        <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                        <div>
-                          <h4 className="text-yellow-800 dark:text-yellow-300 text-sm font-medium">
-                            No pharmacies found for this location
-                          </h4>
-                          <p className="text-yellow-700 dark:text-yellow-400 text-sm mt-1">
-                            Use a valid US ZIP code (e.g., 10036) or city, state format (e.g., Philadelphia, PA).
-                            City names must be followed by a comma and state name or abbreviation.
-                          </p>
+                  {pharmacyResults.length === 0 &&
+                    !isSearchingPharmacy &&
+                    pharmacySearch.medication &&
+                    hasSearchedPharmacy && (
+                      <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-950/50">
+                        <div className="flex items-center space-x-2">
+                          <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                          <div>
+                            <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                              No pharmacies found for this location
+                            </h4>
+                            <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-400">
+                              Use a valid US ZIP code (e.g., 10036) or city,
+                              state format (e.g., Philadelphia, PA). City names
+                              must be followed by a comma and state name or
+                              abbreviation.
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Active Pickup Requests */}
                   {pickupRequests.length > 0 && (
@@ -2039,61 +2312,103 @@ export default function EMRUploadPage() {
                       </h4>
                       <div className="space-y-3">
                         {pickupRequests.map((request) => (
-                          <div key={request.id} className="bg-muted/30 rounded-lg border p-4">
+                          <div
+                            key={request.id}
+                            className="bg-muted/30 rounded-lg border p-4"
+                          >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center space-x-2">
                                   <h5 className="text-foreground font-semibold">
                                     {request.medication}
                                   </h5>
-                                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${
-                                    request.status === 'pending'
-                                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                                      : request.status === 'confirmed'
-                                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                                      : request.status === 'ready'
-                                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                      : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                                  }`}>
-                                    {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                                  <span
+                                    className={`rounded-full px-2 py-1 text-xs font-medium ${
+                                      request.status === "pending"
+                                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                                        : request.status === "confirmed"
+                                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                                          : request.status === "ready"
+                                            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                                            : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300"
+                                    }`}
+                                  >
+                                    {request.status.charAt(0).toUpperCase() +
+                                      request.status.slice(1)}
                                   </span>
                                 </div>
-                                <div className="mt-1 text-sm text-muted-foreground">
-                                  <div>Pharmacy: <span className="text-foreground font-medium">{request.pharmacyName}</span></div>
-                                  <div>Patient: <span className="text-foreground font-medium">{request.patientName}</span></div>
-                                  {request.dosage && <div>Dosage: <span className="text-foreground font-medium">{request.dosage}</span></div>}
-                                  {request.schedule && <div>Schedule: <span className="text-foreground font-medium">{request.schedule}</span></div>}
+                                <div className="text-muted-foreground mt-1 text-sm">
+                                  <div>
+                                    Pharmacy:{" "}
+                                    <span className="text-foreground font-medium">
+                                      {request.pharmacyName}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    Patient:{" "}
+                                    <span className="text-foreground font-medium">
+                                      {request.patientName}
+                                    </span>
+                                  </div>
+                                  {request.dosage && (
+                                    <div>
+                                      Dosage:{" "}
+                                      <span className="text-foreground font-medium">
+                                        {request.dosage}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {request.schedule && (
+                                    <div>
+                                      Schedule:{" "}
+                                      <span className="text-foreground font-medium">
+                                        {request.schedule}
+                                      </span>
+                                    </div>
+                                  )}
                                   {request.additionalNotes && (
                                     <div className="mt-2">
-                                      <div className="text-muted-foreground text-xs">Doctor's Notes:</div>
-                                      <div className="text-foreground text-xs bg-muted/50 rounded p-2 mt-1">
+                                      <div className="text-muted-foreground text-xs">
+                                        Doctor's Notes:
+                                      </div>
+                                      <div className="text-foreground bg-muted/50 mt-1 rounded p-2 text-xs">
                                         {request.additionalNotes}
                                       </div>
                                     </div>
                                   )}
                                   <div className="mt-2 text-xs">
-                                    <div>Requested: {request.requestedAt.toLocaleString()}</div>
-                                    <div>Estimated Ready: {request.estimatedReady.toLocaleString()}</div>
+                                    <div>
+                                      Requested:{" "}
+                                      {request.requestedAt.toLocaleString()}
+                                    </div>
+                                    <div>
+                                      Estimated Ready:{" "}
+                                      {request.estimatedReady.toLocaleString()}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                               <div className="ml-4">
-                                {request.status === 'pending' && (
+                                {request.status === "pending" && (
                                   <div className="flex items-center space-x-1 text-yellow-600 dark:text-yellow-400">
                                     <div className="h-2 w-2 animate-pulse rounded-full bg-current" />
-                                    <span className="text-xs">Processing...</span>
+                                    <span className="text-xs">
+                                      Processing...
+                                    </span>
                                   </div>
                                 )}
-                                {request.status === 'confirmed' && (
+                                {request.status === "confirmed" && (
                                   <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
                                     <CheckCircle className="h-4 w-4" />
                                     <span className="text-xs">Confirmed</span>
                                   </div>
                                 )}
-                                {request.status === 'ready' && (
+                                {request.status === "ready" && (
                                   <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
                                     <CheckCircle className="h-4 w-4" />
-                                    <span className="text-xs">Ready for Pickup</span>
+                                    <span className="text-xs">
+                                      Ready for Pickup
+                                    </span>
                                   </div>
                                 )}
                               </div>
@@ -2187,7 +2502,8 @@ export default function EMRUploadPage() {
                           return;
                         const secureUrl =
                           // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-                          (results.info as CloudinaryUploadWidgetInfo).secure_url;
+                          (results.info as CloudinaryUploadWidgetInfo)
+                            .secure_url;
                         setPatientData((prev) => ({
                           ...prev,
                           uploadedFiles: [...prev.uploadedFiles, secureUrl],
@@ -2198,12 +2514,15 @@ export default function EMRUploadPage() {
                     </CldUploadButton>
                   ) : (
                     <div className="mt-4 text-center">
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                        <div className="text-yellow-800 text-sm">
+                      <div className="rounded-md border border-yellow-200 bg-yellow-50 p-4">
+                        <div className="text-sm text-yellow-800">
                           <strong>File Upload Unavailable</strong>
                         </div>
-                        <div className="text-yellow-700 text-xs mt-1">
-                          Cloudinary credentials not configured. Please set NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_API_KEY in your environment variables.
+                        <div className="mt-1 text-xs text-yellow-700">
+                          Cloudinary credentials not configured. Please set
+                          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and
+                          NEXT_PUBLIC_CLOUDINARY_API_KEY in your environment
+                          variables.
                         </div>
                       </div>
                     </div>
@@ -2677,7 +2996,9 @@ export default function EMRUploadPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-background border-border mx-4 w-full max-w-md rounded-lg border p-6 shadow-lg">
             <div className="mb-4">
-              <h3 className="text-foreground text-lg font-semibold">Request Medication Pickup</h3>
+              <h3 className="text-foreground text-lg font-semibold">
+                Request Medication Pickup
+              </h3>
               <p className="text-muted-foreground text-sm">
                 Send a pickup request to {pickupRequestModal.pharmacy?.name}
               </p>
@@ -2686,11 +3007,19 @@ export default function EMRUploadPage() {
             <div className="space-y-4">
               {/* Medication and Pharmacy Info */}
               <div className="bg-muted rounded-lg border p-4">
-                <div className="text-sm space-y-1">
-                  <div className="font-medium">Medication: {pickupRequestModal.medication}</div>
-                  <div className="text-muted-foreground">Pharmacy: {pickupRequestModal.pharmacy?.name}</div>
-                  <div className="text-muted-foreground">Address: {pickupRequestModal.pharmacy?.address}</div>
-                  <div className="text-muted-foreground">Phone: {pickupRequestModal.pharmacy?.phone}</div>
+                <div className="space-y-1 text-sm">
+                  <div className="font-medium">
+                    Medication: {pickupRequestModal.medication}
+                  </div>
+                  <div className="text-muted-foreground">
+                    Pharmacy: {pickupRequestModal.pharmacy?.name}
+                  </div>
+                  <div className="text-muted-foreground">
+                    Address: {pickupRequestModal.pharmacy?.address}
+                  </div>
+                  <div className="text-muted-foreground">
+                    Phone: {pickupRequestModal.pharmacy?.phone}
+                  </div>
                 </div>
               </div>
 
@@ -2769,8 +3098,19 @@ export default function EMRUploadPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setPickupRequestModal({ isOpen: false, pharmacy: null, medication: "", dosage: "", schedule: "" });
-                    setPickupRequestForm({ patientName: "", dosage: "", schedule: "", additionalNotes: "" });
+                    setPickupRequestModal({
+                      isOpen: false,
+                      pharmacy: null,
+                      medication: "",
+                      dosage: "",
+                      schedule: "",
+                    });
+                    setPickupRequestForm({
+                      patientName: "",
+                      dosage: "",
+                      schedule: "",
+                      additionalNotes: "",
+                    });
                   }}
                 >
                   Cancel

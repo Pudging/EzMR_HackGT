@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Loader2,
-  Brain,
-  Stethoscope,
-  Heart,
-  Activity,
-  Scan,
-} from "lucide-react";
+import { Loader2, Brain, Heart, Activity, Scan } from "lucide-react";
 
 interface LoadingAnimationProps {
   onComplete: () => void;
@@ -20,7 +13,6 @@ const loadingMessages = [
   { icon: Brain, text: "Initializing 3D Body Model..." },
   { icon: Scan, text: "Loading anatomical structures..." },
   { icon: Heart, text: "Preparing interactive elements..." },
-  { icon: Stethoscope, text: "Calibrating medical interface..." },
   { icon: Activity, text: "Finalizing patient assessment tools..." },
 ];
 
@@ -33,7 +25,6 @@ export function LoadingAnimation({
 
   useEffect(() => {
     const interval = duration / 100; // Update progress every 1% of duration
-    const messageInterval = duration / loadingMessages.length;
 
     // Progress bar animation
     const progressTimer = setInterval(() => {
@@ -47,19 +38,16 @@ export function LoadingAnimation({
       });
     }, interval);
 
-    // Message rotation
-    const messageTimer = setInterval(() => {
-      setCurrentMessageIndex((prev) => {
-        const next = (prev + 1) % loadingMessages.length;
-        return next;
-      });
-    }, messageInterval);
-
     return () => {
       clearInterval(progressTimer);
-      clearInterval(messageTimer);
     };
   }, [duration, onComplete]);
+
+  useEffect(() => {
+    setCurrentMessageIndex(() => {
+      return Math.floor((progress / 101) * loadingMessages.length);
+    });
+  }, [progress]);
 
   const currentMessage = loadingMessages[currentMessageIndex]!;
   const IconComponent = currentMessage.icon;
@@ -199,7 +187,7 @@ export function LoadingAnimation({
           ];
           const durations = [3, 4, 3.5, 4.5, 3.2, 4.2, 3.8, 4.1];
           const delays = [0, 0.5, 1, 1.5, 0.3, 0.8, 1.2, 1.8];
-          
+
           return (
             <motion.div
               key={i}
