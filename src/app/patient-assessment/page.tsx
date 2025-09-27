@@ -4,9 +4,7 @@ import { useState } from "react";
 import { HumanBodyModel } from "@/components/patient/human-body-model";
 import { PatientDataEntry } from "@/components/patient/patient-data-entry";
 
-interface PatientData {
-  [key: string]: string;
-}
+type PatientData = Record<string, string>;
 
 export default function PatientAssessmentPage() {
   const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
@@ -19,17 +17,17 @@ export default function PatientAssessmentPage() {
   const handleDataUpdate = (bodyPart: string, description: string) => {
     setPatientData((prev: PatientData) => ({
       ...prev,
-      [bodyPart]: description
+      [bodyPart]: description,
     }));
   };
 
   return (
-    <main className="h-screen bg-black flex flex-col">
+    <main className="flex h-screen flex-col bg-black">
       {/* Navigation */}
-      <nav className="flex items-center justify-between p-6 border-b border-white flex-shrink-0">
+      <nav className="flex flex-shrink-0 items-center justify-between border-b border-white p-6">
         <div className="flex items-center space-x-2">
           <div className="flex h-10 w-10 items-center justify-center border border-white bg-black">
-            <span className="text-white font-mono font-bold">MR</span>
+            <span className="font-mono font-bold text-white">MR</span>
           </div>
           <span className="text-xl font-bold text-gray-900 dark:text-white">
             Patient Assessment
@@ -38,12 +36,12 @@ export default function PatientAssessmentPage() {
       </nav>
 
       {/* Main Content */}
-      <div className="flex-1 p-4 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+      <div className="flex-1 overflow-hidden p-4">
+        <div className="grid h-full grid-cols-1 gap-4 lg:grid-cols-2">
           {/* Left Side - Human Body Model */}
-          <div className="border border-white bg-black h-full flex flex-col">
-            <div className="p-4 border-b border-white flex-shrink-0">
-              <h2 className="text-lg font-mono font-bold text-white">
+          <div className="flex h-full flex-col border border-white bg-black">
+            <div className="flex-shrink-0 border-b border-white p-4">
+              <h2 className="font-mono text-lg font-bold text-white">
                 3D BODY MODEL
               </h2>
             </div>
@@ -57,7 +55,7 @@ export default function PatientAssessmentPage() {
           </div>
 
           {/* Right Side - Patient Data Entry */}
-          <div className="border border-white bg-black h-full">
+          <div className="h-full border border-white bg-black">
             <PatientDataEntry
               selectedBodyPart={selectedBodyPart}
               patientData={patientData}
