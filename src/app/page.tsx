@@ -10,169 +10,195 @@ export default async function HomePage() {
   const tenant = await getCurrentTenant();
 
   return (
-    <main className="bg-background min-h-[calc(100vh-64px)]">
-      {/* Main Content */}
-      <div className="relative z-10 mx-auto px-0 py-16">
-        <div className="text-center">
-          <h1 className="text-foreground mb-6 text-5xl font-extrabold tracking-tight">
-            Welcome to{" "}
-            <span className="text-primary">
-              {tenant?.hospitalName ?? "EzMR"}
-            </span>
-          </h1>
+    <div className="min-h-[calc(100vh-200px)]">
+      {/* Hero Section */}
+      <div className="mb-16 text-center">
+        <h1 className="text-foreground brutalist-text-shadow mb-8 text-6xl font-black tracking-tighter uppercase">
+          WELCOME TO{" "}
+          <span className="bg-primary text-primary-foreground inline-block -rotate-2 transform border-4 border-black px-4 py-2 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+            {tenant?.hospitalName ?? "EZMR"}
+          </span>
+        </h1>
 
-          {session ? (
-            <div className="space-y-6">
-              <p className="text-muted-foreground mx-auto max-w-3xl text-xl">
+        {session ? (
+          <div className="space-y-8">
+            <div className="bg-secondary mx-auto max-w-4xl rotate-1 transform border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
+              <p className="text-secondary-foreground text-2xl font-bold tracking-wide uppercase">
                 {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
-                Welcome back, {session.user?.name || "User"}! Ready to manage
-                your medical records?
+                WELCOME BACK, {session.user?.name || "USER"}! READY TO MANAGE
+                YOUR MEDICAL RECORDS?
               </p>
+            </div>
 
-              <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                <Link href="/dashboard">
-                  <Button size="lg" className="px-8 py-3">
-                    Go to Dashboard
-                  </Button>
-                </Link>
+            <div className="flex flex-col justify-center gap-6 sm:flex-row">
+              <Link href="/dashboard">
                 <Button
-                  variant="outline"
                   size="lg"
-                  className="px-8 py-3 font-semibold"
+                  className="brutalist-button px-12 py-4 text-lg"
                 >
-                  View Profile
+                  GO TO DASHBOARD
                 </Button>
+              </Link>
+              <Button
+                variant="outline"
+                size="lg"
+                className="brutalist-button bg-secondary text-secondary-foreground px-12 py-4 text-lg"
+              >
+                VIEW PROFILE
+              </Button>
+            </div>
+
+            <div className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <Link href="/patient-lookup" className="group">
+                <div className="brutalist-card h-full transform p-8 transition-all duration-200 group-hover:rotate-1">
+                  <div className="bg-primary text-primary-foreground mb-6 flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                    <span className="text-2xl font-black">🔍</span>
+                  </div>
+                  <h3 className="text-card-foreground mb-4 text-2xl font-black tracking-tight uppercase">
+                    PATIENT LOOKUP
+                  </h3>
+                  <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                    SEARCH FOR PATIENTS BY ID, NAME, OR SCAN THEIR ID CARD TO
+                    ACCESS MEDICAL RECORDS.
+                  </p>
+                </div>
+              </Link>
+
+              <Link href="/emr-upload" className="group">
+                <div className="brutalist-card h-full transform p-8 transition-all duration-200 group-hover:-rotate-1">
+                  <div className="bg-primary text-primary-foreground mb-6 flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                    <span className="text-2xl font-black">📄</span>
+                  </div>
+                  <h3 className="text-card-foreground mb-4 text-2xl font-black tracking-tight uppercase">
+                    EMR UPLOAD
+                  </h3>
+                  <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                    UPLOAD AND MANAGE ELECTRONIC MEDICAL RECORDS WITH AI-POWERED
+                    DATA EXTRACTION.
+                  </p>
+                </div>
+              </Link>
+
+              <Link href="/id-scan" className="group">
+                <div className="brutalist-card h-full transform p-8 transition-all duration-200 group-hover:rotate-2">
+                  <div className="bg-primary text-primary-foreground mb-6 flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                    <span className="text-2xl font-black">📷</span>
+                  </div>
+                  <h3 className="text-card-foreground mb-4 text-2xl font-black tracking-tight uppercase">
+                    ID SCANNER
+                  </h3>
+                  <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                    SCAN PATIENT'S ID TO AUTOMATICALLY EXTRACT PERSONAL
+                    INFORMATION.
+                  </p>
+                </div>
+              </Link>
+
+              <div className="brutalist-card h-full transform p-8 transition-all duration-200 hover:-rotate-1">
+                <div className="bg-secondary text-secondary-foreground mb-6 flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                  <span className="text-2xl font-black">📋</span>
+                </div>
+                <h3 className="text-card-foreground mb-4 text-2xl font-black tracking-tight uppercase">
+                  MEDICAL RECORDS
+                </h3>
+                <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                  VIEW AND MANAGE YOUR MEDICAL HISTORY, PRESCRIPTIONS, AND TEST
+                  RESULTS.
+                </p>
               </div>
 
-              <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <Link href="/patient-lookup">
-                  <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
-                    <h3 className="text-card-foreground mb-3 text-xl font-semibold">
-                      🔍 Patient Lookup
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Search for patients by ID, name, or scan their ID card to
-                      access medical records.
-                    </p>
-                  </MagicCard>
-                </Link>
-
-                <Link href="/emr-upload">
-                  <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
-                    <h3 className="text-card-foreground mb-3 text-xl font-semibold">
-                      📄 EMR Upload
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Upload and manage electronic medical records with
-                      AI-powered data extraction.
-                    </p>
-                  </MagicCard>
-                </Link>
-
-                <Link href="/id-scan">
-                  <MagicCard className="rounded-xl border p-6 shadow-sm transition-all duration-200 hover:scale-105">
-                    <h3 className="text-card-foreground mb-3 text-xl font-semibold">
-                      📷 ID Scanner
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Scan patient's ID to automatically extract personal
-                      information.
-                    </p>
-                  </MagicCard>
-                </Link>
-
-                <div className="bg-card rounded-xl border p-6 shadow-sm">
-                  <h3 className="text-card-foreground mb-3 text-xl font-semibold">
-                    📋 Medical Records
-                  </h3>
-                  <p className="text-muted-foreground">
-                    View and manage your medical history, prescriptions, and
-                    test results.
-                  </p>
+              <div className="brutalist-card h-full transform p-8 transition-all duration-200 hover:rotate-1">
+                <div className="bg-secondary text-secondary-foreground mb-6 flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                  <span className="text-2xl font-black">👨‍⚕️</span>
                 </div>
+                <h3 className="text-card-foreground mb-4 text-2xl font-black tracking-tight uppercase">
+                  APPOINTMENTS
+                </h3>
+                <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                  SCHEDULE AND TRACK YOUR UPCOMING MEDICAL APPOINTMENTS.
+                </p>
+              </div>
 
-                <div className="bg-card rounded-xl border p-6 shadow-sm">
-                  <h3 className="text-card-foreground mb-3 text-xl font-semibold">
-                    👨‍⚕️ Appointments
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Schedule and track your upcoming medical appointments.
-                  </p>
+              <div className="brutalist-card h-full transform p-8 transition-all duration-200 hover:-rotate-2">
+                <div className="bg-secondary text-secondary-foreground mb-6 flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                  <span className="text-2xl font-black">💊</span>
                 </div>
-
-                <div className="bg-card rounded-xl border p-6 shadow-sm">
-                  <h3 className="text-card-foreground mb-3 text-xl font-semibold">
-                    💊 Medications
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Keep track of your medications and set reminders.
-                  </p>
-                </div>
+                <h3 className="text-card-foreground mb-4 text-2xl font-black tracking-tight uppercase">
+                  MEDICATIONS
+                </h3>
+                <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                  KEEP TRACK OF YOUR MEDICATIONS AND SET REMINDERS.
+                </p>
               </div>
             </div>
-          ) : (
-            <div className="space-y-8">
-              <p className="text-muted-foreground mx-auto max-w-3xl text-xl">
-                Your personal medical record management system. Secure, simple,
-                and always accessible.
+          </div>
+        ) : (
+          <div className="space-y-12">
+            <div className="bg-accent mx-auto max-w-4xl -rotate-1 transform border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
+              <p className="text-accent-foreground text-center text-2xl font-black tracking-wide uppercase">
+                YOUR PERSONAL MEDICAL RECORD MANAGEMENT SYSTEM. SECURE, SIMPLE,
+                AND ALWAYS ACCESSIBLE.
               </p>
+            </div>
 
-              <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                <Link href="/auth/signin">
-                  <Button size="lg" className="px-8 py-3">
-                    Get Started
-                  </Button>
-                </Link>
+            <div className="flex flex-col justify-center gap-6 sm:flex-row">
+              <Link href="/auth/signin">
                 <Button
-                  variant="outline"
                   size="lg"
-                  className="px-8 py-3 font-semibold"
+                  className="brutalist-button px-12 py-4 text-lg"
                 >
-                  Learn More
+                  GET STARTED
                 </Button>
+              </Link>
+              <Button
+                variant="outline"
+                size="lg"
+                className="brutalist-button bg-secondary text-secondary-foreground px-12 py-4 text-lg"
+              >
+                LEARN MORE
+              </Button>
+            </div>
+
+            <div className="mx-auto mt-20 grid max-w-5xl grid-cols-1 gap-12 md:grid-cols-3">
+              <div className="transform text-center transition-all duration-200 hover:rotate-2">
+                <div className="bg-primary text-primary-foreground mx-auto mb-6 flex h-20 w-20 items-center justify-center border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+                  <span className="text-3xl font-black">🔒</span>
+                </div>
+                <h3 className="text-foreground brutalist-text-shadow mb-4 text-2xl font-black tracking-tight uppercase">
+                  SECURE & PRIVATE
+                </h3>
+                <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                  YOUR MEDICAL DATA IS ENCRYPTED AND ONLY ACCESSIBLE BY YOU.
+                </p>
               </div>
 
-              <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-3">
-                <div className="text-center">
-                  <div className="bg-secondary mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border">
-                    <span className="text-2xl">🔒</span>
-                  </div>
-                  <h3 className="text-foreground mb-2 text-lg font-semibold">
-                    Secure & Private
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Your medical data is encrypted and only accessible by you.
-                  </p>
+              <div className="transform text-center transition-all duration-200 hover:-rotate-2">
+                <div className="bg-primary text-primary-foreground mx-auto mb-6 flex h-20 w-20 items-center justify-center border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+                  <span className="text-3xl font-black">📱</span>
                 </div>
+                <h3 className="text-foreground brutalist-text-shadow mb-4 text-2xl font-black tracking-tight uppercase">
+                  ALWAYS ACCESSIBLE
+                </h3>
+                <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                  ACCESS YOUR RECORDS ANYWHERE, ANYTIME, ON ANY DEVICE.
+                </p>
+              </div>
 
-                <div className="text-center">
-                  <div className="bg-secondary mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border">
-                    <span className="text-2xl">📱</span>
-                  </div>
-                  <h3 className="text-foreground mb-2 text-lg font-semibold">
-                    Always Accessible
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Access your records anywhere, anytime, on any device.
-                  </p>
+              <div className="transform text-center transition-all duration-200 hover:rotate-1">
+                <div className="bg-primary text-primary-foreground mx-auto mb-6 flex h-20 w-20 items-center justify-center border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+                  <span className="text-3xl font-black">⚡</span>
                 </div>
-
-                <div className="text-center">
-                  <div className="bg-secondary mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border">
-                    <span className="text-2xl">⚡</span>
-                  </div>
-                  <h3 className="text-foreground mb-2 text-lg font-semibold">
-                    Lightning Fast
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Quick access to your medical information when you need it.
-                  </p>
-                </div>
+                <h3 className="text-foreground brutalist-text-shadow mb-4 text-2xl font-black tracking-tight uppercase">
+                  LIGHTNING FAST
+                </h3>
+                <p className="text-muted-foreground text-sm font-bold tracking-wide uppercase">
+                  QUICK ACCESS TO YOUR MEDICAL INFORMATION WHEN YOU NEED IT.
+                </p>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </main>
+    </div>
   );
 }

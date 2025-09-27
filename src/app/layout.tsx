@@ -22,15 +22,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
+      <body className="bg-background text-foreground min-h-screen antialiased">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthSessionProvider>
             <Navbar />
-            <main className="container mx-auto px-4">{children}</main>
+            <main className="container mx-auto max-w-7xl px-6 py-8">
+              <div className="brutalist-section bg-background border-4 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)]">
+                {children}
+              </div>
+            </main>
           </AuthSessionProvider>
         </ThemeProvider>
       </body>

@@ -19,25 +19,25 @@ export function Navbar() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+    <header className="bg-background sticky top-0 z-50 border-b-8 border-black shadow-[0_8px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[0_8px_0px_0px_rgba(255,255,255,1)]">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="text-2xl font-bold tracking-tight text-foreground"
+          className="text-foreground brutalist-text-shadow transform text-3xl font-black tracking-tighter uppercase transition-transform duration-150 hover:scale-105"
         >
-          EzMR
+          EZMR
         </Link>
-        <ul className="flex items-center gap-4">
+        <ul className="flex items-center gap-2">
           {links.map((link) => {
             const isActive = pathname === link.href;
             return (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`border-2 px-4 py-2 text-sm font-bold tracking-wider uppercase transition-all duration-150 ${
                     isActive
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-primary text-primary-foreground border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
+                      : "bg-secondary text-secondary-foreground border-black hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:hover:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
                   }`}
                 >
                   {link.label}
@@ -45,18 +45,22 @@ export function Navbar() {
               </li>
             );
           })}
-          <li className="ml-2 list-none">
+          <li className="ml-4 list-none">
             <ModeToggle />
           </li>
-          <li className="list-none">
+          <li className="ml-2 list-none">
             {status === "loading" ? (
-              <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
+              <div className="bg-muted h-10 w-24 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]" />
             ) : session ? (
               <UserNav />
             ) : (
               <Link href="/auth/signin">
-                <Button variant="outline" size="sm">
-                  Sign In
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="brutalist-button"
+                >
+                  SIGN IN
                 </Button>
               </Link>
             )}

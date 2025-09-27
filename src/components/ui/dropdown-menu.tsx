@@ -13,13 +13,13 @@ export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 export const DropdownMenuContent = (
   props: React.ComponentProps<typeof DropdownMenuPrimitive.Content>,
 ) => {
-  const { className, sideOffset = 4, ...rest } = props;
+  const { className, sideOffset = 8, ...rest } = props;
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         sideOffset={sideOffset}
         className={cn(
-          "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+          "bg-popover text-popover-foreground z-50 min-w-[8rem] overflow-hidden border-4 border-black p-2 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]",
           className,
         )}
         {...rest}
@@ -35,7 +35,7 @@ export const DropdownMenuItem = (
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+        "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center border-2 border-transparent px-3 py-2 text-sm font-bold tracking-wider uppercase transition-all outline-none select-none hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:border-white dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]",
         className,
       )}
       {...rest}
@@ -49,7 +49,7 @@ export const DropdownMenuSeparator = (
   const { className, ...rest } = props;
   return (
     <DropdownMenuPrimitive.Separator
-      className={cn("-mx-1 my-1 h-px bg-muted", className)}
+      className={cn("-mx-1 my-2 h-1 bg-black dark:bg-white", className)}
       {...rest}
     />
   );

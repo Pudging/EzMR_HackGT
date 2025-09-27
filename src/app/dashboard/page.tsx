@@ -70,11 +70,16 @@ function DashboardPageContent() {
   // Helper function to get color for DICOM modality
   const getModalityColor = (modality: string) => {
     switch (modality.toUpperCase()) {
-      case 'CT': return 'text-blue-500';
-      case 'MRI': return 'text-green-500';
-      case 'XRAY': return 'text-purple-500';
-      case 'ULTRASOUND': return 'text-orange-500';
-      default: return 'text-gray-500';
+      case "CT":
+        return "text-blue-500";
+      case "MRI":
+        return "text-green-500";
+      case "XRAY":
+        return "text-purple-500";
+      case "ULTRASOUND":
+        return "text-orange-500";
+      default:
+        return "text-gray-500";
     }
   };
   const [selectedPatient, setSelectedPatient] =
@@ -140,18 +145,23 @@ function DashboardPageContent() {
   if (!selectedPatient) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
-        <Card className="mx-4 max-w-md">
+        <Card className="brutalist-card mx-4 max-w-md">
           <CardHeader className="text-center">
             <AlertCircle className="mx-auto mb-4 h-12 w-12 text-yellow-500" />
-            <CardTitle>No Patient Selected</CardTitle>
+            <CardTitle className="brutalist-text-shadow">
+              NO PATIENT SELECTED
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-muted-foreground">
-              Please select a patient before accessing the dashboard.
+            <p className="text-muted-foreground font-bold tracking-wide uppercase">
+              PLEASE SELECT A PATIENT BEFORE ACCESSING THE DASHBOARD.
             </p>
-            <Button onClick={() => router.push("/patient-lookup")}>
+            <Button
+              onClick={() => router.push("/patient-lookup")}
+              className="brutalist-button"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Go to Patient Lookup
+              GO TO PATIENT LOOKUP
             </Button>
           </CardContent>
         </Card>
@@ -174,10 +184,12 @@ function DashboardPageContent() {
   if (patientDataLoading) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
-        <Card className="mx-4 max-w-md">
+        <Card className="brutalist-card mx-4 max-w-md">
           <CardContent className="py-8 text-center">
-            <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
-            <p className="text-muted-foreground">Loading patient data...</p>
+            <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin border-8 border-black border-t-transparent dark:border-white"></div>
+            <p className="text-muted-foreground font-bold tracking-wide uppercase">
+              LOADING PATIENT DATA...
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -188,18 +200,23 @@ function DashboardPageContent() {
   if (patientDataError || !patientData) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
-        <Card className="mx-4 max-w-md">
+        <Card className="brutalist-card mx-4 max-w-md">
           <CardHeader className="text-center">
             <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-500" />
-            <CardTitle>Error Loading Patient Data</CardTitle>
+            <CardTitle className="brutalist-text-shadow">
+              ERROR LOADING PATIENT DATA
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-muted-foreground">
-              {patientDataError ?? "Failed to load patient information"}
+            <p className="text-muted-foreground font-bold tracking-wide uppercase">
+              {patientDataError ?? "FAILED TO LOAD PATIENT INFORMATION"}
             </p>
-            <Button onClick={() => router.push("/patient-lookup")}>
+            <Button
+              onClick={() => router.push("/patient-lookup")}
+              className="brutalist-button"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Patient Lookup
+              BACK TO PATIENT LOOKUP
             </Button>
           </CardContent>
         </Card>
@@ -210,20 +227,20 @@ function DashboardPageContent() {
   return (
     <div className="bg-background min-h-screen">
       {/* Page Header */}
-      <header className="bg-background border-b">
+      <header className="bg-background border-b-8 border-black shadow-[0_8px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[0_8px_0px_0px_rgba(255,255,255,1)]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
-                <Stethoscope className="text-primary-foreground h-5 w-5" />
+          <div className="flex h-20 items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-primary flex h-12 w-12 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                <Stethoscope className="text-primary-foreground h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-foreground text-lg font-semibold">
-                  Patient Dashboard - {selectedPatient.name}
+                <h1 className="text-foreground brutalist-text-shadow text-xl font-black tracking-tight uppercase">
+                  PATIENT DASHBOARD - {selectedPatient.name.toUpperCase()}
                 </h1>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-muted-foreground text-sm font-bold tracking-wider uppercase">
                   ID: {selectedPatient.patientId} • DOB: {selectedPatient.dob} •{" "}
-                  {selectedPatient.sex}
+                  {selectedPatient.sex.toUpperCase()}
                 </p>
               </div>
             </div>
@@ -239,9 +256,10 @@ function DashboardPageContent() {
               <Button
                 variant="outline"
                 onClick={() => router.push("/patient-lookup")}
+                className="brutalist-button"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Change Patient
+                CHANGE PATIENT
               </Button>
             </div>
           </div>
@@ -251,15 +269,15 @@ function DashboardPageContent() {
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Patient Information Header */}
-        <div className="bg-card mb-4 rounded-lg border shadow-sm">
-          <div className="border-b px-4 py-3">
+        <div className="bg-card brutalist-card mb-8">
+          <div className="border-b-4 border-black px-6 py-4 dark:border-white">
             <div className="flex items-center justify-between">
-              <h2 className="text-card-foreground text-lg font-semibold">
-                Patient Information
+              <h2 className="text-card-foreground brutalist-text-shadow text-2xl font-black tracking-tight uppercase">
+                PATIENT INFORMATION
               </h2>
-              <div className="flex items-center space-x-2">
-                <FileDigit className="text-primary h-4 w-4" />
-                <span className="text-primary text-sm font-medium">
+              <div className="bg-primary text-primary-foreground flex items-center space-x-3 border-2 border-black px-4 py-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
+                <FileDigit className="h-5 w-5" />
+                <span className="text-sm font-black tracking-wider uppercase">
                   MRN: {patientData.patientId}
                 </span>
               </div>
@@ -350,12 +368,12 @@ function DashboardPageContent() {
                       </p>
                       {patientData.secondaryPhone && (
                         <>
-                      <p className="text-muted-foreground text-sm">
+                          <p className="text-muted-foreground text-sm">
                             {patientData.secondaryPhone}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Secondary Phone
-                      </p>
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            Secondary Phone
+                          </p>
                         </>
                       )}
                     </div>
@@ -410,33 +428,33 @@ function DashboardPageContent() {
                     </div>
                   </div>
                   {patientData.insurance?.secondary && (
-                  <div className="flex items-start space-x-3">
-                    <Shield className="text-primary mt-0.5 h-5 w-5" />
-                    <div className="flex-1">
-                      <p className="text-foreground text-sm font-medium">
+                    <div className="flex items-start space-x-3">
+                      <Shield className="text-primary mt-0.5 h-5 w-5" />
+                      <div className="flex-1">
+                        <p className="text-foreground text-sm font-medium">
                           {patientData.insurance.secondary.provider}
-                      </p>
-                      <p className="text-muted-foreground text-sm">
+                        </p>
+                        <p className="text-muted-foreground text-sm">
                           Policy: {patientData.insurance.secondary.policyNumber}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Secondary Insurance
-                      </p>
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          Secondary Insurance
+                        </p>
+                      </div>
                     </div>
-                  </div>
                   )}
                   {patientData.insurance?.primary?.groupNumber && (
-                  <div className="flex items-start space-x-3">
-                    <FileDigit className="text-primary mt-0.5 h-5 w-5" />
-                    <div className="flex-1">
-                      <p className="text-foreground text-sm font-medium">
+                    <div className="flex items-start space-x-3">
+                      <FileDigit className="text-primary mt-0.5 h-5 w-5" />
+                      <div className="flex-1">
+                        <p className="text-foreground text-sm font-medium">
                           {patientData.insurance.primary.groupNumber}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Group Number
-                      </p>
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          Group Number
+                        </p>
+                      </div>
                     </div>
-                  </div>
                   )}
                 </div>
 
@@ -495,7 +513,6 @@ function DashboardPageContent() {
           </div>
         </div>
 
-
         {/* AI Clinical Search */}
         <AISearchBox
           patientData={patientData}
@@ -536,48 +553,48 @@ function DashboardPageContent() {
                       Social History
                     </h3>
                     {patientData.socialHistory ? (
-                    <div className="space-y-1">
+                      <div className="space-y-1">
                         {patientData.socialHistory.tobacco && (
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Smoking Status:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Smoking Status:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.tobacco}
-                        </span>
-                      </div>
+                            </span>
+                          </div>
                         )}
                         {patientData.socialHistory.alcohol && (
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Alcohol Use:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Alcohol Use:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.alcohol}
-                        </span>
-                      </div>
+                            </span>
+                          </div>
                         )}
                         {patientData.socialHistory.drugs && (
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Drug Use:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Drug Use:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.drugs}
-                        </span>
-                      </div>
+                            </span>
+                          </div>
                         )}
                         {patientData.socialHistory.occupation && (
-                      <div className="bg-muted flex items-center justify-between rounded p-2">
-                        <span className="text-muted-foreground text-sm font-medium">
-                          Occupation:
-                        </span>
-                        <span className="text-muted-foreground text-sm">
+                          <div className="bg-muted flex items-center justify-between rounded p-2">
+                            <span className="text-muted-foreground text-sm font-medium">
+                              Occupation:
+                            </span>
+                            <span className="text-muted-foreground text-sm">
                               {patientData.socialHistory.occupation}
-                        </span>
-                      </div>
+                            </span>
+                          </div>
                         )}
-                    </div>
+                      </div>
                     ) : (
                       <div className="py-4 text-center">
                         <p className="text-muted-foreground text-sm">
@@ -627,8 +644,10 @@ function DashboardPageContent() {
                         )}
                       </div>
                     ) : (
-                      <div className="text-center py-4">
-                        <p className="text-muted-foreground text-sm">No immunization records</p>
+                      <div className="py-4 text-center">
+                        <p className="text-muted-foreground text-sm">
+                          No immunization records
+                        </p>
                       </div>
                     )}
                   </div>
@@ -690,8 +709,8 @@ function DashboardPageContent() {
                                 <div>
                                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {allergy.substance}
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                                  </p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">
                                     {allergy.severity} - {allergy.reaction}
                                   </p>
                                 </div>
@@ -709,18 +728,18 @@ function DashboardPageContent() {
                           );
                         })
                       ) : (
-                      <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                              No Known Allergies
-                            </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <div className="rounded border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-900/20">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                No Known Allergies
+                              </p>
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
                                 No allergies recorded
-                            </p>
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
                       )}
                     </div>
                   </div>
@@ -756,10 +775,10 @@ function DashboardPageContent() {
                             </div>
                             <p className="text-xs text-gray-600 dark:text-gray-400">
                               {condition.notes}
-                        </p>
-                      </div>
+                            </p>
+                          </div>
                         ))}
-                        </div>
+                      </div>
                     ) : (
                       <div className="py-4 text-center">
                         <p className="text-muted-foreground text-sm">
@@ -789,15 +808,15 @@ function DashboardPageContent() {
                             <div className="mb-1 flex items-start justify-between">
                               <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
                                 {history.relation}:
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
                               {history.condition}
                               {history.notes && ` - ${history.notes}`}
-                        </p>
-                      </div>
+                            </p>
+                          </div>
                         ))}
-                        </div>
+                      </div>
                     ) : (
                       <div className="py-4 text-center">
                         <p className="text-muted-foreground text-sm">
@@ -805,10 +824,10 @@ function DashboardPageContent() {
                         </p>
                       </div>
                     )}
-                        </div>
-                      </div>
-                        </div>
-                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1035,79 +1054,93 @@ function DashboardPageContent() {
 
         {/* Vital Signs Overview */}
         <div
-          className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4"
+          className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4"
           id="section-vitals"
         >
-          <Card className="border-l-4 border-l-green-500">
-            <CardContent className="p-4">
+          <Card className="brutalist-card transform border-l-8 border-l-green-500 transition-all duration-200 hover:rotate-1">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm font-medium">
-                    Blood Pressure & Type
+                  <p className="text-muted-foreground text-sm font-black tracking-wider uppercase">
+                    BLOOD PRESSURE & TYPE
                   </p>
-                  <p className="text-foreground text-xl font-bold">
+                  <p className="text-foreground brutalist-text-shadow text-2xl font-black">
                     {patientData.vitals?.bloodPressure
                       ? `${patientData.vitals.bloodPressure.systolic}/${patientData.vitals.bloodPressure.diastolic}`
                       : "N/A"}{" "}
                     • {patientData.bloodType ?? "N/A"}
                   </p>
-                  <p className="text-xs text-green-600">Normal</p>
+                  <p className="text-xs font-black tracking-wider text-green-600 uppercase">
+                    NORMAL
+                  </p>
                 </div>
-                <Droplets className="h-8 w-8 text-green-600" />
+                <div className="border-4 border-black bg-green-500 p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                  <Droplets className="h-8 w-8 text-white" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-blue-500">
-            <CardContent className="p-4">
+          <Card className="brutalist-card transform border-l-8 border-l-blue-500 transition-all duration-200 hover:-rotate-1">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm font-medium">
-                    Heart Rate
+                  <p className="text-muted-foreground text-sm font-black tracking-wider uppercase">
+                    HEART RATE
                   </p>
-                  <p className="text-foreground text-xl font-bold">
-                    {patientData.vitals?.heartRate ?? "N/A"} bpm
+                  <p className="text-foreground brutalist-text-shadow text-2xl font-black">
+                    {patientData.vitals?.heartRate ?? "N/A"} BPM
                   </p>
-                  <p className="text-xs text-blue-600">Normal</p>
+                  <p className="text-xs font-black tracking-wider text-blue-600 uppercase">
+                    NORMAL
+                  </p>
                 </div>
-                <Heart className="h-8 w-8 text-blue-600" />
+                <div className="border-4 border-black bg-blue-500 p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                  <Heart className="h-8 w-8 text-white" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-orange-500">
-            <CardContent className="p-4">
+          <Card className="brutalist-card transform border-l-8 border-l-orange-500 transition-all duration-200 hover:rotate-2">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm font-medium">
-                    Temperature
+                  <p className="text-muted-foreground text-sm font-black tracking-wider uppercase">
+                    TEMPERATURE
                   </p>
-                  <p className="text-foreground text-xl font-bold">
+                  <p className="text-foreground brutalist-text-shadow text-2xl font-black">
                     {patientData.vitals?.temperature ?? "N/A"}°F
                   </p>
-                  <p className="text-xs text-orange-600">Normal</p>
+                  <p className="text-xs font-black tracking-wider text-orange-600 uppercase">
+                    NORMAL
+                  </p>
                 </div>
-                <Thermometer className="h-8 w-8 text-orange-600" />
+                <div className="border-4 border-black bg-orange-500 p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                  <Thermometer className="h-8 w-8 text-white" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-purple-500">
-            <CardContent className="p-4">
+          <Card className="brutalist-card transform border-l-8 border-l-purple-500 transition-all duration-200 hover:-rotate-2">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-muted-foreground text-sm font-medium">
-                    Weight & Height
+                  <p className="text-muted-foreground text-sm font-black tracking-wider uppercase">
+                    WEIGHT & HEIGHT
                   </p>
-                  <p className="text-foreground text-xl font-bold">
+                  <p className="text-foreground brutalist-text-shadow text-2xl font-black">
                     {patientData.vitals?.weight ?? "N/A"} •{" "}
                     {patientData.vitals?.height ?? "N/A"}
                   </p>
-                  <p className="text-xs text-purple-600">
+                  <p className="text-xs font-black tracking-wider text-purple-600 uppercase">
                     BMI: {patientData.vitals?.bmi ?? "N/A"}
                   </p>
                 </div>
-                <Weight className="h-8 w-8 text-purple-600" />
+                <div className="border-4 border-black bg-purple-500 p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                  <Weight className="h-8 w-8 text-white" />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -1205,13 +1238,21 @@ function DashboardPageContent() {
               <CardContent className="p-0">
                 <div className="divide-border divide-y">
                   {/* DICOM Files from Database */}
-                  {patientData?.dicomFiles && patientData.dicomFiles.length > 0 && 
+                  {patientData?.dicomFiles &&
+                    patientData.dicomFiles.length > 0 &&
                     patientData.dicomFiles.map((dicomFile) => (
-                      <div key={dicomFile.id} className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors">
+                      <div
+                        key={dicomFile.id}
+                        className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors"
+                      >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            <div className={`${getModalityColor(dicomFile.modality)}/10 flex h-12 w-12 items-center justify-center rounded-lg`}>
-                              <Monitor className={`${getModalityColor(dicomFile.modality)} h-6 w-6`} />
+                            <div
+                              className={`${getModalityColor(dicomFile.modality)}/10 flex h-12 w-12 items-center justify-center rounded-lg`}
+                            >
+                              <Monitor
+                                className={`${getModalityColor(dicomFile.modality)} h-6 w-6`}
+                              />
                             </div>
                             <div>
                               <p className="text-foreground font-semibold">
@@ -1221,30 +1262,43 @@ function DashboardPageContent() {
                                 DICOM Imaging • {dicomFile.modality} Study
                               </p>
                               <p className="text-muted-foreground text-xs">
-                                {dicomFile.performedOn && new Date(dicomFile.performedOn).toLocaleDateString()}
+                                {dicomFile.performedOn &&
+                                  new Date(
+                                    dicomFile.performedOn,
+                                  ).toLocaleDateString()}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Badge variant="secondary" className="text-xs">{dicomFile.modality}</Badge>
-                            <Button 
-                              variant="ghost" 
+                            <Badge variant="secondary" className="text-xs">
+                              {dicomFile.modality}
+                            </Badge>
+                            <Button
+                              variant="ghost"
                               size="sm"
-                              onClick={() => setSelectedDicomFile({
-                                images: dicomFile.images || [{ name: dicomFile.name, url: dicomFile.url }],
-                                name: dicomFile.name,
-                                modality: dicomFile.modality,
-                                description: dicomFile.description
-                              })}
+                              onClick={() =>
+                                setSelectedDicomFile({
+                                  images: dicomFile.images || [
+                                    {
+                                      name: dicomFile.name,
+                                      url: dicomFile.url,
+                                    },
+                                  ],
+                                  name: dicomFile.name,
+                                  modality: dicomFile.modality,
+                                  description: dicomFile.description,
+                                })
+                              }
                             >
-                              <Monitor className="h-4 w-4 mr-2" />
-                              View ({(dicomFile.images?.length || 1)} slice{(dicomFile.images?.length || 1) !== 1 ? 's' : ''})
+                              <Monitor className="mr-2 h-4 w-4" />
+                              View ({dicomFile.images?.length || 1} slice
+                              {(dicomFile.images?.length || 1) !== 1 ? "s" : ""}
+                              )
                             </Button>
                           </div>
                         </div>
                       </div>
-                    ))
-                  }
+                    ))}
 
                   <div className="hover:bg-accent hover:text-accent-foreground p-4 transition-colors">
                     <div className="flex items-center justify-between">
@@ -1460,7 +1514,7 @@ function DashboardPageContent() {
                       </p>
                     </div>
                   )}
-                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -1502,17 +1556,17 @@ function DashboardPageContent() {
                           <div className="mb-2 flex items-start justify-between">
                             <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
                               {note.provider}
-                        </span>
-                        <span className="text-xs font-medium text-blue-600">
+                            </span>
+                            <span className="text-xs font-medium text-blue-600">
                               {new Date(note.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">
                             {note.content}
-                      </p>
-                    </div>
+                          </p>
+                        </div>
                       ))}
-                      </div>
+                    </div>
                   ) : (
                     <div className="py-4 text-center">
                       <p className="text-muted-foreground text-sm">
@@ -1552,7 +1606,7 @@ function DashboardPageContent() {
           </Card>
         </div>
       </main>
-      
+
       {/* Modern DICOM Viewer Modal */}
       {selectedDicomFile && (
         <ModernDicomViewer

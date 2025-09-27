@@ -19,36 +19,45 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className="brutalist-button">
           <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="space-y-1">
+      <DropdownMenuContent
+        align="end"
+        className="bg-background space-y-2 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]"
+      >
         <DropdownMenuItem
           className={cn(
-            theme === "light" && "bg-accent text-accent-foreground"
+            "border-2 border-transparent font-bold tracking-wider uppercase hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:border-white dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]",
+            theme === "light" &&
+              "bg-primary text-primary-foreground border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]",
           )}
           onClick={() => setTheme("light")}
         >
-          Light
+          LIGHT
         </DropdownMenuItem>
         <DropdownMenuItem
           className={cn(
-            theme === "dark" && "bg-accent text-accent-foreground"
+            "border-2 border-transparent font-bold tracking-wider uppercase hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:border-white dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]",
+            theme === "dark" &&
+              "bg-primary text-primary-foreground border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]",
           )}
           onClick={() => setTheme("dark")}
         >
-          Dark
+          DARK
         </DropdownMenuItem>
         <DropdownMenuItem
           className={cn(
-            theme === "system" && "bg-accent text-accent-foreground"
+            "border-2 border-transparent font-bold tracking-wider uppercase hover:border-black hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:hover:border-white dark:hover:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]",
+            theme === "system" &&
+              "bg-primary text-primary-foreground border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]",
           )}
           onClick={() => setTheme("system")}
         >
-          System
+          SYSTEM
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

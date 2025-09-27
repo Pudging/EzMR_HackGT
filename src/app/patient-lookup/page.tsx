@@ -37,31 +37,34 @@ export default function PatientLookupPage() {
   const [scanError, setScanError] = useState<string | null>(null);
 
   // Search function to query the database
-  const searchPatients = async (query: string, type: 'id' | 'name'): Promise<PatientSearchResult[]> => {
+  const searchPatients = async (
+    query: string,
+    type: "id" | "name",
+  ): Promise<PatientSearchResult[]> => {
     try {
-      const response = await fetch('/api/patients/search', {
-        method: 'POST',
+      const response = await fetch("/api/patients/search", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ query, type }),
       });
 
       if (!response.ok) {
-        console.error('Search request failed with status:', response.status);
+        console.error("Search request failed with status:", response.status);
         return [];
       }
 
       const result = await response.json();
-      
+
       if (result.success && result.patients) {
         return result.patients;
       } else {
-        console.error('Search failed:', result.error ?? 'Unknown error');
+        console.error("Search failed:", result.error ?? "Unknown error");
         return [];
       }
     } catch (error) {
-      console.error('Error searching patients:', error);
+      console.error("Error searching patients:", error);
       return [];
     }
   };
@@ -100,7 +103,7 @@ export default function PatientLookupPage() {
 
             // Search for patient by extracted name using the database
             try {
-              const searchResults = await searchPatients(result.name, 'name');
+              const searchResults = await searchPatients(result.name, "name");
               console.log("Matching patients found:", searchResults);
               setSearchResults(searchResults);
             } catch (error) {
@@ -136,10 +139,10 @@ export default function PatientLookupPage() {
 
     setIsSearching(true);
     try {
-      const results = await searchPatients(patientIdSearch, 'id');
+      const results = await searchPatients(patientIdSearch, "id");
       setSearchResults(results);
     } catch (error) {
-      console.error('Error searching by patient ID:', error);
+      console.error("Error searching by patient ID:", error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
@@ -151,10 +154,10 @@ export default function PatientLookupPage() {
 
     setIsSearching(true);
     try {
-      const results = await searchPatients(nameSearch, 'name');
+      const results = await searchPatients(nameSearch, "name");
       setSearchResults(results);
     } catch (error) {
-      console.error('Error searching by name:', error);
+      console.error("Error searching by name:", error);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
@@ -171,11 +174,14 @@ export default function PatientLookupPage() {
 
   const goToDashboard = (patient: PatientSearchResult) => {
     console.log(`🚀 Patient Lookup: Going to dashboard with patient:`, patient);
-    
+
     // Store selected patient in sessionStorage for access by other pages
     sessionStorage.setItem("selectedPatient", JSON.stringify(patient));
-    
-    console.log(`💾 Patient Lookup: Stored in sessionStorage:`, JSON.stringify(patient));
+
+    console.log(
+      `💾 Patient Lookup: Stored in sessionStorage:`,
+      JSON.stringify(patient),
+    );
 
     // Navigate to dashboard
     router.push("/dashboard");
@@ -185,40 +191,53 @@ export default function PatientLookupPage() {
     <div className="bg-background min-h-screen p-4">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-foreground mb-2 text-3xl font-bold">
-            Patient Lookup
+        <div className="mb-12 text-center">
+          <h1 className="text-foreground brutalist-text-shadow mb-6 text-5xl font-black tracking-tighter uppercase">
+            PATIENT LOOKUP
           </h1>
-          <p className="text-muted-foreground">
-            Scan an ID, search by patient ID, or search by name to access
-            patient records
-          </p>
+          <div className="bg-secondary mx-auto max-w-3xl -rotate-1 transform border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+            <p className="text-secondary-foreground font-bold tracking-wide uppercase">
+              SCAN AN ID, SEARCH BY PATIENT ID, OR SEARCH BY NAME TO ACCESS
+              PATIENT RECORDS
+            </p>
+          </div>
         </div>
 
         {/* Search Tabs */}
         <Tabs defaultValue="scan" className="mb-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="scan" className="flex items-center gap-2">
-              <Camera className="h-4 w-4" />
-              ID Scan
+          <TabsList className="bg-secondary grid w-full grid-cols-3 border-4 border-black p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+            <TabsTrigger
+              value="scan"
+              className="flex items-center gap-2 border-2 border-transparent font-black tracking-wider uppercase data-[state=active]:border-black data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:data-[state=active]:border-white dark:data-[state=active]:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
+            >
+              <Camera className="h-5 w-5" />
+              ID SCAN
             </TabsTrigger>
-            <TabsTrigger value="id" className="flex items-center gap-2">
-              <Search className="h-4 w-4" />
-              Patient ID
+            <TabsTrigger
+              value="id"
+              className="flex items-center gap-2 border-2 border-transparent font-black tracking-wider uppercase data-[state=active]:border-black data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:data-[state=active]:border-white dark:data-[state=active]:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
+            >
+              <Search className="h-5 w-5" />
+              PATIENT ID
             </TabsTrigger>
-            <TabsTrigger value="name" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Name Search
+            <TabsTrigger
+              value="name"
+              className="flex items-center gap-2 border-2 border-transparent font-black tracking-wider uppercase data-[state=active]:border-black data-[state=active]:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:data-[state=active]:border-white dark:data-[state=active]:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]"
+            >
+              <User className="h-5 w-5" />
+              NAME SEARCH
             </TabsTrigger>
           </TabsList>
 
           {/* ID Scan Tab */}
           <TabsContent value="scan">
-            <Card>
+            <Card className="brutalist-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Camera className="h-5 w-5" />
-                  Scan Patient ID
+                <CardTitle className="brutalist-text-shadow flex items-center gap-3 text-2xl font-black tracking-tight uppercase">
+                  <div className="bg-primary text-primary-foreground border-2 border-black p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+                    <Camera className="h-6 w-6" />
+                  </div>
+                  SCAN PATIENT ID
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -312,42 +331,55 @@ export default function PatientLookupPage() {
 
         {/* Search Results */}
         {searchResults.length > 0 && (
-          <Card>
+          <Card className="brutalist-card">
             <CardHeader>
-              <CardTitle>Search Results</CardTitle>
+              <CardTitle className="brutalist-text-shadow text-2xl font-black tracking-tight uppercase">
+                SEARCH RESULTS
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {searchResults.map((patient) => (
+              <div className="space-y-6">
+                {searchResults.map((patient, index) => (
                   <div
                     key={patient.id}
-                    className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4"
+                    className={`brutalist-card flex transform items-center justify-between p-6 transition-all duration-200 hover:translate-x-[-8px] hover:translate-y-[-8px] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[16px_16px_0px_0px_rgba(255,255,255,1)] ${
+                      index % 2 === 0 ? "rotate-1" : "-rotate-1"
+                    }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
-                        <User className="text-primary h-6 w-6" />
+                    <div className="flex items-center gap-6">
+                      <div className="bg-primary text-primary-foreground flex h-16 w-16 items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                        <User className="h-8 w-8" />
                       </div>
                       <div>
-                        <div className="font-medium">{patient.name}</div>
-                        <div className="text-muted-foreground text-sm">
+                        <div className="brutalist-text-shadow text-xl font-black tracking-tight uppercase">
+                          {patient.name}
+                        </div>
+                        <div className="text-muted-foreground font-bold tracking-wider uppercase">
                           ID: {patient.patientId} • DOB: {patient.dob} •{" "}
-                          {patient.sex}
+                          {patient.sex.toUpperCase()}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {patient.bloodType && (
-                        <Badge variant="outline">{patient.bloodType}</Badge>
+                        <div className="bg-secondary text-secondary-foreground border-2 border-black px-3 py-1 font-black tracking-wider uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:border-white dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+                          {patient.bloodType}
+                        </div>
                       )}
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => goToDashboard(patient)}
+                        className="brutalist-button"
                       >
-                        Go to Dashboard
+                        GO TO DASHBOARD
                       </Button>
-                      <Button size="sm" onClick={() => selectPatient(patient)}>
-                        Patient Assessment
+                      <Button
+                        size="sm"
+                        onClick={() => selectPatient(patient)}
+                        className="brutalist-button"
+                      >
+                        PATIENT ASSESSMENT
                       </Button>
                     </div>
                   </div>

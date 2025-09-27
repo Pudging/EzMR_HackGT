@@ -4,15 +4,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Brutalist theme - sharp corners, no rounded borders */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -47,72 +49,84 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Brutalist theme - no rounded corners */
+  --radius: 0px;
+
+  /* High contrast black/white theme with minimal grays */
+  --background: oklch(1 0 0); /* Pure white */
+  --foreground: oklch(0 0 0); /* Pure black */
+  --card: oklch(0.98 0 0); /* Very light gray */
+  --card-foreground: oklch(0 0 0); /* Pure black */
+  --popover: oklch(1 0 0); /* Pure white */
+  --popover-foreground: oklch(0 0 0); /* Pure black */
+  --primary: oklch(0 0 0); /* Pure black */
+  --primary-foreground: oklch(1 0 0); /* Pure white */
+  --secondary: oklch(0.9 0 0); /* Light gray */
+  --secondary-foreground: oklch(0 0 0); /* Pure black */
+  --muted: oklch(0.95 0 0); /* Very light gray */
+  --muted-foreground: oklch(0.4 0 0); /* Dark gray */
+  --accent: oklch(0.85 0 0); /* Medium light gray */
+  --accent-foreground: oklch(0 0 0); /* Pure black */
+  --destructive: oklch(0.5 0.3 0); /* Red accent */
+  --border: oklch(0.8 0 0); /* Medium gray borders */
+  --input: oklch(0.95 0 0); /* Light gray inputs */
+  --ring: oklch(0 0 0); /* Black focus ring */
+
+  /* Chart colors - minimal color palette */
+  --chart-1: oklch(0.3 0.2 0); /* Dark red */
+  --chart-2: oklch(0.2 0.1 180); /* Dark blue */
+  --chart-3: oklch(0.25 0.15 120); /* Dark green */
+  --chart-4: oklch(0.35 0.2 60); /* Dark yellow */
+  --chart-5: oklch(0.4 0.1 300); /* Dark purple */
+
+  /* Sidebar */
+  --sidebar: oklch(0.95 0 0);
+  --sidebar-foreground: oklch(0 0 0);
+  --sidebar-primary: oklch(0 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.9 0 0);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(0.8 0 0);
+  --sidebar-ring: oklch(0 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Dark mode brutalist theme - high contrast */
+  --background: oklch(0.05 0 0); /* Near black */
+  --foreground: oklch(1 0 0); /* Pure white */
+  --card: oklch(0.1 0 0); /* Very dark gray */
+  --card-foreground: oklch(1 0 0); /* Pure white */
+  --popover: oklch(0.05 0 0); /* Near black */
+  --popover-foreground: oklch(1 0 0); /* Pure white */
+  --primary: oklch(1 0 0); /* Pure white */
+  --primary-foreground: oklch(0 0 0); /* Pure black */
+  --secondary: oklch(0.2 0 0); /* Dark gray */
+  --secondary-foreground: oklch(1 0 0); /* Pure white */
+  --muted: oklch(0.15 0 0); /* Very dark gray */
+  --muted-foreground: oklch(0.7 0 0); /* Light gray */
+  --accent: oklch(0.25 0 0); /* Medium dark gray */
+  --accent-foreground: oklch(1 0 0); /* Pure white */
+  --destructive: oklch(0.6 0.3 0); /* Bright red */
+  --border: oklch(0.3 0 0); /* Medium dark gray borders */
+  --input: oklch(0.1 0 0); /* Very dark inputs */
+  --ring: oklch(1 0 0); /* White focus ring */
+
+  /* Chart colors - brighter for dark mode */
+  --chart-1: oklch(0.7 0.3 0); /* Bright red */
+  --chart-2: oklch(0.6 0.2 240); /* Bright blue */
+  --chart-3: oklch(0.7 0.25 120); /* Bright green */
+  --chart-4: oklch(0.8 0.3 60); /* Bright yellow */
+  --chart-5: oklch(0.7 0.2 300); /* Bright purple */
+
+  /* Sidebar */
+  --sidebar: oklch(0.1 0 0);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(1 0 0);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.2 0 0);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.3 0 0);
+  --sidebar-ring: oklch(1 0 0);
 }
 
 @layer base {
@@ -121,5 +135,77 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Brutalist component styles */
+  .brutalist-card {
+    @apply bg-card transform border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200;
+  }
+
+  .brutalist-card:hover {
+    @apply translate-x-[-4px] translate-y-[-4px] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)];
+  }
+
+  .dark .brutalist-card {
+    @apply border-white shadow-[8px_8px_0px_0px_rgba(255,255,255,1)];
+  }
+
+  .dark .brutalist-card:hover {
+    @apply shadow-[12px_12px_0px_0px_rgba(255,255,255,1)];
+  }
+
+  .brutalist-button {
+    @apply bg-primary text-primary-foreground transform border-4 border-black font-bold tracking-wider uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-150;
+  }
+
+  .brutalist-button:hover {
+    @apply translate-x-[-2px] translate-y-[-2px] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)];
+  }
+
+  .brutalist-button:active {
+    @apply translate-x-[2px] translate-y-[2px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)];
+  }
+
+  .dark .brutalist-button {
+    @apply border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)];
+  }
+
+  .dark .brutalist-button:hover {
+    @apply shadow-[6px_6px_0px_0px_rgba(255,255,255,1)];
+  }
+
+  .dark .brutalist-button:active {
+    @apply shadow-[2px_2px_0px_0px_rgba(255,255,255,1)];
+  }
+
+  .brutalist-input {
+    @apply bg-input border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-2px] focus:translate-y-[-2px] focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)];
+  }
+
+  .dark .brutalist-input {
+    @apply border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] focus:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)];
+  }
+
+  .brutalist-section {
+    @apply relative;
+  }
+
+  .brutalist-section::before {
+    content: "";
+    @apply absolute -top-2 -left-2 -z-10 h-full w-full bg-black;
+  }
+
+  .dark .brutalist-section::before {
+    @apply bg-white;
+  }
+
+  .brutalist-text-shadow {
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 1);
+  }
+
+  .dark .brutalist-text-shadow {
+    text-shadow: 3px 3px 0px rgba(255, 255, 255, 1);
   }
 }
