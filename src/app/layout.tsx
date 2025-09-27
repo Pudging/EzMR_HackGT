@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { AuthSessionProvider } from "@/components/auth/session-provider";
+import { Navbar } from "@/components/ui/navbar";
 
 export const metadata: Metadata = {
   title: "EzMR - Easy Medical Records",
@@ -21,7 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body>
-        <AuthSessionProvider>{children}</AuthSessionProvider>
+        <Navbar />
+        <AuthSessionProvider>
+          <main className="">{children}</main>
+        </AuthSessionProvider>
       </body>
     </html>
   );
