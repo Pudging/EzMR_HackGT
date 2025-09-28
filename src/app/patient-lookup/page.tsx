@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,11 +35,17 @@ export default function PatientLookupPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [activeSearchType, setActiveSearchType] = useState<
+    "id" | "name" | null
+  >(null);
+  const idAbortRef = useRef<AbortController | null>(null);
+  const nameAbortRef = useRef<AbortController | null>(null);
 
   // Search function to query the database
   const searchPatients = async (
     query: string,
     type: "id" | "name",
+    signal?: AbortSignal,
   ): Promise<PatientSearchResult[]> => {
     try {
       const response = await fetch("/api/patients/search", {
@@ -48,6 +54,7 @@ export default function PatientLookupPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query, type }),
+        signal,
       });
 
       if (!response.ok) {
@@ -64,10 +71,73 @@ export default function PatientLookupPage() {
         return [];
       }
     } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return [];
+      }
       console.error("Error searching patients:", error);
       return [];
     }
   };
+
+  // Live search for Patient ID with request cancellation
+  useEffect(() => {
+    if (activeSearchType !== "id") return;
+
+    const trimmed = patientIdSearch.trim();
+    if (trimmed.length === 0) {
+      if (idAbortRef.current) idAbortRef.current.abort();
+      setIsSearching(false);
+      setSearchResults([]);
+      return;
+    }
+
+    if (idAbortRef.current) idAbortRef.current.abort();
+    const controller = new AbortController();
+    idAbortRef.current = controller;
+    setIsSearching(true);
+
+    void (async () => {
+      const results = await searchPatients(trimmed, "id", controller.signal);
+      if (!controller.signal.aborted) {
+        setSearchResults(results);
+        setIsSearching(false);
+      }
+    })();
+
+    return () => {
+      controller.abort();
+    };
+  }, [patientIdSearch, activeSearchType]);
+
+  // Live search for Name with request cancellation
+  useEffect(() => {
+    if (activeSearchType !== "name") return;
+
+    const trimmed = nameSearch.trim();
+    if (trimmed.length === 0) {
+      if (nameAbortRef.current) nameAbortRef.current.abort();
+      setIsSearching(false);
+      setSearchResults([]);
+      return;
+    }
+
+    if (nameAbortRef.current) nameAbortRef.current.abort();
+    const controller = new AbortController();
+    nameAbortRef.current = controller;
+    setIsSearching(true);
+
+    void (async () => {
+      const results = await searchPatients(trimmed, "name", controller.signal);
+      if (!controller.signal.aborted) {
+        setSearchResults(results);
+        setIsSearching(false);
+      }
+    })();
+
+    return () => {
+      controller.abort();
+    };
+  }, [nameSearch, activeSearchType]);
 
   const handleImageCapture = async (imageBlob: Blob) => {
     setIsScanning(true);
@@ -343,7 +413,10 @@ export default function PatientLookupPage() {
                   <Input
                     placeholder="Enter Patient ID (e.g., 1, 2, 3)"
                     value={patientIdSearch}
-                    onChange={(e) => setPatientIdSearch(e.target.value)}
+                    onChange={(e) => {
+                      setPatientIdSearch(e.target.value);
+                      setActiveSearchType("id");
+                    }}
                     onKeyPress={(e) =>
                       e.key === "Enter" && handlePatientIdSearch()
                     }
@@ -404,7 +477,10 @@ export default function PatientLookupPage() {
                   <Input
                     placeholder="Enter patient name (e.g., Kevin, John, Sarah)"
                     value={nameSearch}
-                    onChange={(e) => setNameSearch(e.target.value)}
+                    onChange={(e) => {
+                      setNameSearch(e.target.value);
+                      setActiveSearchType("name");
+                    }}
                     onKeyPress={(e) => e.key === "Enter" && handleNameSearch()}
                     className="border-foreground text-foreground border-2 bg-transparent placeholder:text-neutral-400"
                     style={{
