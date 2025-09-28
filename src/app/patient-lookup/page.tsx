@@ -182,24 +182,24 @@ export default function PatientLookupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-background text-foreground p-6">
       <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-12 border-l-4 border-white pl-6">
+        <div className="mb-12 border-l-4 border-foreground pl-6">
           <h1 
-            className="mb-3 text-4xl font-black uppercase tracking-tight text-white drop-shadow-lg"
+            className="mb-3 text-4xl font-black uppercase tracking-tight text-foreground drop-shadow-lg"
             style={{ 
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              textShadow: 'none'
             }}
           >
             Patient Lookup
           </h1>
           <p 
-            className="text-lg text-neutral-300 drop-shadow-lg"
+            className="text-lg text-muted-foreground drop-shadow-lg"
             style={{ 
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              textShadow: 'none'
             }}
           >
             Scan an ID, search by patient ID, or search by name to access
@@ -210,7 +210,7 @@ export default function PatientLookupPage() {
         {/* Search Tabs */}
         <Tabs defaultValue="scan" className="mb-8">
           <TabsList 
-            className="grid w-full grid-cols-3 border-2 border-white p-1 overflow-hidden"
+            className="grid w-full grid-cols-3 border-2 border-foreground p-1 overflow-hidden"
             style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))' }}
           >
             <TabsTrigger 
@@ -242,15 +242,15 @@ export default function PatientLookupPage() {
           {/* ID Scan Tab */}
           <TabsContent value="scan">
             <Card 
-              className="border-2 border-white shadow-none overflow-hidden"
+              className="border-2 border-foreground shadow-none overflow-hidden"
               style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
             >
-              <CardHeader className="border-b-2 border-white">
+              <CardHeader className="border-b-2 border-foreground">
                 <CardTitle 
-                  className="flex items-center gap-2 font-black uppercase tracking-wide text-white drop-shadow-lg"
+                  className="flex items-center gap-2 font-black uppercase tracking-wide text-foreground drop-shadow-lg"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    textShadow: 'none'
                   }}
                 >
                   <Camera className="h-5 w-5" />
@@ -267,16 +267,16 @@ export default function PatientLookupPage() {
 
                 {scanResult && (
                   <div 
-                    className="border-2 border-white p-4 overflow-hidden"
+                    className="border-2 border-foreground p-4 overflow-hidden"
                     style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))' }}
                   >
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-white" />
+                      <CheckCircle className="h-5 w-5 text-foreground" />
                       <span 
-                        className="font-black text-white uppercase drop-shadow-lg"
+                        className="font-black text-foreground uppercase drop-shadow-lg"
                         style={{ 
                           fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                          textShadow: 'none'
                         }}
                       >
                         Extracted Name: {scanResult}
@@ -291,15 +291,15 @@ export default function PatientLookupPage() {
           {/* Patient ID Search Tab */}
           <TabsContent value="id">
             <Card 
-              className="border-2 border-white shadow-none overflow-hidden"
+              className="border-2 border-foreground shadow-none overflow-hidden"
               style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
             >
-              <CardHeader className="border-b-2 border-white">
+              <CardHeader className="border-b-2 border-foreground">
                 <CardTitle 
-                  className="flex items-center gap-2 font-black uppercase tracking-wide text-white drop-shadow-lg"
+                  className="flex items-center gap-2 font-black uppercase tracking-wide text-foreground drop-shadow-lg"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    textShadow: 'none'
                   }}
                 >
                   <Search className="h-5 w-5" />
@@ -315,7 +315,7 @@ export default function PatientLookupPage() {
                     onKeyPress={(e) =>
                       e.key === "Enter" && handlePatientIdSearch()
                     }
-                    className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
+                    className="border-2 border-foreground bg-transparent text-foreground placeholder:text-neutral-400"
                     style={{ 
                       fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                       clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
@@ -324,7 +324,7 @@ export default function PatientLookupPage() {
                   <Button
                     onClick={handlePatientIdSearch}
                     disabled={isSearching || !patientIdSearch.trim()}
-                    className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
+                    className="border-2 border-foreground bg-white text-black uppercase hover:bg-neutral-200"
                     style={{ 
                       fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                       clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
@@ -344,15 +344,15 @@ export default function PatientLookupPage() {
           {/* Name Search Tab */}
           <TabsContent value="name">
             <Card 
-              className="border-2 border-white shadow-none overflow-hidden"
+              className="border-2 border-foreground shadow-none overflow-hidden"
               style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
             >
-              <CardHeader className="border-b-2 border-white">
+              <CardHeader className="border-b-2 border-foreground">
                 <CardTitle 
-                  className="flex items-center gap-2 font-black uppercase tracking-wide text-white drop-shadow-lg"
+                  className="flex items-center gap-2 font-black uppercase tracking-wide text-foreground drop-shadow-lg"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    textShadow: 'none'
                   }}
                 >
                   <User className="h-5 w-5" />
@@ -366,7 +366,7 @@ export default function PatientLookupPage() {
                     value={nameSearch}
                     onChange={(e) => setNameSearch(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && handleNameSearch()}
-                    className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
+                    className="border-2 border-foreground bg-transparent text-foreground placeholder:text-neutral-400"
                     style={{ 
                       fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                       clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
@@ -375,7 +375,7 @@ export default function PatientLookupPage() {
                   <Button
                     onClick={handleNameSearch}
                     disabled={isSearching || !nameSearch.trim()}
-                    className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
+                    className="border-2 border-foreground bg-white text-black uppercase hover:bg-neutral-200"
                     style={{ 
                       fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                       clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
@@ -396,15 +396,15 @@ export default function PatientLookupPage() {
         {/* Search Results */}
         {searchResults.length > 0 && (
           <Card 
-            className="border-2 border-white shadow-none overflow-hidden"
+            className="border-2 border-foreground shadow-none overflow-hidden"
             style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
           >
-            <CardHeader className="border-b-2 border-white">
+            <CardHeader className="border-b-2 border-foreground">
               <CardTitle 
-                className="font-black uppercase tracking-wide text-white drop-shadow-lg"
+                className="font-black uppercase tracking-wide text-foreground drop-shadow-lg"
                 style={{ 
                   fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  textShadow: 'none'
                 }}
               >
                 Search Results
@@ -415,31 +415,31 @@ export default function PatientLookupPage() {
                 {searchResults.map((patient) => (
                   <div
                     key={patient.id}
-                    className="flex items-center justify-between border-2 border-white p-4 hover:border-opacity-80 transition-colors overflow-hidden"
+                    className="flex items-center justify-between border-2 border-foreground p-4 hover:border-opacity-80 transition-colors overflow-hidden"
                     style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))' }}
                   >
                     <div className="flex items-center gap-4">
                       <div 
-                        className="flex h-12 w-12 items-center justify-center border-2 border-white overflow-hidden"
+                        className="flex h-12 w-12 items-center justify-center border-2 border-foreground overflow-hidden"
                         style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
                       >
-                        <User className="h-6 w-6 text-white" />
+                        <User className="h-6 w-6 text-foreground" />
                       </div>
                       <div>
                         <div 
-                          className="font-black text-white uppercase tracking-wide drop-shadow-lg"
+                          className="font-black text-foreground uppercase tracking-wide drop-shadow-lg"
                           style={{ 
                             fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            textShadow: 'none'
                           }}
                         >
                           {patient.name}
                         </div>
                         <div 
-                          className="text-neutral-300 text-sm drop-shadow-lg"
+                          className="text-muted-foreground text-sm drop-shadow-lg"
                           style={{ 
                             fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                            textShadow: 'none'
                           }}
                         >
                           ID: {patient.patientId} • DOB: {patient.dob} •{" "}
@@ -450,7 +450,7 @@ export default function PatientLookupPage() {
                     <div className="flex items-center gap-2">
                       {patient.bloodType && (
                         <Badge 
-                          className="border-2 border-white bg-transparent text-white uppercase"
+                          className="border-2 border-foreground bg-transparent text-foreground uppercase"
                           style={{ 
                             fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                             clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))'
@@ -462,7 +462,7 @@ export default function PatientLookupPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-2 border-white bg-transparent text-white uppercase hover:bg-white hover:text-black"
+                        className="border-2 border-foreground bg-transparent text-foreground uppercase hover:bg-white hover:text-black"
                         style={{ 
                           fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                           clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))'
@@ -473,7 +473,7 @@ export default function PatientLookupPage() {
                       </Button>
                       <Button 
                         size="sm" 
-                        className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
+                        className="border-2 border-foreground bg-white text-black uppercase hover:bg-neutral-200"
                         style={{ 
                           fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                           clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))'
@@ -495,25 +495,25 @@ export default function PatientLookupPage() {
           (patientIdSearch || nameSearch || scanResult) &&
           !isSearching && (
             <Card 
-              className="border-2 border-white shadow-none overflow-hidden"
+              className="border-2 border-foreground shadow-none overflow-hidden"
               style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
             >
               <CardContent className="py-8 text-center">
                 <AlertCircle className="mx-auto mb-4 h-12 w-12 text-neutral-400" />
                 <p 
-                  className="mb-2 text-lg font-black uppercase tracking-wide text-white drop-shadow-lg"
+                  className="mb-2 text-lg font-black uppercase tracking-wide text-foreground drop-shadow-lg"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    textShadow: 'none'
                   }}
                 >
                   No patients found
                 </p>
                 <p 
-                  className="text-neutral-300 drop-shadow-lg"
+                  className="text-muted-foreground drop-shadow-lg"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    textShadow: 'none'
                   }}
                 >
                   Try adjusting your search criteria or verify the patient

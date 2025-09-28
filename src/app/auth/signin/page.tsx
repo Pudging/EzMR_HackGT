@@ -79,30 +79,30 @@ export default function SignInPage({
   }
 
   return (
-    <div className="bg-black flex min-h-screen items-center justify-center p-4 text-white">
+    <div className="bg-background flex min-h-screen items-center justify-center p-4 text-foreground">
       <div className="w-full max-w-md">
         {/* Header Section */}
         <div className="mb-8 text-center">
           <div 
-            className="mb-4 inline-flex h-16 w-16 items-center justify-center border-2 border-white overflow-hidden"
+            className="mb-4 inline-flex h-16 w-16 items-center justify-center border-2 border-foreground overflow-hidden"
             style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
           >
-            <Sparkles className="h-8 w-8 text-white" />
+            <Sparkles className="h-8 w-8 text-foreground" />
           </div>
           <h1 
-            className="mb-2 text-3xl font-black uppercase tracking-tight text-white drop-shadow-lg"
+            className="mb-2 text-3xl font-black uppercase tracking-tight text-foreground drop-shadow-lg"
             style={{ 
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              textShadow: 'none'
             }}
           >
             EzMR
           </h1>
           <p 
-            className="text-neutral-300 drop-shadow-lg"
+            className="text-muted-foreground drop-shadow-lg"
             style={{ 
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              textShadow: 'none'
             }}
           >
             Welcome! Please sign in to continue
@@ -110,24 +110,24 @@ export default function SignInPage({
         </div>
 
         <Card 
-          className="border-2 border-white shadow-none overflow-hidden"
+          className="border-2 border-foreground shadow-none overflow-hidden"
           style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
         >
-          <CardHeader className="space-y-1 pb-6 border-b-2 border-white">
+          <CardHeader className="space-y-1 pb-6 border-b-2 border-foreground">
             <CardTitle 
-              className="text-center text-2xl font-black uppercase tracking-wide text-white drop-shadow-lg"
+              className="text-center text-2xl font-black uppercase tracking-wide text-foreground drop-shadow-lg"
               style={{ 
                 fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                textShadow: 'none'
               }}
             >
               Sign in to your account
             </CardTitle>
             <CardDescription 
-              className="text-center text-neutral-300 drop-shadow-lg"
+              className="text-center text-muted-foreground drop-shadow-lg"
               style={{ 
                 fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                textShadow: 'none'
               }}
             >
               Enter your email address and we'll send you a magic link
@@ -138,10 +138,10 @@ export default function SignInPage({
               <div className="space-y-2">
                 <Label
                   htmlFor="email"
-                  className="text-white text-sm font-black uppercase drop-shadow-lg"
+                  className="text-foreground text-sm font-black uppercase drop-shadow-lg"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    textShadow: 'none'
                   }}
                 >
                   Email address
@@ -153,7 +153,7 @@ export default function SignInPage({
                   autoComplete="email"
                   required
                   placeholder="Enter your email address"
-                  className="h-12 w-full border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
+                  className="h-12 w-full border-2 border-foreground bg-transparent text-foreground placeholder:text-neutral-400"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                     clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
@@ -165,7 +165,7 @@ export default function SignInPage({
               </div>
               <Button
                 type="submit"
-                className="h-12 w-full border-2 border-white bg-white text-black font-black uppercase hover:bg-neutral-200"
+                className="h-12 w-full border-2 border-foreground bg-white text-black font-black uppercase hover:bg-neutral-200"
                 style={{ 
                   fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                   clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
@@ -200,14 +200,14 @@ export default function SignInPage({
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t-2 border-white" />
+                <span className="w-full border-t-2 border-foreground" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span 
-                  className="bg-black text-neutral-300 px-2 drop-shadow-lg"
+                  className="bg-background text-muted-foreground px-2 drop-shadow-lg"
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    textShadow: 'none'
                   }}
                 >
                   Secure authentication
@@ -216,23 +216,23 @@ export default function SignInPage({
             </div>
 
             <div 
-              className="text-neutral-300 text-center text-sm drop-shadow-lg"
+              className="text-muted-foreground text-center text-sm drop-shadow-lg"
               style={{ 
                 fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                textShadow: 'none'
               }}
             >
               By signing in, you agree to our{" "}
               <a
                 href="#"
-                className="hover:text-white underline transition-colors text-white"
+                className="hover:text-foreground underline transition-colors text-foreground"
               >
                 Terms of Service
               </a>{" "}
               and{" "}
               <a
                 href="#"
-                className="hover:text-white underline transition-colors text-white"
+                className="hover:text-foreground underline transition-colors text-foreground"
               >
                 Privacy Policy
               </a>
@@ -242,10 +242,10 @@ export default function SignInPage({
 
         <div className="mt-6 text-center">
           <p 
-            className="text-neutral-300 text-sm drop-shadow-lg"
+            className="text-muted-foreground text-sm drop-shadow-lg"
             style={{ 
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              textShadow: 'none'
             }}
           >
             New to EzMR? Your account will be created automatically when you
