@@ -2951,7 +2951,7 @@ export default function EMRUploadPage() {
                         ) : (
                           <>
                             <Search className="mr-2 h-4 w-4" />
-                            Search Pharmacies
+                            Search
                           </>
                         )}
                       </Button>
@@ -3420,7 +3420,7 @@ export default function EMRUploadPage() {
                       accept=".zip"
                       onChange={handleDicomZipUpload}
                       disabled={dicomUploading}
-                      className="border-foreground text-foreground mt-1 border-2 bg-transparent file:mr-4 file:rounded-sm file:border-0 file:bg-white file:px-2 file:py-1 file:text-black"
+                      className="border-foreground text-foreground mt-1 border-1 bg-transparent file:mr-4 file:rounded-sm file:border-0 file:bg-white file:px-2 file:py-1 file:text-black"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -3909,7 +3909,7 @@ export default function EMRUploadPage() {
                   >
                     Past Injuries & Conditions
                   </h3>
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
                     <Input
                       type="date"
                       value={newCondition.date}
@@ -4009,7 +4009,7 @@ export default function EMRUploadPage() {
                   >
                     Immunization History
                   </h3>
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]">
                     <Input
                       type="date"
                       value={newImmunization.date}
@@ -4092,7 +4092,7 @@ export default function EMRUploadPage() {
                   >
                     Family Medical History
                   </h3>
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
                     <Input
                       type="date"
                       value={newFamilyHistory.date}
