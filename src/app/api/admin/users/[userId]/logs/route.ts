@@ -41,7 +41,7 @@ export async function GET(
 
     return NextResponse.json({ logs });
   } catch (error) {
-    // eslint-disable-next-line no-console
+     
     console.error("GET /api/admin/users/[userId]/logs error:", error);
     return NextResponse.json(
       { error: "Failed to fetch logs" },

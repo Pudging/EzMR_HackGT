@@ -72,7 +72,7 @@ export async function logUserAction(
       },
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
+     
     console.error("logUserAction error:", error);
   }
 }

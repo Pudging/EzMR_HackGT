@@ -178,7 +178,7 @@ export function PatientDataEntry({
           >
             {/* Collapsed Box Header */}
             <div
-              className={`bg-card text-card-foreground cursor-pointer p-4 font-mono transition-all duration-200 ${
+              className={`bg-card text-card-foreground cursor-pointer p-3 transition-all duration-200 ${
                 selectedBodyPart === bodyPart
                   ? "border-destructive bg-destructive/20 border-2"
                   : "hover:bg-muted"
@@ -186,11 +186,11 @@ export function PatientDataEntry({
               onClick={() => toggleBox(bodyPart)}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <span className="text-sm font-bold">
+                <div className="flex items-center space-x-2">
+                  <span className="text-base font-bold">
                     [{expandedBoxes.has(bodyPart) ? "-" : "+"}]
                   </span>
-                  <span className="font-medium">
+                  <span className="font-medium text-sm">
                     {
                       BODY_PART_LABELS[
                         bodyPart as keyof typeof BODY_PART_LABELS
@@ -199,8 +199,8 @@ export function PatientDataEntry({
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  {patientData[bodyPart] && <span className="text-xs">●</span>}
-                  <span className="font-mono text-xs">
+                  {patientData[bodyPart] && <span className="text-sm">●</span>}
+                  <span className="text-sm">
                     {patientData[bodyPart] ? "Data" : "Empty"}
                   </span>
                 </div>
@@ -208,7 +208,7 @@ export function PatientDataEntry({
 
               {/* Show preview of data when collapsed */}
               {!expandedBoxes.has(bodyPart) && patientData[bodyPart] && (
-                <div className="mt-2 truncate text-xs opacity-70">
+                <div className="mt-2 text-sm opacity-70 line-clamp-2">
                   {patientData[bodyPart]}
                 </div>
               )}
@@ -218,23 +218,23 @@ export function PatientDataEntry({
             {expandedBoxes.has(bodyPart) && (
               <div className="border-border bg-background text-foreground border-t">
                 <div className="p-4">
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="font-mono text-xs font-bold">
+                      <div className="text-sm font-bold">
                         Assessment Notes:
                       </div>
                       {savingStatus[bodyPart] && savingStatus[bodyPart] !== 'idle' && (
                         <div className="flex items-center space-x-1">
                           {savingStatus[bodyPart] === 'pending' && (
-                            <span className="text-yellow-600 text-xs">●</span>
+                            <span className="text-yellow-600 text-sm">●</span>
                           )}
                           {savingStatus[bodyPart] === 'saving' && (
-                            <span className="text-blue-600 text-xs animate-pulse">●</span>
+                            <span className="text-blue-600 text-sm animate-pulse">●</span>
                           )}
                           {savingStatus[bodyPart] === 'saved' && (
-                            <span className="text-green-600 text-xs">✓</span>
+                            <span className="text-green-600 text-sm">✓</span>
                           )}
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-sm text-muted-foreground">
                             {savingStatus[bodyPart] === 'pending' && 'Pending'}
                             {savingStatus[bodyPart] === 'saving' && 'Saving...'}
                             {savingStatus[bodyPart] === 'saved' && 'Saved'}
@@ -248,18 +248,18 @@ export function PatientDataEntry({
                       onChange={(e) =>
                         handleTextChange(bodyPart, e.target.value)
                       }
-                      className="border-border bg-input min-h-[120px] resize-none border-2 font-mono text-sm"
+                      className="border-border bg-input min-h-[100px] resize-none border-2 text-base"
                     />
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-3">
                       <button
                         onClick={() => handleSave(bodyPart)}
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 px-4 py-2 font-mono text-sm transition-colors"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 px-4 py-2 text-sm font-medium transition-colors rounded"
                       >
-                        Save
+                        Save Notes
                       </button>
                       <button
                         onClick={() => handleClear(bodyPart)}
-                        className="border-border text-foreground hover:bg-muted border px-4 py-2 font-mono text-sm transition-colors"
+                        className="border-border text-foreground hover:bg-muted border px-4 py-2 text-sm font-medium transition-colors rounded"
                       >
                         Clear
                       </button>

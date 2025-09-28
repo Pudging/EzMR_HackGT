@@ -3,7 +3,7 @@
 import React, { useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Edges } from "@react-three/drei";
-import { Group } from "three";
+import { type Group } from "three";
 import { useTheme } from "next-themes";
 
 function DodecahedronMesh() {

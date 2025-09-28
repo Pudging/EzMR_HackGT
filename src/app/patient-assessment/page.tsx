@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SkeletonBodyModel } from "@/components/patient/skeleton-body-model";
+import { HybridBodyModel } from "@/components/patient/hybrid-body-model";
 import { PatientDataEntry } from "@/components/patient/patient-data-entry";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingAnimation } from "@/components/ui/loading-animation";
@@ -100,6 +100,11 @@ export default function PatientAssessmentPage() {
   const [skeletonFile, setSkeletonFile] = useState<string>(
     "overview-skeleton.glb",
   );
+  
+  // Patient assessment data for body parts
+  const [patientData, setPatientData] = useState<Record<string, string>>({});
+  const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
+  const [savingStatus, setSavingStatus] = useState<Record<string, 'idle' | 'pending' | 'saving' | 'saved'>>({});
 
   // EMS-specific state
   const [allergies, setAllergies] = useState<Allergy[]>([]);
@@ -125,6 +130,10 @@ export default function PatientAssessmentPage() {
       const response = await fetch(`/api/patients/${patientId}/assessment`);
       if (response.ok) {
         const assessmentData = await response.json();
+        
+        // Set patient data for the hybrid model
+        setPatientData(assessmentData);
+        
         // Convert body part data to history format
         const historyEntries = Object.entries(assessmentData)
           .filter(
@@ -142,6 +151,62 @@ export default function PatientAssessmentPage() {
       console.error("Error fetching assessment history:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Function to update patient data for a specific body part
+  const handleDataUpdate = async (bodyPart: string, data: string) => {
+    if (!selectedPatient) return;
+
+    // Update local state immediately
+    setPatientData(prev => ({
+      ...prev,
+      [bodyPart]: data
+    }));
+
+    // Set saving status
+    setSavingStatus(prev => ({ ...prev, [bodyPart]: 'saving' }));
+
+    try {
+      // Save to API
+      const response = await fetch(`/api/patients/${selectedPatient.patientId}/assessment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          [bodyPart]: data
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save assessment data");
+      }
+
+      console.log(`✅ Saved assessment data for ${bodyPart}`);
+      
+      // Set saved status
+      setSavingStatus(prev => ({ ...prev, [bodyPart]: 'saved' }));
+      
+      // Clear saved status after 2 seconds
+      setTimeout(() => {
+        setSavingStatus(prev => ({ ...prev, [bodyPart]: 'idle' }));
+      }, 2000);
+    } catch (error) {
+      console.error("Error saving assessment data:", error);
+      // Revert local state on error
+      setPatientData(prev => {
+        const updated = { ...prev };
+        if (data.trim() === "") {
+          delete updated[bodyPart];
+        } else {
+          updated[bodyPart] = data;
+        }
+        return updated;
+      });
+      
+      // Set error status (using idle as fallback)
+      setSavingStatus(prev => ({ ...prev, [bodyPart]: 'idle' }));
     }
   };
 
@@ -305,7 +370,7 @@ export default function PatientAssessmentPage() {
     };
   }, []);
 
-  // Submit current issue to history
+  // Submit current issue to assessment database
   const submitCurrentIssue = async () => {
     if (!currentIssue.trim() || !selectedPatient) return;
 
@@ -316,12 +381,7 @@ export default function PatientAssessmentPage() {
     void analyzeInjury();
 
     try {
-      // Add to local history immediately
-      const timestamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-      const newEntry = { timestamp, note: currentIssue.trim() };
-      setHistory((prev) => [newEntry, ...prev]);
-
-      // Save to API
+      // Save to assessment API with real-time feedback
       const response = await fetch(
         `/api/patients/${selectedPatient.patientId}/assessment`,
         {
@@ -330,23 +390,26 @@ export default function PatientAssessmentPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            current_issue: currentIssue.trim(),
-            timestamp: new Date().toISOString(),
+            "general-status": currentIssue.trim(), // Save as general status in assessment
           }),
         },
       );
 
       if (response.ok) {
+        // Update local patient data for real-time feedback
+        setPatientData(prev => ({
+          ...prev,
+          "general-status": currentIssue.trim()
+        }));
+        
         setCurrentIssue(""); // Clear input
+        console.log("✅ Patient status update saved to assessment database");
       } else {
-        console.error("Failed to save current issue");
-        // Remove from local history if API failed
-        setHistory((prev) => prev.slice(1));
+        console.error("Failed to save patient status update");
+        throw new Error("Failed to save status update");
       }
     } catch (error) {
-      console.error("Error saving current issue:", error);
-      // Remove from local history if API failed
-      setHistory((prev) => prev.slice(1));
+      console.error("Error saving patient status update:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -478,7 +541,7 @@ export default function PatientAssessmentPage() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         {/* Break-Glass Override Banner */}
         {breakGlassOverride && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
@@ -509,14 +572,25 @@ export default function PatientAssessmentPage() {
         )}
 
         {/* Patient Demographics */}
-        <Card className="mb-6">
-          <CardHeader className="border-b">
-            <CardTitle className="text-card-foreground flex items-center space-x-2">
-              <User className="text-primary h-5 w-5" />
-              <span>Patient Demographics</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
+        <div
+          className="mb-4 overflow-hidden border-2 border-foreground"
+          style={{
+            clipPath: "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+          }}
+        >
+          <div className="border-b-2 border-foreground bg-background px-4 py-3">
+            <h2
+              className="text-lg flex items-center font-black tracking-wide text-foreground uppercase"
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: "none",
+              }}
+            >
+              <User className="mr-2 h-5 w-5 text-primary" />
+              PATIENT DEMOGRAPHICS
+            </h2>
+          </div>
+          <div className="px-4 py-3">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="flex items-center space-x-3">
                 <User className="text-primary h-5 w-5" />
@@ -564,351 +638,347 @@ export default function PatientAssessmentPage() {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Left Side - Dashboard Panel */}
-          <div className="space-y-6">
-            {/* Severe Allergies - Most Critical */}
-            <Card>
-              <CardHeader className="border-b">
-                <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Bell className="h-5 w-5 text-red-500" />
-                  <span>Severe Allergies</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                {allergies.filter((allergy) => allergy.severity === "severe")
-                  .length > 0 ? (
-                  <div className="space-y-3">
-                    {allergies
-                      .filter((allergy) => allergy.severity === "severe")
-                      .map((allergy, index) => (
-                        <div
-                          key={index}
-                          className="rounded-lg border border-red-200 bg-red-50 p-3"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-semibold text-red-800">
-                                {allergy.substance}
-                              </p>
-                              <p className="text-xs text-red-600">
-                                {allergy.reaction}
-                              </p>
-                            </div>
-                            <span className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
-                              SEVERE
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="py-4 text-center">
-                    <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
-                    <p className="text-muted-foreground text-sm">
-                      No severe allergies
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Status Update Textbox - Second Most Important */}
-            <Card>
-              <CardHeader className="border-b">
-                <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Stethoscope className="text-primary h-5 w-5" />
-                  <span>Patient Status Update</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="space-y-4">
-                  <Textarea
-                    placeholder="Enter patient status, symptoms, or observations for hospital records..."
-                    value={currentIssue}
-                    onChange={(e) => {
-                      setCurrentIssue(e.target.value);
-                      // Auto-analyze injury when typing (like the Injury Analysis textbox)
-                      if (e.target.value.trim()) {
-                        setSearchText(e.target.value);
-                        // Debounce the API call
-                        if (debounceTimer.current) {
-                          clearTimeout(debounceTimer.current);
-                        }
-                        debounceTimer.current = setTimeout(() => {
-                          void analyzeInjury();
-                        }, 500);
-                      }
-                    }}
-                    className="min-h-[100px]"
-                  />
-                  <div className="flex items-center justify-between">
-                    <div className="flex space-x-2">
-                      <Button
-                        onClick={submitCurrentIssue}
-                        disabled={!currentIssue.trim() || isSubmitting}
-                        className="px-6"
-                      >
-                        {isSubmitting
-                          ? "Transmitting to hospital..."
-                          : "Send Status Update"}
-                      </Button>
-                    </div>
-                    <span className="text-muted-foreground text-xs">
-                      {currentIssue.length} characters
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Current Medications */}
-            <Card>
-              <CardHeader className="border-b">
-                <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Pill className="h-5 w-5 text-blue-500" />
-                  <span>Current Medications</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                {medications.filter((med) => med.active).length > 0 ? (
-                  <div className="space-y-3">
-                    {medications
-                      .filter((med) => med.active)
-                      .map((medication, index) => (
-                        <div
-                          key={index}
-                          className="rounded-lg border bg-blue-50 p-3"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-semibold">
-                                {medication.name}
-                              </p>
-                              <p className="text-muted-foreground text-xs">
-                                {medication.dosage} - {medication.frequency}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-muted-foreground text-xs">
-                                Last taken:
-                              </p>
-                              <p className="text-xs font-medium">
-                                {medication.lastTaken}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="py-4 text-center">
-                    <p className="text-muted-foreground text-sm">
-                      No current medications
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Critical Medical Conditions */}
-            <Card>
-              <CardHeader className="border-b">
-                <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Activity className="h-5 w-5 text-green-500" />
-                  <span>Critical Medical Conditions</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                {medicalHistory.filter(
-                  (condition) =>
-                    condition.status === "active" ||
-                    condition.status === "chronic",
-                ).length > 0 ? (
-                  <div className="space-y-3">
-                    {medicalHistory
-                      .filter(
-                        (condition) =>
-                          condition.status === "active" ||
-                          condition.status === "chronic",
-                      )
-                      .map((condition, index) => (
-                        <div
-                          key={index}
-                          className={`rounded-lg border p-3 ${
-                            condition.status === "active"
-                              ? "border-red-200 bg-red-50"
-                              : "border-orange-200 bg-orange-50"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-semibold">
-                                {condition.condition}
-                              </p>
-                              <p className="text-muted-foreground text-xs">
-                                {condition.notes}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <span
-                                className={`rounded px-2 py-1 text-xs font-medium ${
-                                  condition.status === "active"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-orange-100 text-orange-800"
-                                }`}
-                              >
-                                {condition.status.toUpperCase()}
-                              </span>
-                              <p className="text-muted-foreground mt-1 text-xs">
-                                {condition.diagnosisDate}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="py-4 text-center">
-                    <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
-                    <p className="text-muted-foreground text-sm">
-                      No critical conditions
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Advance Care Plans */}
-            <Card>
-              <CardHeader className="border-b">
-                <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Shield className="h-5 w-5 text-purple-500" />
-                  <span>Advance Care Plans</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  {advanceCarePlan.dnr && (
-                    <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50 p-3">
-                      <div className="flex items-center space-x-3">
-                        <XCircle className="h-5 w-5 text-red-500" />
-                        <div>
-                          <p className="text-sm font-semibold">
-                            DNR (Do Not Resuscitate)
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            Effective: {advanceCarePlan.dnrDate}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
-                        ACTIVE
-                      </span>
-                    </div>
-                  )}
-
-                  {advanceCarePlan.molst && (
-                    <div className="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50 p-3">
-                      <div className="flex items-center space-x-3">
-                        <AlertTriangle className="h-5 w-5 text-orange-500" />
-                        <div>
-                          <p className="text-sm font-semibold">
-                            MOLST (Medical Orders for Life-Sustaining Treatment)
-                          </p>
-                          <p className="text-muted-foreground text-xs">
-                            Effective: {advanceCarePlan.molstDate}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="rounded bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
-                        ACTIVE
-                      </span>
-                    </div>
-                  )}
-
-                  {advanceCarePlan.notes && (
-                    <div className="rounded-lg bg-gray-50 p-3">
-                      <p className="text-muted-foreground mb-1 text-xs font-medium">
-                        Notes:
-                      </p>
-                      <p className="text-xs">{advanceCarePlan.notes}</p>
-                    </div>
-                  )}
-
-                  {!advanceCarePlan.dnr && !advanceCarePlan.molst && (
-                    <div className="py-4 text-center">
-                      <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
-                      <p className="text-muted-foreground text-sm">
-                        No active advance care plans
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Side - Medical Imaging */}
-          <div>
-            <Card className="h-[600px]">
-              <CardHeader className="border-b">
-                <CardTitle className="text-card-foreground flex items-center space-x-2">
-                  <Stethoscope className="text-primary h-5 w-5" />
-                  <span>Medical Imaging</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 overflow-hidden p-0">
-                <SkeletonBodyModel
-                  selectedBodyPart={null}
-                  onBodyPartSelect={() => {
-                    void 0;
-                  }}
-                  patientData={{}}
-                  skeletonFile={skeletonFile}
-                  analysisText={currentIssue}
-                />
-              </CardContent>
-            </Card>
           </div>
         </div>
 
-        {/* Status History */}
-        <Card className="mt-6">
-          <CardHeader className="border-b">
-            <CardTitle className="text-card-foreground flex items-center space-x-2">
-              <Clock className="text-primary h-5 w-5" />
-              <span>Status History</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="max-h-48 space-y-3 overflow-y-auto">
-              {history.length === 0 ? (
-                <div className="text-muted-foreground py-8 text-center">
-                  <p className="text-sm">No status updates recorded yet</p>
-                  <p className="mt-1 text-xs">
-                    Send status updates to build history
-                  </p>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mb-6">
+          {/* Left Side - Medical Imaging */}
+          <div>
+            <div
+              className="h-[800px] overflow-hidden border-2 border-foreground"
+              style={{
+                clipPath: "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
+            >
+              <div className="border-b-2 border-foreground bg-background px-4 py-3">
+                <h2
+                  className="text-lg flex items-center font-black tracking-wide text-foreground uppercase"
+                  style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "none",
+                  }}
+                >
+                  <Stethoscope className="mr-2 h-5 w-5 text-primary" />
+                  MEDICAL IMAGING
+                </h2>
+              </div>
+              <div className="h-[calc(100%-60px)] overflow-hidden">
+                <HybridBodyModel
+                  selectedBodyPart={selectedBodyPart}
+                  onBodyPartSelect={setSelectedBodyPart}
+                  patientData={patientData}
+                  skeletonFile={skeletonFile}
+                  analysisText={currentIssue}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Assessment Controls */}
+          <div className="space-y-4">
+            {/* Patient Status Update */}
+            <div
+              className="overflow-hidden border-2 border-foreground p-4"
+              style={{
+                clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+              }}
+            >
+              <h3
+                className="text-base mb-3 flex items-center font-black tracking-wide text-foreground uppercase"
+                style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  textShadow: "none",
+                }}
+              >
+                <Stethoscope className="mr-2 h-5 w-5 text-primary" />
+                PATIENT STATUS UPDATE
+              </h3>
+              <div className="space-y-3">
+                <Textarea
+                  placeholder="Enter patient status, symptoms, or observations for hospital records..."
+                  value={currentIssue}
+                  onChange={(e) => {
+                    setCurrentIssue(e.target.value);
+                    // Auto-analyze injury when typing
+                    if (e.target.value.trim()) {
+                      setSearchText(e.target.value);
+                      // Debounce the API call
+                      if (debounceTimer.current) {
+                        clearTimeout(debounceTimer.current);
+                      }
+                      debounceTimer.current = setTimeout(() => {
+                        void analyzeInjury();
+                      }, 500);
+                    }
+                  }}
+                  className="min-h-[80px] border-2 border-foreground bg-background text-foreground text-sm"
+                  style={{
+                    clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  }}
+                />
+                <div className="flex items-center justify-between">
+                  <Button
+                    onClick={submitCurrentIssue}
+                    disabled={!currentIssue.trim() || isSubmitting}
+                    className="border-2 border-foreground bg-transparent text-foreground uppercase hover:bg-white hover:text-black px-4 py-2"
+                    style={{
+                      clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    }}
+                  >
+                    {isSubmitting ? "TRANSMITTING..." : "SEND STATUS"}
+                  </Button>
+                  <span className="text-muted-foreground text-sm font-mono">
+                    {currentIssue.length} chars
+                  </span>
                 </div>
-              ) : (
-                history.map((entry, index) => (
+              </div>
+            </div>
+
+            {/* Assessment Notes */}
+            <div
+              className="h-[580px] overflow-hidden border-2 border-foreground"
+              style={{
+                clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+              }}
+            >
+              <div className="border-b-2 border-foreground bg-background px-4 py-3">
+                <h3
+                  className="text-base flex items-center font-black tracking-wide text-foreground uppercase"
+                  style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "none",
+                  }}
+                >
+                  <User className="mr-2 h-5 w-5 text-primary" />
+                  ASSESSMENT NOTES
+                </h3>
+              </div>
+              <div className="h-[calc(100%-60px)] overflow-auto p-4">
+                <PatientDataEntry
+                  selectedBodyPart={selectedBodyPart}
+                  patientData={patientData}
+                  onDataUpdate={handleDataUpdate}
+                  savingStatus={savingStatus}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section - Patient Information */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* Severe Allergies */}
+          <div
+            className="overflow-hidden border-2 border-foreground p-3"
+            style={{
+              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+            }}
+          >
+            <h3
+              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: "none",
+              }}
+            >
+              <Bell className="mr-2 h-4 w-4 text-red-500" />
+              ALLERGIES
+            </h3>
+            {allergies.filter((allergy) => allergy.severity === "severe")
+              .length > 0 ? (
+              allergies
+                .filter((allergy) => allergy.severity === "severe")
+                .map((allergy, index) => (
                   <div
                     key={index}
-                    className="border-primary border-l-2 py-2 pl-3"
+                    className="overflow-hidden border-2 border-foreground bg-red-100 dark:bg-red-900 p-1 mb-1"
+                    style={{
+                      clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                    }}
                   >
-                    <div className="text-muted-foreground font-mono text-xs">
-                      [{entry.timestamp}]
-                    </div>
-                    <div className="mt-1 text-sm">{entry.note}</div>
+                    <p className="text-xs font-semibold text-red-800 dark:text-red-200">
+                      {allergy.substance}
+                    </p>
                   </div>
                 ))
+            ) : (
+              <div className="py-1 text-center">
+                <CheckCircle className="mx-auto mb-1 h-4 w-4 text-green-500" />
+                <p className="text-muted-foreground text-xs">
+                  None
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Current Medications */}
+          <div
+            className="overflow-hidden border-2 border-foreground p-3"
+            style={{
+              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+            }}
+          >
+            <h3
+              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: "none",
+              }}
+            >
+              <Pill className="mr-2 h-4 w-4 text-blue-500" />
+              MEDICATIONS
+            </h3>
+            {medications.filter((med) => med.active).length > 0 ? (
+              <div className="space-y-1">
+                {medications
+                  .filter((med) => med.active)
+                  .slice(0, 3)
+                  .map((medication, index) => (
+                    <div
+                      key={index}
+                      className="overflow-hidden border-2 border-foreground bg-blue-100 dark:bg-blue-900 p-1"
+                      style={{
+                        clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                      }}
+                    >
+                      <p className="text-xs font-semibold text-blue-800 dark:text-blue-200">
+                        {medication.name}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {medication.dosage}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="py-1 text-center">
+                <p className="text-muted-foreground text-xs">
+                  None
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Critical Medical Conditions */}
+          <div
+            className="overflow-hidden border-2 border-foreground p-3"
+            style={{
+              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+            }}
+          >
+            <h3
+              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: "none",
+              }}
+            >
+              <Activity className="mr-2 h-4 w-4 text-green-500" />
+              CONDITIONS
+            </h3>
+            {medicalHistory.filter(
+              (condition) =>
+                condition.status === "active" ||
+                condition.status === "chronic",
+            ).length > 0 ? (
+              <div className="space-y-1">
+                {medicalHistory
+                  .filter(
+                    (condition) =>
+                      condition.status === "active" ||
+                      condition.status === "chronic",
+                  )
+                  .slice(0, 2)
+                  .map((condition, index) => (
+                    <div
+                      key={index}
+                      className={`overflow-hidden border-2 border-foreground p-1 ${
+                        condition.status === "active"
+                          ? "bg-red-100 dark:bg-red-900"
+                          : "bg-orange-100 dark:bg-orange-900"
+                      }`}
+                      style={{
+                        clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                      }}
+                    >
+                      <p className={`text-xs font-semibold ${
+                        condition.status === "active"
+                          ? "text-red-800 dark:text-red-200"
+                          : "text-orange-800 dark:text-orange-200"
+                      }`}>
+                        {condition.condition}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="py-1 text-center">
+                <CheckCircle className="mx-auto mb-1 h-4 w-4 text-green-500" />
+                <p className="text-muted-foreground text-xs">
+                  None
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Advance Care Plans */}
+          <div
+            className="overflow-hidden border-2 border-foreground p-3"
+            style={{
+              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+            }}
+          >
+            <h3
+              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                textShadow: "none",
+              }}
+            >
+              <Shield className="mr-2 h-4 w-4 text-purple-500" />
+              CARE PLANS
+            </h3>
+            <div className="space-y-1">
+              {advanceCarePlan.dnr && (
+                <div 
+                  className="overflow-hidden border-2 border-foreground bg-red-100 dark:bg-red-900 p-1"
+                  style={{
+                    clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                  }}
+                >
+                  <p className="text-xs font-semibold text-red-800 dark:text-red-200">
+                    DNR
+                  </p>
+                </div>
+              )}
+
+              {advanceCarePlan.molst && (
+                <div 
+                  className="overflow-hidden border-2 border-foreground bg-orange-100 dark:bg-orange-900 p-1"
+                  style={{
+                    clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                  }}
+                >
+                  <p className="text-xs font-semibold text-orange-800 dark:text-orange-200">
+                    MOLST
+                  </p>
+                </div>
+              )}
+
+              {!advanceCarePlan.dnr && !advanceCarePlan.molst && (
+                <div className="py-1 text-center">
+                  <CheckCircle className="mx-auto mb-1 h-4 w-4 text-green-500" />
+                  <p className="text-muted-foreground text-xs">
+                    None
+                  </p>
+                </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
       </main>
 
       {/* Break-Glass Override Modal */}

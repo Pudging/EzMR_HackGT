@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Enhanced medical terminology mapping for injury analysis
 const medicalTermMap = {

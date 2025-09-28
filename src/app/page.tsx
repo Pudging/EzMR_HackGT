@@ -23,7 +23,7 @@ export default async function HomePage() {
                   textShadow: 'none'
                 }}
               >
-                {tenant?.hospitalName ?? "EzMR"}
+                EZMR
               </h1>
               <p 
                 className="text-xl text-muted-foreground uppercase tracking-wide drop-shadow-lg"
