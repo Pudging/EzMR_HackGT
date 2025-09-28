@@ -1,18 +1,22 @@
 "use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Brain, 
-  Loader2, 
-  CheckCircle, 
-  AlertCircle, 
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Brain,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
   FileText,
-  ArrowRight
-} from 'lucide-react';
-import { useMastraAgent, type ParsedMedicalData, type CategoryExtraction } from '@/hooks/useMastraAgent';
+  ArrowRight,
+} from "lucide-react";
+import {
+  useMastraAgent,
+  type ParsedMedicalData,
+  type CategoryExtraction,
+} from "@/hooks/useMastraAgent";
 
 interface SmartNotesParserProps {
   notes: string;
@@ -20,18 +24,19 @@ interface SmartNotesParserProps {
   className?: string;
 }
 
-export function SmartNotesParser({ notes, onDataExtracted, className = "" }: SmartNotesParserProps) {
+export function SmartNotesParser({
+  notes,
+  onDataExtracted,
+  className = "",
+}: SmartNotesParserProps) {
   const [showResults, setShowResults] = useState(false);
-  const [extractedData, setExtractedData] = useState<ParsedMedicalData | null>(null);
+  const [extractedData, setExtractedData] = useState<ParsedMedicalData | null>(
+    null,
+  );
   const [categories, setCategories] = useState<CategoryExtraction | null>(null);
-  
-  const { 
-    parseNotes, 
-    categorizeNotes, 
-    isProcessing, 
-    error, 
-    clearError 
-  } = useMastraAgent();
+
+  const { parseNotes, categorizeNotes, isProcessing, error, clearError } =
+    useMastraAgent();
 
   const handleParseNotes = async () => {
     if (!notes.trim()) return;
@@ -43,7 +48,7 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
       // Parse the notes and categorize them
       const [parsedData, categoryData] = await Promise.all([
         parseNotes(notes),
-        categorizeNotes(notes)
+        categorizeNotes(notes),
       ]);
 
       if (parsedData) {
@@ -52,7 +57,7 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
         setShowResults(true);
       }
     } catch (err) {
-      console.error('Failed to process notes:', err);
+      console.error("Failed to process notes:", err);
     }
   };
 
@@ -96,7 +101,7 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
 
       {/* Error Display */}
       {error && (
-        <Card className="bg-red-900/20 border-red-500/30">
+        <Card className="border-red-500/30 bg-red-900/20">
           <CardContent className="p-4">
             <div className="flex items-center space-x-2 text-red-300">
               <AlertCircle className="h-4 w-4" />
@@ -108,16 +113,19 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
 
       {/* Processing Status */}
       {isProcessing && (
-        <Card className="bg-blue-900/20 border-blue-500/30">
+        <Card className="border-blue-500/30 bg-blue-900/20">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
               <Loader2 className="h-5 w-5 animate-spin text-blue-400" />
-            <div>
-              <div className="text-blue-300 font-medium">Gemini AI Processing Medical Notes</div>
-              <div className="text-sm text-gray-400">
-                Processing current injuries, conditions, allergies, and medical history with automatic timestamping...
+              <div>
+                <div className="font-medium text-blue-300">
+                  Gemini AI Processing Medical Notes
+                </div>
+                <div className="text-sm text-gray-400">
+                  Processing current injuries, conditions, allergies, and
+                  medical history with automatic timestamping...
+                </div>
               </div>
-            </div>
             </div>
           </CardContent>
         </Card>
@@ -125,7 +133,7 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
 
       {/* Results Display */}
       {showResults && extractedData && (
-        <Card className="bg-green-900/20 border-green-500/30">
+        <Card className="border-green-500/30 bg-green-900/20">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center space-x-2 text-green-300">
               <CheckCircle className="h-5 w-5" />
@@ -133,25 +141,32 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            
             {/* Summary */}
             {categories?.summary && (
-              <div className="bg-gray-900/50 rounded-lg p-3">
-                <div className="text-sm text-gray-300 mb-2">Summary:</div>
-                <div className="text-white text-sm">{categories.summary}</div>
+              <div className="rounded-lg bg-gray-900/50 p-3">
+                <div className="mb-2 text-sm text-gray-300">Summary:</div>
+                <div className="text-sm text-white">{categories.summary}</div>
               </div>
             )}
 
             {/* Key Findings */}
             {categories?.keyFindings && categories.keyFindings.length > 0 && (
               <div>
-                <div className="text-sm text-gray-300 mb-2">Key Findings:</div>
+                <div className="mb-2 text-sm text-gray-300">Key Findings:</div>
                 <div className="flex flex-wrap gap-2">
-                  {categories.keyFindings.map((finding: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {finding.length > 50 ? finding.substring(0, 50) + '...' : finding}
-                    </Badge>
-                  ))}
+                  {categories.keyFindings.map(
+                    (finding: string, index: number) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-xs"
+                      >
+                        {finding.length > 50
+                          ? finding.substring(0, 50) + "..."
+                          : finding}
+                      </Badge>
+                    ),
+                  )}
                 </div>
               </div>
             )}
@@ -159,10 +174,12 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
             {/* Extracted Categories */}
             {categories?.categories && categories.categories.length > 0 && (
               <div>
-                <div className="text-sm text-gray-300 mb-2">Detected Categories:</div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                <div className="mb-2 text-sm text-gray-300">
+                  Detected Categories:
+                </div>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
                   {categories.categories.map((cat, index: number) => (
-                    <div key={index} className="bg-gray-800/50 rounded p-2">
+                    <div key={index} className="rounded bg-gray-800/50 p-2">
                       <div className="text-xs font-semibold text-purple-300 capitalize">
                         {cat.category}
                       </div>
@@ -176,21 +193,30 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
             )}
 
             {/* Data Preview */}
-            <div className="bg-gray-900/50 rounded-lg p-3">
-              <div className="text-sm text-gray-300 mb-2">Extracted Data Preview:</div>
-              <div className="text-xs text-gray-400 space-y-1">
-                {extractedData.vitals && Object.keys(extractedData.vitals).length > 0 && (
-                  <div>• Vitals: {Object.keys(extractedData.vitals).join(', ')}</div>
-                )}
-                {extractedData.medications && extractedData.medications.length > 0 && (
-                  <div>• Medications: {extractedData.medications.length} items</div>
-                )}
-                {extractedData.pastConditions && extractedData.pastConditions.length > 0 && (
-                  <div>• Conditions: {extractedData.pastConditions.length} items</div>
-                )}
-                {extractedData.allergies && (
-                  <div>• Allergies: Found</div>
-                )}
+            <div className="rounded-lg bg-gray-900/50 p-3">
+              <div className="mb-2 text-sm text-gray-300">
+                Extracted Data Preview:
+              </div>
+              <div className="space-y-1 text-xs text-gray-400">
+                {extractedData.vitals &&
+                  Object.keys(extractedData.vitals).length > 0 && (
+                    <div>
+                      • Vitals: {Object.keys(extractedData.vitals).join(", ")}
+                    </div>
+                  )}
+                {extractedData.medications &&
+                  extractedData.medications.length > 0 && (
+                    <div>
+                      • Medications: {extractedData.medications.length} items
+                    </div>
+                  )}
+                {extractedData.pastConditions &&
+                  extractedData.pastConditions.length > 0 && (
+                    <div>
+                      • Conditions: {extractedData.pastConditions.length} items
+                    </div>
+                  )}
+                {extractedData.allergies && <div>• Allergies: Found</div>}
               </div>
             </div>
 
@@ -200,7 +226,7 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
                 onClick={handleApplyData}
                 className="flex-1 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
               >
-                <ArrowRight className="h-4 w-4 mr-2" />
+                <ArrowRight className="mr-2 h-4 w-4" />
                 Apply to EMR Form
               </Button>
               <Button
@@ -217,13 +243,15 @@ export function SmartNotesParser({ notes, onDataExtracted, className = "" }: Sma
 
       {/* Help Text */}
       {!hasNotes && (
-        <div className="text-center p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
-          <FileText className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-400 text-sm mb-2">
-            Add medical notes above, then use AI to automatically extract and categorize the information.
+        <div className="rounded-lg border border-gray-700 p-4 text-center dark:bg-gray-900/30">
+          <FileText className="mx-auto mb-2 h-8 w-8 text-gray-800 dark:text-gray-400" />
+          <p className="mb-2 text-sm text-gray-800 dark:text-gray-400">
+            Add medical notes above, then use AI to automatically extract and
+            categorize the information.
           </p>
-          <div className="text-xs text-gray-500">
-            Handles current injuries, ongoing conditions, allergies, medical history, and automatically timestamps all entries.
+          <div className="text-xs text-gray-800 dark:text-gray-400">
+            Handles current injuries, ongoing conditions, allergies, medical
+            history, and automatically timestamps all entries.
           </div>
         </div>
       )}

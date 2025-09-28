@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Volume2, RotateCcw } from 'lucide-react';
-import { useCedarVoiceToText } from '@/hooks/useCedarVoiceToText';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Mic, MicOff, Volume2, RotateCcw } from "lucide-react";
+import { useCedarVoiceToText } from "@/hooks/useCedarVoiceToText";
 
 interface VoiceToTextProps {
   onTranscriptUpdate: (transcript: string) => void;
@@ -11,9 +11,13 @@ interface VoiceToTextProps {
   disabled?: boolean;
 }
 
-export function VoiceToText({ onTranscriptUpdate, className = "", disabled = false }: VoiceToTextProps) {
-  const [fullTranscript, setFullTranscript] = useState('');
-  
+export function VoiceToText({
+  onTranscriptUpdate,
+  className = "",
+  disabled = false,
+}: VoiceToTextProps) {
+  const [fullTranscript, setFullTranscript] = useState("");
+
   const {
     isSupported,
     isListening,
@@ -22,18 +26,18 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
     startListening,
     stopListening,
     resetTranscript,
-    error
+    error,
   } = useCedarVoiceToText({
     continuous: true,
     interimResults: true,
-    language: 'en-US',
+    language: "en-US",
     onResult: (newTranscript, isFinal) => {
       if (isFinal) {
         // Only append the NEW final transcript to the parent
         onTranscriptUpdate(newTranscript.trim());
-        setFullTranscript(prev => prev + ' ' + newTranscript);
+        setFullTranscript((prev) => prev + " " + newTranscript);
       }
-    }
+    },
   });
 
   const handleToggleListening = () => {
@@ -46,15 +50,17 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
 
   const handleReset = () => {
     resetTranscript();
-    setFullTranscript('');
-    onTranscriptUpdate('');
+    setFullTranscript("");
+    onTranscriptUpdate("");
   };
 
   if (!isSupported) {
     return (
-      <div className={`text-center p-4 bg-red-900/20 border border-red-500/30 rounded-lg ${className}`}>
-        <MicOff className="h-8 w-8 text-red-400 mx-auto mb-2" />
-        <p className="text-red-300 text-sm">
+      <div
+        className={`rounded-lg border border-red-500/30 bg-red-700/10 p-4 text-center dark:bg-red-900/20 ${className}`}
+      >
+        <MicOff className="mx-auto mb-2 h-8 w-8 text-red-400" />
+        <p className="text-sm text-red-600 dark:text-red-300">
           Voice recognition is not supported in this browser.
           <br />
           Try using Chrome, Edge, or Safari for the best experience.
@@ -71,9 +77,9 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
           onClick={handleToggleListening}
           disabled={disabled}
           className={`flex items-center space-x-2 transition-all duration-300 ${
-            isListening 
-              ? 'bg-red-600 hover:bg-red-700 animate-pulse' 
-              : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
+            isListening
+              ? "animate-pulse bg-red-600 hover:bg-red-700"
+              : "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
           }`}
         >
           {isListening ? (
@@ -96,7 +102,7 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
             size="sm"
             className="border-gray-600 text-gray-300 hover:bg-gray-700"
           >
-            <RotateCcw className="h-4 w-4 mr-2" />
+            <RotateCcw className="mr-2 h-4 w-4" />
             Clear
           </Button>
         )}
@@ -111,9 +117,9 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
 
       {/* Live Transcript Display */}
       {(fullTranscript || interimTranscript) && (
-        <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-4 min-h-[100px]">
-          <div className="text-sm text-gray-400 mb-2 flex items-center">
-            <Mic className="h-4 w-4 mr-2" />
+        <div className="min-h-[100px] rounded-lg border border-gray-600 bg-gray-900/50 p-4">
+          <div className="mb-2 flex items-center text-sm text-gray-400">
+            <Mic className="mr-2 h-4 w-4" />
             Live Transcript:
           </div>
           <div className="text-white">
@@ -122,7 +128,7 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
               <span className="text-gray-400 italic"> {interimTranscript}</span>
             )}
             {isListening && (
-              <span className="inline-block w-2 h-5 bg-green-400 ml-1 animate-pulse"></span>
+              <span className="ml-1 inline-block h-5 w-2 animate-pulse bg-green-400"></span>
             )}
           </div>
         </div>
@@ -130,9 +136,9 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3">
-          <p className="text-red-300 text-sm flex items-center">
-            <MicOff className="h-4 w-4 mr-2" />
+        <div className="rounded-lg border border-red-500/30 bg-red-900/20 p-3">
+          <p className="flex items-center text-sm text-red-300">
+            <MicOff className="mr-2 h-4 w-4" />
             {error}
           </p>
         </div>
@@ -140,9 +146,9 @@ export function VoiceToText({ onTranscriptUpdate, className = "", disabled = fal
 
       {/* Instructions */}
       {!isListening && !fullTranscript && !error && (
-        <div className="text-center p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-          <Mic className="h-8 w-8 text-blue-400 mx-auto mb-2" />
-          <p className="text-blue-300 text-sm">
+        <div className="rounded-lg border border-blue-500/30 bg-blue-900/20 p-4 text-center">
+          <Mic className="mx-auto mb-2 h-8 w-8 text-blue-400" />
+          <p className="text-sm text-blue-300">
             Click "Start Voice Input" and speak clearly.
             <br />
             Your speech will be converted to text automatically.
