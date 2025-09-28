@@ -61,32 +61,6 @@ In emergencies, seconds matter. Paramedics often treat without context on allerg
 
 ## Architecture
 
-### High-Level System Diagram (Mermaid)
-
-```mermaid
-flowchart LR
-  subgraph EMS
-    A[Medic Tablet] -- Auth --> G[NextAuth]
-    A -- Query --> B[Next.js API Routes]
-  end
-
-  subgraph backend [Backend (Vercel)]
-    B -- RBAC/Policies --> P[Policy Engine (HIPAA/HIE)]
-    B -- AI Parse --> M[Gemini via Maestra]
-    B -- DICOM Parse --> D[dicom-parser]
-    B -- Upload --> C[Cloudinary]
-    B -- ORM --> R[(PostgreSQL/Prisma)]
-  end
-
-  subgraph Hospital
-    H1[EMR Systems] --> R
-  end
-
-  G -. Sessions .-> R
-  P -. Audit Trails .-> R
-  C -. Secure Assets .-> A
-```
-
 ### Data Model Highlights
 
 - 25+ Prisma models: `Patient`, `Allergies`, `Medications`, `Problems`, `ClinicalNotes`, etc.
