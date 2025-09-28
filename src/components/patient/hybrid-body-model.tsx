@@ -476,10 +476,10 @@ export function HybridBodyModel({
   }, [analysisText]);
 
   return (
-    <div className="h-full w-full bg-black">
+    <div className="h-full w-full bg-background">
       <Canvas
         camera={{ position: [0, 1, 6], fov: 60 }}
-        style={{ background: "#000000" }}
+        style={{ background: "transparent" }}
       >
         <ambientLight intensity={0.4} />
         <directionalLight position={[5, 5, 5]} intensity={1.0} castShadow />

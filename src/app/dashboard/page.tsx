@@ -305,7 +305,6 @@ function DashboardPageContent() {
               >
                 Patient Information
               </h2>
-              <small>{userPermissions.toString()}</small>
               <div className="flex items-center space-x-2">
                 <FileDigit className="h-4 w-4 text-foreground" />
                 <span

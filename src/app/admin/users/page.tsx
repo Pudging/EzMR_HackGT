@@ -223,7 +223,7 @@ export default async function AdminUsersPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2">
                     {!user.emailVerified && (
-                      <Badge variant="outline" className="text-red-600">
+                      <Badge variant="outline" className="text-destructive">
                         Unverified
                       </Badge>
                     )}

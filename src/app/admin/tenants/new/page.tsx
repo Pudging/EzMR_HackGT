@@ -51,14 +51,14 @@ export default async function NewTenantPage({
   const { error } = await searchParams;
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-950">
+    <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-xl p-8">
-        <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="mb-6 text-3xl font-bold text-foreground">
           Register New Tenant
         </h1>
 
         {error ? (
-          <div className="mb-4 rounded-md border border-red-300 bg-red-50 p-3 text-red-700 dark:border-red-800 dark:bg-red-950/50 dark:text-red-300">
+          <div className="mb-4 rounded-md border-2 border-destructive bg-destructive/10 p-3 text-destructive">
             {error}
           </div>
         ) : null}
@@ -109,7 +109,7 @@ export default async function NewTenantPage({
           <div className="pt-2">
             <button
               type="submit"
-              className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-white shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-gray-900"
+              className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-primary-foreground shadow hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none"
             >
               Create tenant
             </button>

@@ -522,7 +522,7 @@ export default function PatientAssessmentPage() {
                 <Button
                   variant="outline"
                   onClick={() => setShowBreakGlassModal(true)}
-                  className="border-red-300 text-red-600 hover:bg-red-50"
+                  className="border-destructive text-destructive hover:bg-destructive/10"
                 >
                   <AlertTriangle className="mr-2 h-4 w-4" />
                   Break-Glass Override
@@ -544,15 +544,15 @@ export default function PatientAssessmentPage() {
       <main className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         {/* Break-Glass Override Banner */}
         {breakGlassOverride && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="mb-6 rounded-lg border-2 border-destructive bg-destructive/10 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <AlertTriangle className="h-6 w-6 text-red-600" />
+                <AlertTriangle className="h-6 w-6 text-destructive" />
                 <div>
-                  <h3 className="font-semibold text-red-800">
+                  <h3 className="font-semibold text-destructive">
                     Break-Glass Override Active
                   </h3>
-                  <p className="text-sm text-red-700">
+                  <p className="text-sm text-muted-foreground">
                     Emergency access granted to {auditLog[0]?.username} -{" "}
                     {auditLog[0]?.reason}
                   </p>
@@ -562,7 +562,7 @@ export default function PatientAssessmentPage() {
                 variant="outline"
                 size="sm"
                 onClick={resetBreakGlassOverride}
-                className="border-red-300 text-red-600 hover:bg-red-50"
+                className="border-destructive text-destructive hover:bg-destructive/10"
               >
                 <Lock className="mr-2 h-4 w-4" />
                 End Override
@@ -783,7 +783,7 @@ export default function PatientAssessmentPage() {
                 textShadow: "none",
               }}
             >
-              <Bell className="mr-2 h-4 w-4 text-red-500" />
+              <Bell className="mr-2 h-4 w-4 text-destructive" />
               ALLERGIES
             </h3>
             {allergies.filter((allergy) => allergy.severity === "severe")
@@ -793,12 +793,12 @@ export default function PatientAssessmentPage() {
                 .map((allergy, index) => (
                   <div
                     key={index}
-                    className="overflow-hidden border-2 border-foreground bg-red-100 dark:bg-red-900 p-1 mb-1"
+                    className="overflow-hidden border-2 border-foreground bg-destructive/10 p-1 mb-1"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
                     }}
                   >
-                    <p className="text-xs font-semibold text-red-800 dark:text-red-200">
+                    <p className="text-xs font-semibold text-destructive">
                       {allergy.substance}
                     </p>
                   </div>
@@ -896,7 +896,7 @@ export default function PatientAssessmentPage() {
                       key={index}
                       className={`overflow-hidden border-2 border-foreground p-1 ${
                         condition.status === "active"
-                          ? "bg-red-100 dark:bg-red-900"
+                          ? "bg-destructive/10"
                           : "bg-orange-100 dark:bg-orange-900"
                       }`}
                       style={{
@@ -905,7 +905,7 @@ export default function PatientAssessmentPage() {
                     >
                       <p className={`text-xs font-semibold ${
                         condition.status === "active"
-                          ? "text-red-800 dark:text-red-200"
+                          ? "text-destructive"
                           : "text-orange-800 dark:text-orange-200"
                       }`}>
                         {condition.condition}
@@ -943,12 +943,12 @@ export default function PatientAssessmentPage() {
             <div className="space-y-1">
               {advanceCarePlan.dnr && (
                 <div 
-                  className="overflow-hidden border-2 border-foreground bg-red-100 dark:bg-red-900 p-1"
+                  className="overflow-hidden border-2 border-foreground bg-destructive/10 p-1"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
                   }}
                 >
-                  <p className="text-xs font-semibold text-red-800 dark:text-red-200">
+                  <p className="text-xs font-semibold text-destructive">
                     DNR
                   </p>
                 </div>
@@ -983,20 +983,20 @@ export default function PatientAssessmentPage() {
 
       {/* Break-Glass Override Modal */}
       {showBreakGlassModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-background">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-background border-2 border-foreground p-6">
             <div className="mb-4 flex items-center space-x-3">
               <AlertTriangle className="h-6 w-6 text-red-500" />
-              <h3 className="text-lg font-semibold text-red-800">
+              <h3 className="text-lg font-semibold text-foreground">
                 Break-Glass Override
               </h3>
             </div>
             <div className="space-y-4">
-              <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-                <p className="mb-2 text-sm font-medium text-red-800">
+              <div className="rounded-lg border-2 border-foreground bg-background p-4">
+                <p className="mb-2 text-sm font-medium text-foreground">
                   ⚠️ Emergency Access Required
                 </p>
-                <p className="text-xs text-red-700">
+                <p className="text-xs text-muted-foreground">
                   This action will grant emergency access to patient data
                   without explicit consent. This access will be logged and
                   audited. Use only in life-critical situations.
@@ -1028,7 +1028,7 @@ export default function PatientAssessmentPage() {
               <div className="flex space-x-3 pt-4">
                 <Button
                   onClick={handleBreakGlassOverride}
-                  className="flex-1 bg-red-600 hover:bg-red-700"
+                  className="flex-1 bg-destructive hover:bg-destructive/90"
                 >
                   <Unlock className="mr-2 h-4 w-4" />
                   Grant Emergency Access

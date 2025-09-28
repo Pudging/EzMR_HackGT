@@ -965,9 +965,9 @@ export function SkeletonBodyModel({
 
   if (isLoading) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-black">
-        <div className="text-center text-white">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
+      <div className="flex h-full w-full items-center justify-center bg-background">
+        <div className="text-center text-foreground">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-foreground"></div>
           <p>Loading 3D skeleton...</p>
         </div>
       </div>
@@ -976,8 +976,8 @@ export function SkeletonBodyModel({
 
   if (error) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-black">
-        <div className="text-center text-red-400">
+      <div className="flex h-full w-full items-center justify-center bg-background">
+        <div className="text-center text-destructive">
           <p className="mb-2 text-lg">⚠️</p>
           <p>{error}</p>
         </div>
@@ -986,12 +986,12 @@ export function SkeletonBodyModel({
   }
 
   return (
-    <div className="relative h-full w-full bg-black">
+    <div className="relative h-full w-full bg-background">
       {/* 3D Viewer - Full Screen */}
       <div className="relative h-full w-full">
         <Canvas
           camera={{ position: [0, 1, 5], fov: 45 }}
-          style={{ background: "#000000" }}
+          style={{ background: "transparent" }}
           onCreated={({ camera }) => {
             cameraRef.current = camera;
           }}
@@ -1023,8 +1023,8 @@ export function SkeletonBodyModel({
         </Canvas>
 
         {isLoading && (
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center font-mono text-white">
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center font-mono text-foreground">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-foreground"></div>
             <p>Loading 3D skeleton...</p>
           </div>
         )}
@@ -1035,7 +1035,7 @@ export function SkeletonBodyModel({
         {/* Arrow Button */}
         <button
           onClick={() => setIsPanelOpen(!isPanelOpen)}
-          className="flex items-center space-x-2 border-2 border-white bg-gray-900 px-4 py-2 font-mono text-sm text-white transition-all duration-200 hover:bg-gray-700"
+          className="flex items-center space-x-2 border-2 border-foreground bg-background px-4 py-2 font-mono text-sm text-foreground transition-all duration-200 hover:bg-muted"
         >
           <span>3D Controls</span>
           <span
@@ -1047,7 +1047,7 @@ export function SkeletonBodyModel({
 
         {/* Collapsible Panel */}
         {isPanelOpen && (
-          <div className="absolute right-0 bottom-full mb-2 max-h-80 w-64 overflow-y-auto border-2 border-white bg-gray-900 p-4">
+          <div className="absolute right-0 bottom-full mb-2 max-h-80 w-64 overflow-y-auto border-2 border-foreground bg-background p-4">
             <div className="space-y-4">
               {/* Component Selection */}
               <div>
