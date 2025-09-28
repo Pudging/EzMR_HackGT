@@ -45,6 +45,7 @@ export default async function AdminUsersPage() {
       email: true,
       emailVerified: true,
       role: true,
+      permissions: true,
       image: true,
       _count: {
         select: {
@@ -159,6 +160,7 @@ export default async function AdminUsersPage() {
                         <img
                           src={user.image}
                           alt={user.name ?? "User"}
+                          referrerPolicy="no-referrer"
                           className="h-12 w-12 rounded-full object-cover"
                         />
                       ) : (

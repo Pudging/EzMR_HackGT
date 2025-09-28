@@ -2100,33 +2100,38 @@ export default function EMRUploadPage() {
   }
 
   return (
-    <div className="bg-black min-h-screen text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* Page Header */}
       <header className="border-b-4 border-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div 
-                className="flex h-10 w-10 items-center justify-center border-2 border-white overflow-hidden"
-                style={{ clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))' }}
+              <div
+                className="flex h-10 w-10 items-center justify-center overflow-hidden border-2 border-white"
+                style={{
+                  clipPath:
+                    "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
+                }}
               >
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 
-                  className="text-white text-lg font-black uppercase tracking-tight drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <h1
+                  className="text-lg font-black tracking-tight text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   EMR Upload
                 </h1>
-                <p 
-                  className="text-neutral-300 text-sm drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <p
+                  className="text-sm text-neutral-300 drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   Electronic Medical Records
@@ -2135,13 +2140,15 @@ export default function EMRUploadPage() {
             </div>
             <form action={(fd) => startSaving(() => onSaveAction(fd))}>
               <input type="hidden" name="payload" value="" readOnly />
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isSaving}
-                className="border-2 border-white bg-white text-black font-black uppercase hover:bg-neutral-200"
-                style={{ 
-                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                  clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                className="border-2 border-white bg-white font-black text-black uppercase hover:bg-neutral-200"
+                style={{
+                  fontFamily:
+                    'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  clipPath:
+                    "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                 }}
               >
                 <Upload className="mr-2 h-4 w-4" />
@@ -2158,16 +2165,20 @@ export default function EMRUploadPage() {
           {/* Left Side - Demographics & Vital Info */}
           <div className="space-y-6 overflow-y-auto">
             {/* Demographics */}
-            <Card 
-              className="border-2 border-white overflow-hidden"
-              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            <Card
+              className="overflow-hidden border-2 border-white"
+              style={{
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
             >
               <CardHeader className="border-b-2 border-white">
-                <CardTitle 
-                  className="text-white flex items-center space-x-2 font-black uppercase tracking-wide drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <CardTitle
+                  className="flex items-center space-x-2 font-black tracking-wide text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   <User className="h-5 w-5 text-white" />
@@ -2177,11 +2188,12 @@ export default function EMRUploadPage() {
               <CardContent className="space-y-4 p-6">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Full Name
@@ -2196,18 +2208,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Patient full name"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Date of Birth
@@ -2222,18 +2237,21 @@ export default function EMRUploadPage() {
                         }))
                       }
                       className="border-2 border-white bg-transparent text-white"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Sex
@@ -2246,24 +2264,35 @@ export default function EMRUploadPage() {
                           sex: e.target.value,
                         }))
                       }
-                      className="w-full border-2 border-white bg-transparent text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      className="w-full border-2 border-white bg-transparent px-3 py-2 text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black focus:outline-none"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     >
-                      <option value="" className="bg-black text-white">Select...</option>
-                      <option value="Male" className="bg-black text-white">Male</option>
-                      <option value="Female" className="bg-black text-white">Female</option>
-                      <option value="Other" className="bg-black text-white">Other</option>
+                      <option value="" className="bg-black text-white">
+                        Select...
+                      </option>
+                      <option value="Male" className="bg-black text-white">
+                        Male
+                      </option>
+                      <option value="Female" className="bg-black text-white">
+                        Female
+                      </option>
+                      <option value="Other" className="bg-black text-white">
+                        Other
+                      </option>
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Patient ID / MRN
@@ -2278,19 +2307,22 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Medical Record Number"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label 
-                    className="text-white font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <Label
+                    className="font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Address
@@ -2305,19 +2337,22 @@ export default function EMRUploadPage() {
                     }
                     className="h-20 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
                     placeholder="Full address..."
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                   />
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Phone Number
@@ -2332,18 +2367,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="(555) 123-4567"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Insurance Info
@@ -2358,19 +2396,22 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Policy numbers, provider..."
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label 
-                    className="text-white font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <Label
+                    className="font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Emergency Contact
@@ -2385,9 +2426,11 @@ export default function EMRUploadPage() {
                     }
                     placeholder="Name, relation, phone number..."
                     className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                   />
                 </div>
@@ -2406,16 +2449,20 @@ export default function EMRUploadPage() {
             ) : null}
 
             {/* Vital Signs */}
-            <Card 
-              className="border-2 border-white overflow-hidden"
-              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            <Card
+              className="overflow-hidden border-2 border-white"
+              style={{
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
             >
               <CardHeader className="border-b-2 border-white">
-                <CardTitle 
-                  className="text-white flex items-center space-x-2 font-black uppercase tracking-wide drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <CardTitle
+                  className="flex items-center space-x-2 font-black tracking-wide text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   <Activity className="h-5 w-5 text-white" />
@@ -2425,11 +2472,12 @@ export default function EMRUploadPage() {
               <CardContent className="space-y-4 p-6">
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Blood Pressure
@@ -2447,18 +2495,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="120/80"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Heart Rate
@@ -2473,18 +2524,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="72 bpm"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Temperature
@@ -2502,18 +2556,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="98.6°F"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Weight (kg)
@@ -2528,18 +2585,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="70"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Height (m)
@@ -2554,18 +2614,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="1.75"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       BMI
@@ -2580,18 +2643,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="22.5"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Blood Type
@@ -2604,21 +2670,41 @@ export default function EMRUploadPage() {
                           vitals: { ...prev.vitals, bloodType: e.target.value },
                         }))
                       }
-                      className="w-full border-2 border-white bg-transparent text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      className="w-full border-2 border-white bg-transparent px-3 py-2 text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black focus:outline-none"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     >
-                      <option value="" className="bg-black text-white">Select...</option>
-                      <option value="A+" className="bg-black text-white">A+</option>
-                      <option value="A-" className="bg-black text-white">A-</option>
-                      <option value="B+" className="bg-black text-white">B+</option>
-                      <option value="B-" className="bg-black text-white">B-</option>
-                      <option value="AB+" className="bg-black text-white">AB+</option>
-                      <option value="AB-" className="bg-black text-white">AB-</option>
-                      <option value="O+" className="bg-black text-white">O+</option>
-                      <option value="O-" className="bg-black text-white">O-</option>
+                      <option value="" className="bg-black text-white">
+                        Select...
+                      </option>
+                      <option value="A+" className="bg-black text-white">
+                        A+
+                      </option>
+                      <option value="A-" className="bg-black text-white">
+                        A-
+                      </option>
+                      <option value="B+" className="bg-black text-white">
+                        B+
+                      </option>
+                      <option value="B-" className="bg-black text-white">
+                        B-
+                      </option>
+                      <option value="AB+" className="bg-black text-white">
+                        AB+
+                      </option>
+                      <option value="AB-" className="bg-black text-white">
+                        AB-
+                      </option>
+                      <option value="O+" className="bg-black text-white">
+                        O+
+                      </option>
+                      <option value="O-" className="bg-black text-white">
+                        O-
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -2626,16 +2712,20 @@ export default function EMRUploadPage() {
             </Card>
 
             {/* Medications & Prescription */}
-            <Card 
-              className="border-2 border-white overflow-hidden"
-              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            <Card
+              className="overflow-hidden border-2 border-white"
+              style={{
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
             >
               <CardHeader className="border-b-2 border-white">
-                <CardTitle 
-                  className="text-white flex items-center space-x-2 font-black uppercase tracking-wide drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <CardTitle
+                  className="flex items-center space-x-2 font-black tracking-wide text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   <Shield className="h-5 w-5 text-white" />
@@ -2654,9 +2744,11 @@ export default function EMRUploadPage() {
                     }
                     placeholder="Medication name"
                     className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                   />
                   <Input
@@ -2669,9 +2761,11 @@ export default function EMRUploadPage() {
                     }
                     placeholder="Dosage (10mg)"
                     className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                   />
                   <Input
@@ -2684,17 +2778,21 @@ export default function EMRUploadPage() {
                     }
                     placeholder="Schedule (2x daily)"
                     className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                   />
-                  <Button 
+                  <Button
                     onClick={addMedication}
                     className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                   >
                     <Plus className="h-4 w-4" />
@@ -2734,11 +2832,12 @@ export default function EMRUploadPage() {
 
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                     <div className="space-y-2">
-                      <Label 
-                        className="text-white font-black uppercase drop-shadow-lg"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      <Label
+                        className="font-black text-white uppercase drop-shadow-lg"
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                         }}
                       >
                         Medication Name
@@ -2753,18 +2852,21 @@ export default function EMRUploadPage() {
                         }
                         placeholder="Enter medication name..."
                         className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          clipPath:
+                            "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                         }}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label 
-                        className="text-white font-black uppercase drop-shadow-lg"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      <Label
+                        className="font-black text-white uppercase drop-shadow-lg"
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                         }}
                       >
                         Location
@@ -2779,9 +2881,11 @@ export default function EMRUploadPage() {
                         }
                         placeholder="Enter US ZIP code or city, state (e.g., 90210 or Philadelphia, PA)"
                         className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          clipPath:
+                            "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                         }}
                       />
                     </div>
@@ -2793,9 +2897,11 @@ export default function EMRUploadPage() {
                           !pharmacySearch.medication.trim()
                         }
                         className="w-full border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          clipPath:
+                            "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                         }}
                       >
                         {isSearchingPharmacy ? (
@@ -3067,16 +3173,20 @@ export default function EMRUploadPage() {
             </Card>
 
             {/* Care Plans */}
-            <Card 
-              className="border-2 border-white overflow-hidden"
-              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            <Card
+              className="overflow-hidden border-2 border-white"
+              style={{
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
             >
               <CardHeader className="border-b-2 border-white">
-                <CardTitle 
-                  className="text-white flex items-center space-x-2 font-black uppercase tracking-wide drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <CardTitle
+                  className="flex items-center space-x-2 font-black tracking-wide text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   <Calendar className="h-5 w-5 text-white" />
@@ -3096,22 +3206,24 @@ export default function EMRUploadPage() {
                     }
                     className="h-5 w-5 border-2 border-white bg-transparent text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
                   />
-                  <Label 
-                    className="text-lg text-white font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <Label
+                    className="text-lg font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     DNR (Do Not Resuscitate)
                   </Label>
                 </div>
                 <div>
-                  <Label 
-                    className="text-white font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <Label
+                    className="font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Preventive Care
@@ -3125,9 +3237,11 @@ export default function EMRUploadPage() {
                       }))
                     }
                     className="h-24 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                     placeholder="Preventive care plans, screenings, follow-ups..."
                   />
@@ -3136,16 +3250,20 @@ export default function EMRUploadPage() {
             </Card>
 
             {/* File Upload Section */}
-            <Card 
-              className="border-2 border-white overflow-hidden"
-              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            <Card
+              className="overflow-hidden border-2 border-white"
+              style={{
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
             >
               <CardHeader className="border-b-2 border-white">
-                <CardTitle 
-                  className="text-white flex items-center space-x-2 font-black uppercase tracking-wide drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <CardTitle
+                  className="flex items-center space-x-2 font-black tracking-wide text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   <Upload className="h-5 w-5 text-white" />
@@ -3153,71 +3271,78 @@ export default function EMRUploadPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
-                <div 
-                  className="border-2 border-white border-dashed p-8 text-center transition-colors hover:border-opacity-80 overflow-hidden"
-                  style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))' }}
+                <div
+                  className="hover:border-opacity-80 overflow-hidden border-2 border-dashed border-white p-8 text-center transition-colors"
+                  style={{
+                    clipPath:
+                      "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+                  }}
                 >
-                  <Upload className="text-white mx-auto mb-4 h-12 w-12" />
-                  <div 
-                    className="text-white mb-2 font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <Upload className="mx-auto mb-4 h-12 w-12 text-white" />
+                  <div
+                    className="mb-2 font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Upload Lab Results
                   </div>
-                  <div 
-                    className="text-neutral-300 text-sm drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <div
+                    className="text-sm text-neutral-300 drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Bloodwork, X-rays, Genetic tests, Medical documents
                   </div>
                   {process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ? (
-                    <div 
+                    <div
                       className="mt-4 overflow-hidden"
-                      style={{ 
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))',
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace'
+                      style={{
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                       }}
                     >
                       <CldUploadButton
-                        className="inline-flex h-10 items-center justify-center px-4 py-2 text-sm font-medium transition-colors border-2 border-white bg-white text-black uppercase hover:bg-neutral-200 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                        className="inline-flex h-10 items-center justify-center border-2 border-white bg-white px-4 py-2 text-sm font-medium text-black uppercase transition-colors hover:bg-neutral-200 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
                         uploadPreset="emr-upload"
-                      options={{
-                        sources: ["local", "camera"],
-                        multiple: true,
-                        maxFiles: 10,
-                        maxFileSize: 10000000, // 10MB
-                        resourceType: "auto",
-                        clientAllowedFormats: [
-                          "jpg",
-                          "jpeg",
-                          "png",
-                          "pdf",
-                          "doc",
-                          "docx",
-                        ],
-                        styles: currentCloudinaryStyles,
-                      }}
-                      onSuccess={(results) => {
-                        if (!results.info || typeof results.info === "string")
-                          return;
-                        const secureUrl =
-                          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-                          (results.info as CloudinaryUploadWidgetInfo)
-                            .secure_url;
-                        setPatientData((prev) => ({
-                          ...prev,
-                          uploadedFiles: [...prev.uploadedFiles, secureUrl],
-                        }));
-                      }}
-                    >
-                      Choose Files
-                    </CldUploadButton>
+                        options={{
+                          sources: ["local", "camera"],
+                          multiple: true,
+                          maxFiles: 10,
+                          maxFileSize: 10000000, // 10MB
+                          resourceType: "auto",
+                          clientAllowedFormats: [
+                            "jpg",
+                            "jpeg",
+                            "png",
+                            "pdf",
+                            "doc",
+                            "docx",
+                          ],
+                          styles: currentCloudinaryStyles,
+                        }}
+                        onSuccess={(results) => {
+                          if (!results.info || typeof results.info === "string")
+                            return;
+                          const secureUrl =
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                            (results.info as CloudinaryUploadWidgetInfo)
+                              .secure_url;
+                          setPatientData((prev) => ({
+                            ...prev,
+                            uploadedFiles: [...prev.uploadedFiles, secureUrl],
+                          }));
+                        }}
+                      >
+                        Choose Files
+                      </CldUploadButton>
                     </div>
                   ) : (
                     <div className="mt-4 text-center">
@@ -3241,10 +3366,11 @@ export default function EMRUploadPage() {
                   <div>
                     <Label
                       htmlFor="dicom-zip-upload"
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       DICOM Series (ZIP file containing DCM slices)
@@ -3255,10 +3381,12 @@ export default function EMRUploadPage() {
                       accept=".zip"
                       onChange={handleDicomZipUpload}
                       disabled={dicomUploading}
-                      className="mt-1 border-2 border-white bg-transparent text-white file:bg-white file:text-black file:border-0 file:mr-4 file:py-1 file:px-2 file:rounded-sm"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      className="mt-1 border-2 border-white bg-transparent text-white file:mr-4 file:rounded-sm file:border-0 file:bg-white file:px-2 file:py-1 file:text-black"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                     <p className="mt-1 text-xs text-gray-500">
@@ -3495,16 +3623,20 @@ export default function EMRUploadPage() {
           {/* Right Side - Medical History & Notes */}
           <div className="space-y-6 overflow-y-auto">
             {/* Generic Notes for Auto-filling (Future Feature) */}
-            <Card 
-              className="border-2 border-white overflow-hidden"
-              style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+            <Card
+              className="overflow-hidden border-2 border-white"
+              style={{
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
             >
               <CardHeader className="border-b-2 border-white">
-                <CardTitle 
-                  className="text-white flex items-center space-x-2 font-black uppercase tracking-wide drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <CardTitle
+                  className="flex items-center space-x-2 font-black tracking-wide text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   <FileText className="h-5 w-5 text-white" />
@@ -3512,24 +3644,29 @@ export default function EMRUploadPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
-                <div 
-                  className="mb-4 border-2 border-white p-4 overflow-hidden"
-                  style={{ clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))' }}
+                <div
+                  className="mb-4 overflow-hidden border-2 border-white p-4"
+                  style={{
+                    clipPath:
+                      "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+                  }}
                 >
-                  <div 
-                    className="text-white mb-2 text-sm font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <div
+                    className="mb-2 text-sm font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     💡 AI-Powered Feature
                   </div>
-                  <div 
-                    className="text-neutral-300 text-sm drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <div
+                    className="text-sm text-neutral-300 drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Type, paste, or use voice input to add raw medical notes
@@ -3541,9 +3678,11 @@ export default function EMRUploadPage() {
                   value={smartNotes}
                   onChange={(e) => setSmartNotes(e.target.value)}
                   className="h-40 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    clipPath:
+                      "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                   }}
                   placeholder="Type, paste, or use voice input to add medical notes, discharge summaries, or doctor's notes here. AI will automatically categorize this information into the appropriate sections below..."
                 />
@@ -3577,9 +3716,11 @@ export default function EMRUploadPage() {
                       variant="outline"
                       size="sm"
                       className="border-2 border-white bg-transparent text-white uppercase hover:bg-white hover:text-black"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
                       }}
                     >
                       Clear Notes
@@ -3592,11 +3733,12 @@ export default function EMRUploadPage() {
             {/* Medical History Section */}
             <Card className="border">
               <CardHeader className="border-b-2 border-white">
-                <CardTitle 
-                  className="text-white flex items-center space-x-2 font-black uppercase tracking-wide drop-shadow-lg"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                <CardTitle
+                  className="flex items-center space-x-2 font-black tracking-wide text-white uppercase drop-shadow-lg"
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                   }}
                 >
                   <Heart className="h-5 w-5 text-white" />
@@ -3606,22 +3748,24 @@ export default function EMRUploadPage() {
               <CardContent className="space-y-6 p-6">
                 {/* Social History */}
                 <div className="space-y-4">
-                  <h3 
-                    className="text-white border-b-2 border-white pb-2 text-lg font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <h3
+                    className="border-b-2 border-white pb-2 text-lg font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Social History
                   </h3>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div className="space-y-2">
-                      <Label 
-                        className="text-white font-black uppercase drop-shadow-lg"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      <Label
+                        className="font-black text-white uppercase drop-shadow-lg"
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                         }}
                       >
                         Smoking
@@ -3638,19 +3782,22 @@ export default function EMRUploadPage() {
                           }))
                         }
                         className="h-20 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          clipPath:
+                            "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                         }}
                         placeholder="Smoking history..."
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label 
-                        className="text-white font-black uppercase drop-shadow-lg"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      <Label
+                        className="font-black text-white uppercase drop-shadow-lg"
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                         }}
                       >
                         Drugs
@@ -3667,19 +3814,22 @@ export default function EMRUploadPage() {
                           }))
                         }
                         className="h-20 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          clipPath:
+                            "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                         }}
                         placeholder="Drug history..."
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label 
-                        className="text-white font-black uppercase drop-shadow-lg"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      <Label
+                        className="font-black text-white uppercase drop-shadow-lg"
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                         }}
                       >
                         Alcohol
@@ -3696,9 +3846,11 @@ export default function EMRUploadPage() {
                           }))
                         }
                         className="h-20 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                          clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                        style={{
+                          fontFamily:
+                            'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                          clipPath:
+                            "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                         }}
                         placeholder="Alcohol history..."
                       />
@@ -3708,11 +3860,12 @@ export default function EMRUploadPage() {
 
                 {/* Past Conditions */}
                 <div className="space-y-4">
-                  <h3 
-                    className="text-white border-b-2 border-white pb-2 text-lg font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <h3
+                    className="border-b-2 border-white pb-2 text-lg font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Past Injuries & Conditions
@@ -3728,9 +3881,11 @@ export default function EMRUploadPage() {
                         }))
                       }
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                     <Input
@@ -3743,9 +3898,11 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Body part (Head, Other, etc.)"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                     <Input
@@ -3758,17 +3915,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Condition notes..."
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
-                    <Button 
+                    <Button
                       onClick={addCondition}
                       className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     >
                       <Plus className="h-4 w-4" />
@@ -3799,11 +3960,12 @@ export default function EMRUploadPage() {
 
                 {/* Immunizations */}
                 <div className="space-y-4">
-                  <h3 
-                    className="text-white border-b-2 border-white pb-2 text-lg font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <h3
+                    className="border-b-2 border-white pb-2 text-lg font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Immunization History
@@ -3819,9 +3981,11 @@ export default function EMRUploadPage() {
                         }))
                       }
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                     <Input
@@ -3834,17 +3998,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Vaccination details..."
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
-                    <Button 
+                    <Button
                       onClick={addImmunization}
                       className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     >
                       <Plus className="h-4 w-4" />
@@ -3875,11 +4043,12 @@ export default function EMRUploadPage() {
 
                 {/* Family History */}
                 <div className="space-y-4">
-                  <h3 
-                    className="text-white border-b-2 border-white pb-2 text-lg font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <h3
+                    className="border-b-2 border-white pb-2 text-lg font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Family Medical History
@@ -3895,9 +4064,11 @@ export default function EMRUploadPage() {
                         }))
                       }
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                     <Input
@@ -3910,9 +4081,11 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Relation (Mother, Father, etc.)"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                     <Input
@@ -3925,17 +4098,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="Family medical history..."
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
-                    <Button 
+                    <Button
                       onClick={addFamilyHistory}
                       className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     >
                       <Plus className="h-4 w-4" />
@@ -3966,11 +4143,12 @@ export default function EMRUploadPage() {
 
                 {/* Allergies */}
                 <div className="space-y-4">
-                  <h3 
-                    className="text-white border-b-2 border-white pb-2 text-lg font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <h3
+                    className="border-b-2 border-white pb-2 text-lg font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Allergies
@@ -3985,9 +4163,11 @@ export default function EMRUploadPage() {
                         }))
                       }
                       className="h-24 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                       placeholder="List all known allergies, reactions, and severity..."
                     />
@@ -3996,11 +4176,12 @@ export default function EMRUploadPage() {
 
                 {/* General Notes */}
                 <div className="space-y-4">
-                  <h3 
-                    className="text-white border-b-2 border-white pb-2 text-lg font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <h3
+                    className="border-b-2 border-white pb-2 text-lg font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     General Notes
@@ -4015,9 +4196,11 @@ export default function EMRUploadPage() {
                         }))
                       }
                       className="h-32 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                       placeholder="General progress notes, observations, care instructions..."
                     />
@@ -4032,25 +4215,30 @@ export default function EMRUploadPage() {
       {/* Pickup Request Modal */}
       {pickupRequestModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div 
-            className="mx-4 w-full max-w-md border-2 border-white p-6 shadow-lg overflow-hidden"
-            style={{ clipPath: 'polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))' }}
+          <div
+            className="mx-4 w-full max-w-md overflow-hidden border-2 border-white p-6 shadow-lg"
+            style={{
+              clipPath:
+                "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+            }}
           >
             <div className="mb-4">
-              <h3 
-                className="text-white text-lg font-black uppercase drop-shadow-lg"
-                style={{ 
-                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              <h3
+                className="text-lg font-black text-white uppercase drop-shadow-lg"
+                style={{
+                  fontFamily:
+                    'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                 }}
               >
                 Request Medication Pickup
               </h3>
-              <p 
-                className="text-neutral-300 text-sm drop-shadow-lg"
-                style={{ 
-                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+              <p
+                className="text-sm text-neutral-300 drop-shadow-lg"
+                style={{
+                  fontFamily:
+                    'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                 }}
               >
                 Send a pickup request to {pickupRequestModal.pharmacy?.name}
@@ -4079,11 +4267,12 @@ export default function EMRUploadPage() {
               {/* Editable Fields */}
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label 
-                    className="text-white font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <Label
+                    className="font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Patient Name *
@@ -4098,20 +4287,23 @@ export default function EMRUploadPage() {
                     }
                     placeholder="Enter patient's full name"
                     className="w-full border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Dosage
@@ -4126,18 +4318,21 @@ export default function EMRUploadPage() {
                       }
                       placeholder="e.g., 10mg"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label 
-                      className="text-white font-black uppercase drop-shadow-lg"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                    <Label
+                      className="font-black text-white uppercase drop-shadow-lg"
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                       }}
                     >
                       Schedule
@@ -4152,20 +4347,23 @@ export default function EMRUploadPage() {
                       }
                       placeholder="e.g., 2x daily"
                       className="border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                      style={{ 
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                      style={{
+                        fontFamily:
+                          'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                        clipPath:
+                          "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                       }}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label 
-                    className="text-white font-black uppercase drop-shadow-lg"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                  <Label
+                    className="font-black text-white uppercase drop-shadow-lg"
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                     }}
                   >
                     Additional Notes (Optional)
@@ -4179,9 +4377,11 @@ export default function EMRUploadPage() {
                       }))
                     }
                     className="h-20 resize-none border-2 border-white bg-transparent text-white placeholder:text-neutral-400"
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                     }}
                     placeholder="Add any special instructions, dosage modifications, or notes for the pharmacy..."
                   />
@@ -4216,9 +4416,11 @@ export default function EMRUploadPage() {
                     });
                   }}
                   className="border-2 border-white bg-transparent text-white uppercase hover:bg-white hover:text-black"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    clipPath:
+                      "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                   }}
                 >
                   Cancel
@@ -4227,9 +4429,11 @@ export default function EMRUploadPage() {
                   onClick={submitPickupRequest}
                   disabled={!pickupRequestForm.patientName.trim()}
                   className="border-2 border-white bg-white text-black uppercase hover:bg-neutral-200"
-                  style={{ 
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
-                    clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))'
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    clipPath:
+                      "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
                   }}
                 >
                   <Send className="mr-2 h-4 w-4" />

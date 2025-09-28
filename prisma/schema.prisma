@@ -66,6 +66,7 @@ model User {
     emailVerified        DateTime?
     image                String?
     role                 UserRole              @default(USER)
+    permissions          String[]              @default([])
     accounts             Account[]
     sessions             Session[]
     posts                Post[]

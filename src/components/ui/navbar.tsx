@@ -18,12 +18,13 @@ const links = [
 export function Navbar() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
+  const isAdmin = session?.user?.role === "ADMIN";
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link
           href="/"
-          className="text-2xl font-bold tracking-tight text-foreground"
+          className="text-foreground text-2xl font-bold tracking-tight"
         >
           EzMR
         </Link>
@@ -45,12 +46,26 @@ export function Navbar() {
               </li>
             );
           })}
+          {isAdmin ? (
+            <li>
+              <Link
+                href="/admin/users"
+                className={`text-sm font-medium transition-colors ${
+                  pathname.startsWith("/admin")
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Admin
+              </Link>
+            </li>
+          ) : null}
           <li className="ml-2 list-none">
             <ModeToggle />
           </li>
           <li className="list-none">
             {status === "loading" ? (
-              <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
+              <div className="bg-muted h-8 w-24 animate-pulse rounded-md" />
             ) : session ? (
               <UserNav />
             ) : (

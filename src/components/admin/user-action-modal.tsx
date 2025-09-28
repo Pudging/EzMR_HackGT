@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ALL_DASHBOARD_PERMISSIONS } from "@/lib/admin-utils";
 
 type UserActionLog = {
   id: string;
@@ -30,6 +31,8 @@ export function UserActionModalTrigger({
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState<UserActionLog[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [permissions, setPermissions] = useState<string[]>([]);
+  const [savingPerms, setSavingPerms] = useState(false);
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -52,8 +55,23 @@ export function UserActionModalTrigger({
   }, [userId]);
 
   useEffect(() => {
-    if (open) void fetchLogs();
-  }, [open, fetchLogs]);
+    if (open) {
+      void fetchLogs();
+      void (async () => {
+        try {
+          const res = await fetch(`/api/admin/users/${userId}/permissions`, {
+            method: "GET",
+          });
+          if (res.ok) {
+            const data = (await res.json()) as { permissions: string[] };
+            setPermissions(data.permissions ?? []);
+          }
+        } catch {
+          // ignore
+        }
+      })();
+    }
+  }, [open, fetchLogs, userId]);
 
   const displayName = useMemo(() => userName ?? "User", [userName]);
 
@@ -76,6 +94,59 @@ export function UserActionModalTrigger({
               </Button>
             </CardHeader>
             <CardContent>
+              <div className="mb-6">
+                <h4 className="mb-2 font-medium">Permissions</h4>
+                <div className="mb-3 grid grid-cols-1 gap-2 md:grid-cols-2">
+                  {ALL_DASHBOARD_PERMISSIONS.map((perm) => (
+                    <label
+                      key={perm}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4"
+                        checked={permissions.includes(perm)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setPermissions((prev) =>
+                            checked
+                              ? Array.from(new Set([...prev, perm]))
+                              : prev.filter((p) => p !== perm),
+                          );
+                        }}
+                      />
+                      <span>{perm}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    disabled={savingPerms}
+                    onClick={async () => {
+                      try {
+                        setSavingPerms(true);
+                        const res = await fetch(
+                          `/api/admin/users/${userId}/permissions`,
+                          {
+                            method: "PUT",
+                            headers: { "content-type": "application/json" },
+                            body: JSON.stringify({ permissions }),
+                          },
+                        );
+                        if (!res.ok)
+                          throw new Error("Failed to save permissions");
+                      } catch (err) {
+                        setError((err as Error).message);
+                      } finally {
+                        setSavingPerms(false);
+                      }
+                    }}
+                  >
+                    {savingPerms ? "Saving..." : "Save Permissions"}
+                  </Button>
+                </div>
+              </div>
               {loading ? (
                 <div className="text-muted-foreground text-sm">Loading…</div>
               ) : error ? (
