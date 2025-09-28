@@ -100,11 +100,13 @@ export default function PatientAssessmentPage() {
   const [skeletonFile, setSkeletonFile] = useState<string>(
     "overview-skeleton.glb",
   );
-  
+
   // Patient assessment data for body parts
   const [patientData, setPatientData] = useState<Record<string, string>>({});
   const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
-  const [savingStatus, setSavingStatus] = useState<Record<string, 'idle' | 'pending' | 'saving' | 'saved'>>({});
+  const [savingStatus, setSavingStatus] = useState<
+    Record<string, "idle" | "pending" | "saving" | "saved">
+  >({});
 
   // EMS-specific state
   const [allergies, setAllergies] = useState<Allergy[]>([]);
@@ -130,10 +132,10 @@ export default function PatientAssessmentPage() {
       const response = await fetch(`/api/patients/${patientId}/assessment`);
       if (response.ok) {
         const assessmentData = await response.json();
-        
+
         // Set patient data for the hybrid model
         setPatientData(assessmentData);
-        
+
         // Convert body part data to history format
         const historyEntries = Object.entries(assessmentData)
           .filter(
@@ -159,43 +161,46 @@ export default function PatientAssessmentPage() {
     if (!selectedPatient) return;
 
     // Update local state immediately
-    setPatientData(prev => ({
+    setPatientData((prev) => ({
       ...prev,
-      [bodyPart]: data
+      [bodyPart]: data,
     }));
 
     // Set saving status
-    setSavingStatus(prev => ({ ...prev, [bodyPart]: 'saving' }));
+    setSavingStatus((prev) => ({ ...prev, [bodyPart]: "saving" }));
 
     try {
       // Save to API
-      const response = await fetch(`/api/patients/${selectedPatient.patientId}/assessment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `/api/patients/${selectedPatient.patientId}/assessment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            [bodyPart]: data,
+          }),
         },
-        body: JSON.stringify({
-          [bodyPart]: data
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to save assessment data");
       }
 
       console.log(`✅ Saved assessment data for ${bodyPart}`);
-      
+
       // Set saved status
-      setSavingStatus(prev => ({ ...prev, [bodyPart]: 'saved' }));
-      
+      setSavingStatus((prev) => ({ ...prev, [bodyPart]: "saved" }));
+
       // Clear saved status after 2 seconds
       setTimeout(() => {
-        setSavingStatus(prev => ({ ...prev, [bodyPart]: 'idle' }));
+        setSavingStatus((prev) => ({ ...prev, [bodyPart]: "idle" }));
       }, 2000);
     } catch (error) {
       console.error("Error saving assessment data:", error);
       // Revert local state on error
-      setPatientData(prev => {
+      setPatientData((prev) => {
         const updated = { ...prev };
         if (data.trim() === "") {
           delete updated[bodyPart];
@@ -204,9 +209,9 @@ export default function PatientAssessmentPage() {
         }
         return updated;
       });
-      
+
       // Set error status (using idle as fallback)
-      setSavingStatus(prev => ({ ...prev, [bodyPart]: 'idle' }));
+      setSavingStatus((prev) => ({ ...prev, [bodyPart]: "idle" }));
     }
   };
 
@@ -397,11 +402,11 @@ export default function PatientAssessmentPage() {
 
       if (response.ok) {
         // Update local patient data for real-time feedback
-        setPatientData(prev => ({
+        setPatientData((prev) => ({
           ...prev,
-          "general-status": currentIssue.trim()
+          "general-status": currentIssue.trim(),
         }));
-        
+
         setCurrentIssue(""); // Clear input
         console.log("✅ Patient status update saved to assessment database");
       } else {
@@ -478,12 +483,12 @@ export default function PatientAssessmentPage() {
   if (!selectedPatient) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
-        <Card className="mx-4 max-w-md">
+        <Card className="mx-4 max-w-md gap-0 py-4">
           <CardHeader className="text-center">
             <AlertCircle className="mx-auto mb-4 h-12 w-12 text-yellow-500" />
-            <CardTitle>No Patient Selected</CardTitle>
+            <CardTitle className="mb-2">No Patient Selected</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-center">
+          <CardContent className="space-y-4 py-4 text-center">
             <p className="text-muted-foreground">
               Please select a patient before accessing the assessment page.
             </p>
@@ -544,15 +549,15 @@ export default function PatientAssessmentPage() {
       <main className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         {/* Break-Glass Override Banner */}
         {breakGlassOverride && (
-          <div className="mb-6 rounded-lg border-2 border-destructive bg-destructive/10 p-4">
+          <div className="border-destructive bg-destructive/10 mb-6 rounded-lg border-2 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
+                <AlertTriangle className="text-destructive h-6 w-6" />
                 <div>
-                  <h3 className="font-semibold text-destructive">
+                  <h3 className="text-destructive font-semibold">
                     Break-Glass Override Active
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Emergency access granted to {auditLog[0]?.username} -{" "}
                     {auditLog[0]?.reason}
                   </p>
@@ -573,20 +578,22 @@ export default function PatientAssessmentPage() {
 
         {/* Patient Demographics */}
         <div
-          className="mb-4 overflow-hidden border-2 border-foreground"
+          className="border-foreground mb-4 overflow-hidden border-2"
           style={{
-            clipPath: "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+            clipPath:
+              "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
           }}
         >
-          <div className="border-b-2 border-foreground bg-background px-4 py-3">
+          <div className="border-foreground bg-background border-b-2 px-4 py-3">
             <h2
-              className="text-lg flex items-center font-black tracking-wide text-foreground uppercase"
+              className="text-foreground flex items-center text-lg font-black tracking-wide uppercase"
               style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                 textShadow: "none",
               }}
             >
-              <User className="mr-2 h-5 w-5 text-primary" />
+              <User className="text-primary mr-2 h-5 w-5" />
               PATIENT DEMOGRAPHICS
             </h2>
           </div>
@@ -641,24 +648,26 @@ export default function PatientAssessmentPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mb-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
           {/* Left Side - Medical Imaging */}
           <div>
             <div
-              className="h-[800px] overflow-hidden border-2 border-foreground"
+              className="border-foreground h-[800px] overflow-hidden border-2"
               style={{
-                clipPath: "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
               }}
             >
-              <div className="border-b-2 border-foreground bg-background px-4 py-3">
+              <div className="border-foreground bg-background border-b-2 px-4 py-3">
                 <h2
-                  className="text-lg flex items-center font-black tracking-wide text-foreground uppercase"
+                  className="text-foreground flex items-center text-lg font-black tracking-wide uppercase"
                   style={{
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                     textShadow: "none",
                   }}
                 >
-                  <Stethoscope className="mr-2 h-5 w-5 text-primary" />
+                  <Stethoscope className="text-primary mr-2 h-5 w-5" />
                   MEDICAL IMAGING
                 </h2>
               </div>
@@ -678,19 +687,21 @@ export default function PatientAssessmentPage() {
           <div className="space-y-4">
             {/* Patient Status Update */}
             <div
-              className="overflow-hidden border-2 border-foreground p-4"
+              className="border-foreground overflow-hidden border-2 p-4"
               style={{
-                clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+                clipPath:
+                  "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
               }}
             >
               <h3
-                className="text-base mb-3 flex items-center font-black tracking-wide text-foreground uppercase"
+                className="text-foreground mb-3 flex items-center text-base font-black tracking-wide uppercase"
                 style={{
-                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                  fontFamily:
+                    'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                   textShadow: "none",
                 }}
               >
-                <Stethoscope className="mr-2 h-5 w-5 text-primary" />
+                <Stethoscope className="text-primary mr-2 h-5 w-5" />
                 PATIENT STATUS UPDATE
               </h3>
               <div className="space-y-3">
@@ -711,25 +722,29 @@ export default function PatientAssessmentPage() {
                       }, 500);
                     }
                   }}
-                  className="min-h-[80px] border-2 border-foreground bg-background text-foreground text-sm"
+                  className="border-foreground bg-background text-foreground min-h-[80px] border-2 text-sm"
                   style={{
-                    clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    clipPath:
+                      "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                   }}
                 />
                 <div className="flex items-center justify-between">
                   <Button
                     onClick={submitCurrentIssue}
                     disabled={!currentIssue.trim() || isSubmitting}
-                    className="border-2 border-foreground bg-transparent text-foreground uppercase hover:bg-white hover:text-black px-4 py-2"
+                    className="border-foreground text-foreground border-2 bg-transparent px-4 py-2 uppercase hover:bg-white hover:text-black"
                     style={{
-                      clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
-                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                      clipPath:
+                        "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                     }}
                   >
                     {isSubmitting ? "TRANSMITTING..." : "SEND STATUS"}
                   </Button>
-                  <span className="text-muted-foreground text-sm font-mono">
+                  <span className="text-muted-foreground font-mono text-sm">
                     {currentIssue.length} chars
                   </span>
                 </div>
@@ -738,20 +753,22 @@ export default function PatientAssessmentPage() {
 
             {/* Assessment Notes */}
             <div
-              className="h-[580px] overflow-hidden border-2 border-foreground"
+              className="border-foreground h-[580px] overflow-hidden border-2"
               style={{
-                clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+                clipPath:
+                  "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
               }}
             >
-              <div className="border-b-2 border-foreground bg-background px-4 py-3">
+              <div className="border-foreground bg-background border-b-2 px-4 py-3">
                 <h3
-                  className="text-base flex items-center font-black tracking-wide text-foreground uppercase"
+                  className="text-foreground flex items-center text-base font-black tracking-wide uppercase"
                   style={{
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                     textShadow: "none",
                   }}
                 >
-                  <User className="mr-2 h-5 w-5 text-primary" />
+                  <User className="text-primary mr-2 h-5 w-5" />
                   ASSESSMENT NOTES
                 </h3>
               </div>
@@ -771,19 +788,21 @@ export default function PatientAssessmentPage() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Severe Allergies */}
           <div
-            className="overflow-hidden border-2 border-foreground p-3"
+            className="border-foreground overflow-hidden border-2 p-3"
             style={{
-              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+              clipPath:
+                "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
             }}
           >
             <h3
-              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              className="text-foreground mb-2 flex items-center text-sm font-black tracking-wide uppercase"
               style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                 textShadow: "none",
               }}
             >
-              <Bell className="mr-2 h-4 w-4 text-destructive" />
+              <Bell className="text-destructive mr-2 h-4 w-4" />
               ALLERGIES
             </h3>
             {allergies.filter((allergy) => allergy.severity === "severe")
@@ -793,12 +812,13 @@ export default function PatientAssessmentPage() {
                 .map((allergy, index) => (
                   <div
                     key={index}
-                    className="overflow-hidden border-2 border-foreground bg-destructive/10 p-1 mb-1"
+                    className="border-foreground bg-destructive/10 mb-1 overflow-hidden border-2 p-1"
                     style={{
-                      clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                      clipPath:
+                        "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
                     }}
                   >
-                    <p className="text-xs font-semibold text-destructive">
+                    <p className="text-destructive text-xs font-semibold">
                       {allergy.substance}
                     </p>
                   </div>
@@ -806,24 +826,24 @@ export default function PatientAssessmentPage() {
             ) : (
               <div className="py-1 text-center">
                 <CheckCircle className="mx-auto mb-1 h-4 w-4 text-green-500" />
-                <p className="text-muted-foreground text-xs">
-                  None
-                </p>
+                <p className="text-muted-foreground text-xs">None</p>
               </div>
             )}
           </div>
 
           {/* Current Medications */}
           <div
-            className="overflow-hidden border-2 border-foreground p-3"
+            className="border-foreground overflow-hidden border-2 p-3"
             style={{
-              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+              clipPath:
+                "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
             }}
           >
             <h3
-              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              className="text-foreground mb-2 flex items-center text-sm font-black tracking-wide uppercase"
               style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                 textShadow: "none",
               }}
             >
@@ -838,9 +858,10 @@ export default function PatientAssessmentPage() {
                   .map((medication, index) => (
                     <div
                       key={index}
-                      className="overflow-hidden border-2 border-foreground bg-blue-100 dark:bg-blue-900 p-1"
+                      className="border-foreground overflow-hidden border-2 bg-blue-100 p-1 dark:bg-blue-900"
                       style={{
-                        clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                        clipPath:
+                          "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
                       }}
                     >
                       <p className="text-xs font-semibold text-blue-800 dark:text-blue-200">
@@ -854,24 +875,24 @@ export default function PatientAssessmentPage() {
               </div>
             ) : (
               <div className="py-1 text-center">
-                <p className="text-muted-foreground text-xs">
-                  None
-                </p>
+                <p className="text-muted-foreground text-xs">None</p>
               </div>
             )}
           </div>
 
           {/* Critical Medical Conditions */}
           <div
-            className="overflow-hidden border-2 border-foreground p-3"
+            className="border-foreground overflow-hidden border-2 p-3"
             style={{
-              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+              clipPath:
+                "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
             }}
           >
             <h3
-              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              className="text-foreground mb-2 flex items-center text-sm font-black tracking-wide uppercase"
               style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                 textShadow: "none",
               }}
             >
@@ -880,8 +901,7 @@ export default function PatientAssessmentPage() {
             </h3>
             {medicalHistory.filter(
               (condition) =>
-                condition.status === "active" ||
-                condition.status === "chronic",
+                condition.status === "active" || condition.status === "chronic",
             ).length > 0 ? (
               <div className="space-y-1">
                 {medicalHistory
@@ -894,20 +914,23 @@ export default function PatientAssessmentPage() {
                   .map((condition, index) => (
                     <div
                       key={index}
-                      className={`overflow-hidden border-2 border-foreground p-1 ${
+                      className={`border-foreground overflow-hidden border-2 p-1 ${
                         condition.status === "active"
                           ? "bg-destructive/10"
                           : "bg-orange-100 dark:bg-orange-900"
                       }`}
                       style={{
-                        clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                        clipPath:
+                          "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
                       }}
                     >
-                      <p className={`text-xs font-semibold ${
-                        condition.status === "active"
-                          ? "text-destructive"
-                          : "text-orange-800 dark:text-orange-200"
-                      }`}>
+                      <p
+                        className={`text-xs font-semibold ${
+                          condition.status === "active"
+                            ? "text-destructive"
+                            : "text-orange-800 dark:text-orange-200"
+                        }`}
+                      >
                         {condition.condition}
                       </p>
                     </div>
@@ -916,24 +939,24 @@ export default function PatientAssessmentPage() {
             ) : (
               <div className="py-1 text-center">
                 <CheckCircle className="mx-auto mb-1 h-4 w-4 text-green-500" />
-                <p className="text-muted-foreground text-xs">
-                  None
-                </p>
+                <p className="text-muted-foreground text-xs">None</p>
               </div>
             )}
           </div>
 
           {/* Advance Care Plans */}
           <div
-            className="overflow-hidden border-2 border-foreground p-3"
+            className="border-foreground overflow-hidden border-2 p-3"
             style={{
-              clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
+              clipPath:
+                "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
             }}
           >
             <h3
-              className="text-sm mb-2 flex items-center font-black tracking-wide text-foreground uppercase"
+              className="text-foreground mb-2 flex items-center text-sm font-black tracking-wide uppercase"
               style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                 textShadow: "none",
               }}
             >
@@ -942,23 +965,23 @@ export default function PatientAssessmentPage() {
             </h3>
             <div className="space-y-1">
               {advanceCarePlan.dnr && (
-                <div 
-                  className="overflow-hidden border-2 border-foreground bg-destructive/10 p-1"
+                <div
+                  className="border-foreground bg-destructive/10 overflow-hidden border-2 p-1"
                   style={{
-                    clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                    clipPath:
+                      "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
                   }}
                 >
-                  <p className="text-xs font-semibold text-destructive">
-                    DNR
-                  </p>
+                  <p className="text-destructive text-xs font-semibold">DNR</p>
                 </div>
               )}
 
               {advanceCarePlan.molst && (
-                <div 
-                  className="overflow-hidden border-2 border-foreground bg-orange-100 dark:bg-orange-900 p-1"
+                <div
+                  className="border-foreground overflow-hidden border-2 bg-orange-100 p-1 dark:bg-orange-900"
                   style={{
-                    clipPath: "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
+                    clipPath:
+                      "polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px))",
                   }}
                 >
                   <p className="text-xs font-semibold text-orange-800 dark:text-orange-200">
@@ -970,33 +993,30 @@ export default function PatientAssessmentPage() {
               {!advanceCarePlan.dnr && !advanceCarePlan.molst && (
                 <div className="py-1 text-center">
                   <CheckCircle className="mx-auto mb-1 h-4 w-4 text-green-500" />
-                  <p className="text-muted-foreground text-xs">
-                    None
-                  </p>
+                  <p className="text-muted-foreground text-xs">None</p>
                 </div>
               )}
             </div>
           </div>
         </div>
-
       </main>
 
       {/* Break-Glass Override Modal */}
       {showBreakGlassModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-background">
-          <div className="mx-4 w-full max-w-md rounded-lg bg-background border-2 border-foreground p-6">
+        <div className="bg-opacity-50 bg-background fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-background border-foreground mx-4 w-full max-w-md rounded-lg border-2 p-6">
             <div className="mb-4 flex items-center space-x-3">
               <AlertTriangle className="h-6 w-6 text-red-500" />
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="text-foreground text-lg font-semibold">
                 Break-Glass Override
               </h3>
             </div>
             <div className="space-y-4">
-              <div className="rounded-lg border-2 border-foreground bg-background p-4">
-                <p className="mb-2 text-sm font-medium text-foreground">
+              <div className="border-foreground bg-background rounded-lg border-2 p-4">
+                <p className="text-foreground mb-2 text-sm font-medium">
                   ⚠️ Emergency Access Required
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   This action will grant emergency access to patient data
                   without explicit consent. This access will be logged and
                   audited. Use only in life-critical situations.
@@ -1028,7 +1048,7 @@ export default function PatientAssessmentPage() {
               <div className="flex space-x-3 pt-4">
                 <Button
                   onClick={handleBreakGlassOverride}
-                  className="flex-1 bg-destructive hover:bg-destructive/90"
+                  className="bg-destructive hover:bg-destructive/90 flex-1"
                 >
                   <Unlock className="mr-2 h-4 w-4" />
                   Grant Emergency Access

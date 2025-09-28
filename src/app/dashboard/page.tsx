@@ -148,12 +148,12 @@ function DashboardPageContent() {
   if (!selectedPatient) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
-        <Card className="mx-4 max-w-md">
+        <Card className="mx-4 max-w-md gap-0 py-4">
           <CardHeader className="text-center">
             <AlertCircle className="mx-auto mb-4 h-12 w-12 text-yellow-500" />
-            <CardTitle>No Patient Selected</CardTitle>
+            <CardTitle className="mb-2">No Patient Selected</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-center">
+          <CardContent className="space-y-4 py-4 text-center">
             <p className="text-muted-foreground">
               Please select a patient before accessing the dashboard.
             </p>
@@ -182,7 +182,7 @@ function DashboardPageContent() {
   if (patientDataLoading) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
-        <Card className="mx-4 max-w-md">
+        <Card className="mx-4 max-w-md gap-0 py-4">
           <CardContent className="py-8 text-center">
             <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
             <p className="text-muted-foreground">Loading patient data...</p>
@@ -196,12 +196,12 @@ function DashboardPageContent() {
   if (patientDataError || !patientData) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center">
-        <Card className="mx-4 max-w-md">
+        <Card className="mx-4 max-w-md gap-0 py-4">
           <CardHeader className="text-center">
             <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-500" />
-            <CardTitle>Error Loading Patient Data</CardTitle>
+            <CardTitle className="mb-2">Error Loading Patient Data</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-center">
+          <CardContent className="space-y-4 py-4 text-center">
             <p className="text-muted-foreground">
               {patientDataError ?? "Failed to load patient information"}
             </p>
@@ -216,24 +216,24 @@ function DashboardPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="bg-background text-foreground min-h-screen">
       {/* Page Header */}
-      <header className="border-b-4 border-foreground">
+      <header className="border-foreground border-b-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center space-x-3">
               <div
-                className="flex h-10 w-10 items-center justify-center overflow-hidden border-2 border-foreground"
+                className="border-foreground flex h-10 w-10 items-center justify-center overflow-hidden border-2"
                 style={{
                   clipPath:
                     "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
                 }}
               >
-                <Stethoscope className="h-5 w-5 text-foreground" />
+                <Stethoscope className="text-foreground h-5 w-5" />
               </div>
               <div>
                 <h1
-                  className="text-lg font-black tracking-tight text-foreground uppercase drop-shadow-lg"
+                  className="text-foreground text-lg font-black tracking-tight uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -243,7 +243,7 @@ function DashboardPageContent() {
                   Patient Dashboard - {selectedPatient.name}
                 </h1>
                 <p
-                  className="text-sm text-muted-foreground drop-shadow-lg"
+                  className="text-muted-foreground text-sm drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -266,7 +266,7 @@ function DashboardPageContent() {
               />
               <Button
                 variant="outline"
-                className="border-2 border-foreground bg-transparent text-foreground uppercase hover:bg-white hover:text-black"
+                className="border-foreground text-foreground border-2 bg-transparent uppercase hover:bg-white hover:text-black"
                 style={{
                   fontFamily:
                     'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -287,16 +287,16 @@ function DashboardPageContent() {
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Patient Information Header */}
         <div
-          className="mb-4 overflow-hidden border-2 border-foreground"
+          className="border-foreground mb-4 overflow-hidden border-2"
           style={{
             clipPath:
               "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
           }}
         >
-          <div className="border-b-2 border-foreground px-4 py-3">
+          <div className="border-foreground border-b-2 px-4 py-3">
             <div className="flex items-center justify-between">
               <h2
-                className="text-lg font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                className="text-foreground text-lg font-black tracking-wide uppercase drop-shadow-lg"
                 style={{
                   fontFamily:
                     'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -306,9 +306,9 @@ function DashboardPageContent() {
                 Patient Information
               </h2>
               <div className="flex items-center space-x-2">
-                <FileDigit className="h-4 w-4 text-foreground" />
+                <FileDigit className="text-foreground h-4 w-4" />
                 <span
-                  className="text-sm font-black text-foreground uppercase drop-shadow-lg"
+                  className="text-foreground text-sm font-black uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -327,20 +327,20 @@ function DashboardPageContent() {
               <div className="flex justify-center lg:justify-start">
                 <div className="group relative">
                   <div
-                    className="hover:border-opacity-80 flex h-[326px] w-[298px] cursor-pointer flex-col items-center justify-center overflow-hidden border-2 border-foreground transition-colors"
+                    className="hover:border-opacity-80 border-foreground flex h-[326px] w-[298px] cursor-pointer flex-col items-center justify-center overflow-hidden border-2 transition-colors"
                     style={{
                       clipPath:
                         "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
                     }}
                   >
                     <div
-                      className="mb-2 flex h-36 w-36 items-center justify-center overflow-hidden border-2 border-foreground"
+                      className="border-foreground mb-2 flex h-36 w-36 items-center justify-center overflow-hidden border-2"
                       style={{
                         clipPath:
                           "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
                       }}
                     >
-                      <User className="h-20 w-20 text-foreground" />
+                      <User className="text-foreground h-20 w-20" />
                     </div>
                     <div className="text-center">
                       <p className="text-muted-foreground text-xs font-medium">
@@ -351,7 +351,7 @@ function DashboardPageContent() {
                       </p>
                     </div>
                     {/* Upload overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-background/50 opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="bg-background/50 absolute inset-0 flex items-center justify-center rounded-lg opacity-0 transition-opacity group-hover:opacity-100">
                       <div className="text-card-foreground text-center">
                         <Plus className="mx-auto mb-1 h-6 w-6" />
                         <p className="text-xs">Update Photo</p>
@@ -589,16 +589,16 @@ function DashboardPageContent() {
           <div className="mb-6" id="section-pastConditions">
             {/* Past Medical History Section - Full width */}
             <div
-              className="overflow-hidden border-2 border-foreground"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
               }}
             >
-              <div className="border-b-2 border-foreground px-4 py-3">
+              <div className="border-foreground border-b-2 px-4 py-3">
                 <div className="flex items-center justify-between">
                   <h2
-                    className="text-lg font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                    className="text-foreground text-lg font-black tracking-wide uppercase drop-shadow-lg"
                     style={{
                       fontFamily:
                         'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -608,9 +608,9 @@ function DashboardPageContent() {
                     Past Medical History
                   </h2>
                   <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-foreground" />
+                    <FileText className="text-foreground h-4 w-4" />
                     <span
-                      className="text-sm font-black text-foreground uppercase drop-shadow-lg"
+                      className="text-foreground text-sm font-black uppercase drop-shadow-lg"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -628,7 +628,7 @@ function DashboardPageContent() {
                   <div className="space-y-4">
                     {/* Social History */}
                     <div
-                      className="overflow-hidden border-2 border-foreground p-3"
+                      className="border-foreground overflow-hidden border-2 p-3"
                       style={{
                         clipPath:
                           "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
@@ -636,14 +636,14 @@ function DashboardPageContent() {
                       id="section-socialHistory"
                     >
                       <h3
-                        className="text-md mb-2 flex items-center font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                        className="text-md text-foreground mb-2 flex items-center font-black tracking-wide uppercase drop-shadow-lg"
                         style={{
                           fontFamily:
                             'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                           textShadow: "none",
                         }}
                       >
-                        <Users className="mr-2 h-4 w-4 text-foreground" />
+                        <Users className="text-foreground mr-2 h-4 w-4" />
                         Social History
                       </h3>
                       {patientData.socialHistory ? (
@@ -701,7 +701,7 @@ function DashboardPageContent() {
                     {/* Immunization History */}
                     {hasPermission(userPermissions, "VIEW_IMMUNIZATIONS") && (
                       <div
-                        className="overflow-hidden border-2 border-foreground p-3"
+                        className="border-foreground overflow-hidden border-2 p-3"
                         id="section-immunizations"
                         style={{
                           clipPath:
@@ -726,7 +726,7 @@ function DashboardPageContent() {
                               (immunization, index) => (
                                 <div
                                   key={index}
-                                  className="bg-secondary overflow-hidden border-2 border-foreground p-2"
+                                  className="bg-secondary border-foreground overflow-hidden border-2 p-2"
                                   style={{
                                     clipPath:
                                       "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
@@ -796,7 +796,7 @@ function DashboardPageContent() {
 
                     {/* Allergies */}
                     <div
-                      className="overflow-hidden border-2 border-foreground p-3"
+                      className="border-foreground overflow-hidden border-2 p-3"
                       id="section-allergies"
                       style={{
                         clipPath:
@@ -857,7 +857,7 @@ function DashboardPageContent() {
                             return (
                               <div
                                 key={index}
-                                className={`border-2 border-foreground ${style.bg} overflow-hidden p-2`}
+                                className={`border-foreground border-2 ${style.bg} overflow-hidden p-2`}
                                 style={{
                                   clipPath:
                                     "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
@@ -949,7 +949,7 @@ function DashboardPageContent() {
                     {/* Past Injuries and Conditions */}
                     {hasPermission(userPermissions, "VIEW_PAST_CONDITIONS") && (
                       <div
-                        className="overflow-hidden border-2 border-foreground p-3"
+                        className="border-foreground overflow-hidden border-2 p-3"
                         style={{
                           clipPath:
                             "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
@@ -1041,7 +1041,7 @@ function DashboardPageContent() {
                     {/* Family Medical History */}
                     {hasPermission(userPermissions, "VIEW_FAMILY_HISTORY") && (
                       <div
-                        className="overflow-hidden border-2 border-foreground p-3"
+                        className="border-foreground overflow-hidden border-2 p-3"
                         id="section-familyHistory"
                         style={{
                           clipPath:
@@ -1124,16 +1124,16 @@ function DashboardPageContent() {
         {hasPermission(userPermissions, "VIEW_CARE_PLANS") && (
           <div className="mb-6">
             <div
-              className="overflow-hidden border-2 border-foreground"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
               }}
             >
-              <div className="border-b-2 border-foreground px-4 py-3">
+              <div className="border-foreground border-b-2 px-4 py-3">
                 <div className="flex items-center justify-between">
                   <h2
-                    className="text-lg font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                    className="text-foreground text-lg font-black tracking-wide uppercase drop-shadow-lg"
                     style={{
                       fontFamily:
                         'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -1143,9 +1143,9 @@ function DashboardPageContent() {
                     Care Plans
                   </h2>
                   <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-foreground" />
+                    <FileText className="text-foreground h-4 w-4" />
                     <span
-                      className="text-sm font-black text-foreground uppercase drop-shadow-lg"
+                      className="text-foreground text-sm font-black uppercase drop-shadow-lg"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -1161,26 +1161,26 @@ function DashboardPageContent() {
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   {/* DNRS Section */}
                   <div
-                    className="overflow-hidden border-2 border-foreground p-4"
+                    className="border-foreground overflow-hidden border-2 p-4"
                     style={{
                       clipPath:
                         "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
                     }}
                   >
                     <h3
-                      className="text-md mb-3 flex items-center font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                      className="text-md text-foreground mb-3 flex items-center font-black tracking-wide uppercase drop-shadow-lg"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                         textShadow: "none",
                       }}
                     >
-                      <Activity className="mr-2 h-5 w-5 text-foreground" />
+                      <Activity className="text-foreground mr-2 h-5 w-5" />
                       DNRS (Dynamic Neuromuscular Rehabilitation System)
                     </h3>
                     <div className="space-y-3">
                       <div
-                        className="overflow-hidden border-2 border-foreground p-3"
+                        className="border-foreground overflow-hidden border-2 p-3"
                         style={{
                           clipPath:
                             "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
@@ -1188,7 +1188,7 @@ function DashboardPageContent() {
                       >
                         <div className="mb-2 flex items-start justify-between">
                           <span
-                            className="text-sm font-black text-foreground uppercase drop-shadow-lg"
+                            className="text-foreground text-sm font-black uppercase drop-shadow-lg"
                             style={{
                               fontFamily:
                                 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -1198,7 +1198,7 @@ function DashboardPageContent() {
                             Current Status:
                           </span>
                           <span
-                            className="overflow-hidden border-2 border-foreground px-2 py-1 text-xs font-black text-foreground uppercase"
+                            className="border-foreground text-foreground overflow-hidden border-2 px-2 py-1 text-xs font-black uppercase"
                             style={{
                               fontFamily:
                                 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -1270,7 +1270,7 @@ function DashboardPageContent() {
 
                   {/* Preventive Care Section */}
                   <div
-                    className="overflow-hidden border-2 border-foreground p-4"
+                    className="border-foreground overflow-hidden border-2 p-4"
                     style={{
                       clipPath:
                         "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
@@ -1290,7 +1290,7 @@ function DashboardPageContent() {
                     <div className="space-y-3">
                       {/* Upcoming Screenings */}
                       <div
-                        className="bg-secondary overflow-hidden border-2 border-foreground p-3"
+                        className="bg-secondary border-foreground overflow-hidden border-2 p-3"
                         style={{
                           clipPath:
                             "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
@@ -1378,7 +1378,7 @@ function DashboardPageContent() {
 
                       {/* Completed Screenings */}
                       <div
-                        className="bg-secondary overflow-hidden border-2 border-foreground p-3"
+                        className="bg-secondary border-foreground overflow-hidden border-2 p-3"
                         style={{
                           clipPath:
                             "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))",
@@ -1526,7 +1526,7 @@ function DashboardPageContent() {
             className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4"
             id="section-vitals"
           >
-            <Card className="border-l-4 border-l-green-500">
+            <Card className="gap-0 border-l-4 border-l-green-500 py-4">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -1546,7 +1546,7 @@ function DashboardPageContent() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-blue-500">
+            <Card className="gap-0 border-l-4 border-l-blue-500 py-4">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -1563,7 +1563,7 @@ function DashboardPageContent() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-orange-500">
+            <Card className="gap-0 border-l-4 border-l-orange-500 py-4">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -1580,7 +1580,7 @@ function DashboardPageContent() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-purple-500">
+            <Card className="gap-0 border-l-4 border-l-purple-500 py-4">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -1607,23 +1607,23 @@ function DashboardPageContent() {
           patientData?.assessmentData &&
           Object.keys(patientData.assessmentData).length > 0 && (
             <Card
-              className="overflow-hidden border-2 border-foreground"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               id="section-assessment"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
               }}
             >
-              <CardHeader className="border-b-2 border-foreground">
+              <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="flex items-center font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                     textShadow: "none",
                   }}
                 >
-                  <Stethoscope className="mr-2 h-5 w-5 text-foreground" />
+                  <Stethoscope className="text-foreground mr-2 h-5 w-5" />
                   Physical Assessment
                 </CardTitle>
                 <CardDescription
@@ -1654,7 +1654,7 @@ function DashboardPageContent() {
                       return (
                         <div
                           key={bodyPart}
-                          className="bg-card text-card-foreground overflow-hidden border-2 border-foreground p-4"
+                          className="bg-card text-card-foreground border-foreground overflow-hidden border-2 p-4"
                           style={{
                             clipPath:
                               "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
@@ -1715,24 +1715,24 @@ function DashboardPageContent() {
             <div className="space-y-6 lg:col-span-2">
               {/* Recent Medical Records */}
               <Card
-                className="overflow-hidden border-2 border-foreground"
+                className="border-foreground gap-0 overflow-hidden border-2 py-4"
                 style={{
                   clipPath:
                     "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
                 }}
               >
-                <CardHeader className="border-b-2 border-foreground">
+                <CardHeader className="border-foreground border-b-2">
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle
-                        className="flex items-center font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                        className="text-foreground mb-2 flex items-center font-black tracking-wide uppercase drop-shadow-lg"
                         style={{
                           fontFamily:
                             'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                           textShadow: "none",
                         }}
                       >
-                        <FileText className="mr-2 h-5 w-5 text-foreground" />
+                        <FileText className="text-foreground mr-2 h-5 w-5" />
                         Medical Records
                       </CardTitle>
                       <CardDescription
@@ -1750,7 +1750,7 @@ function DashboardPageContent() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-2 border-foreground bg-transparent text-foreground uppercase hover:bg-white hover:text-black"
+                        className="border-foreground text-foreground border-2 bg-transparent uppercase hover:bg-white hover:text-black"
                         style={{
                           fontFamily:
                             'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -1764,7 +1764,7 @@ function DashboardPageContent() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-2 border-foreground bg-transparent text-foreground uppercase hover:bg-white hover:text-black"
+                        className="border-foreground text-foreground border-2 bg-transparent uppercase hover:bg-white hover:text-black"
                         style={{
                           fontFamily:
                             'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2021,23 +2021,23 @@ function DashboardPageContent() {
             <div className="space-y-6">
               {/* Current Medications */}
               <Card
-                className="overflow-hidden border-2 border-foreground"
+                className="border-foreground gap-0 overflow-hidden border-2 py-4"
                 id="section-medications"
                 style={{
                   clipPath:
                     "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
                 }}
               >
-                <CardHeader className="border-b-2 border-foreground">
+                <CardHeader className="border-foreground border-b-2">
                   <CardTitle
-                    className="flex items-center font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                    className="text-foreground mb-2 flex items-center font-black tracking-wide uppercase drop-shadow-lg"
                     style={{
                       fontFamily:
                         'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                       textShadow: "none",
                     }}
                   >
-                    <Pill className="mr-2 h-5 w-5 text-foreground" />
+                    <Pill className="text-foreground mr-2 h-5 w-5" />
                     Current Medications
                   </CardTitle>
                 </CardHeader>
@@ -2048,7 +2048,7 @@ function DashboardPageContent() {
                       .map((medication, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between overflow-hidden border-2 border-foreground p-3"
+                          className="border-foreground flex items-center justify-between overflow-hidden border-2 p-3"
                           style={{
                             clipPath:
                               "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
@@ -2056,7 +2056,7 @@ function DashboardPageContent() {
                         >
                           <div>
                             <p
-                              className="font-black text-foreground uppercase drop-shadow-lg"
+                              className="text-foreground font-black uppercase drop-shadow-lg"
                               style={{
                                 fontFamily:
                                   'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2067,7 +2067,7 @@ function DashboardPageContent() {
                               {medication.dose && `${medication.dose}`}
                             </p>
                             <p
-                              className="text-sm text-muted-foreground drop-shadow-lg"
+                              className="text-muted-foreground text-sm drop-shadow-lg"
                               style={{
                                 fontFamily:
                                   'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2089,7 +2089,7 @@ function DashboardPageContent() {
                               </p>
                             )}
                           </div>
-                          <Clock className="h-4 w-4 text-foreground" />
+                          <Clock className="text-foreground h-4 w-4" />
                         </div>
                       )) ?? (
                       <div className="py-4 text-center">
@@ -2116,16 +2116,16 @@ function DashboardPageContent() {
         {hasPermission(userPermissions, "VIEW_NOTES") && (
           <div className="my-6">
             <Card
-              className="overflow-hidden border-2 border-foreground shadow-sm"
+              className="border-foreground gap-0 overflow-hidden border-2 shadow-sm"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
               }}
             >
-              <CardHeader className="border-b-2 border-foreground">
-                <div className="flex items-center justify-between">
+              <CardHeader className="border-foreground border-b-2">
+                <div className="mb-4 flex items-center justify-between">
                   <CardTitle
-                    className="font-black tracking-wide text-foreground uppercase drop-shadow-lg"
+                    className="text-foreground font-black tracking-wide uppercase drop-shadow-lg"
                     style={{
                       fontFamily:
                         'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2134,10 +2134,10 @@ function DashboardPageContent() {
                   >
                     General Notes
                   </CardTitle>
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-foreground" />
+                  <div className="flex items-start space-x-2">
+                    <FileText className="text-foreground h-4 w-4" />
                     <span
-                      className="text-sm font-black text-foreground uppercase drop-shadow-lg"
+                      className="text-foreground text-sm font-black uppercase drop-shadow-lg"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2149,19 +2149,19 @@ function DashboardPageContent() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 pb-0">
                 <div className="space-y-4">
                   {/* Recent Notes */}
                   <div className="space-y-3">
                     <h3
-                      className="text-md flex items-center font-black text-foreground uppercase drop-shadow-lg"
+                      className="text-md text-foreground flex items-center font-black uppercase drop-shadow-lg"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                         textShadow: "none",
                       }}
                     >
-                      <Clock className="mr-2 h-4 w-4 text-foreground" />
+                      <Clock className="text-foreground mr-2 h-4 w-4" />
                       Recent Notes
                     </h3>
 
@@ -2171,7 +2171,7 @@ function DashboardPageContent() {
                         {patientData.recentNotes.map((note, index) => (
                           <div
                             key={index}
-                            className="overflow-hidden border-2 border-foreground p-4"
+                            className="border-foreground overflow-hidden border-2 p-4"
                             style={{
                               clipPath:
                                 "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))",
@@ -2179,7 +2179,7 @@ function DashboardPageContent() {
                           >
                             <div className="mb-2 flex items-start justify-between">
                               <span
-                                className="text-sm font-black text-foreground uppercase drop-shadow-lg"
+                                className="text-foreground text-sm font-black uppercase drop-shadow-lg"
                                 style={{
                                   fontFamily:
                                     'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2189,7 +2189,7 @@ function DashboardPageContent() {
                                 {note.provider}
                               </span>
                               <span
-                                className="text-xs font-black text-muted-foreground uppercase drop-shadow-lg"
+                                className="text-muted-foreground text-xs font-black uppercase drop-shadow-lg"
                                 style={{
                                   fontFamily:
                                     'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2213,9 +2213,9 @@ function DashboardPageContent() {
                         ))}
                       </div>
                     ) : (
-                      <div className="py-4 text-center">
+                      <div className="pb-4 text-center">
                         <p
-                          className="text-sm text-muted-foreground drop-shadow-lg"
+                          className="text-muted-foreground text-sm drop-shadow-lg"
                           style={{
                             fontFamily:
                               'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2229,21 +2229,21 @@ function DashboardPageContent() {
                   </div>
 
                   {/* Progress Summary */}
-                  <div className="border-t-2 border-foreground pt-4">
+                  <div className="border-foreground border-t-2 pt-4">
                     <h3
-                      className="text-md mb-3 flex items-center font-black text-foreground uppercase drop-shadow-lg"
+                      className="text-md text-foreground mb-3 flex items-center font-black uppercase drop-shadow-lg"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                         textShadow: "none",
                       }}
                     >
-                      <BarChart3 className="mr-2 h-4 w-4 text-foreground" />
+                      <BarChart3 className="text-foreground mr-2 h-4 w-4" />
                       Progress Summary
                     </h3>
-                    <div className="py-4 text-center">
+                    <div className="pb-4 text-center">
                       <p
-                        className="text-sm text-muted-foreground drop-shadow-lg"
+                        className="text-muted-foreground text-sm drop-shadow-lg"
                         style={{
                           fontFamily:
                             'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2256,21 +2256,21 @@ function DashboardPageContent() {
                   </div>
 
                   {/* General Observations */}
-                  <div className="border-t-2 border-foreground pt-4">
+                  <div className="border-foreground border-t-2 pt-4">
                     <h3
-                      className="text-md mb-3 flex items-center font-black text-foreground uppercase drop-shadow-lg"
+                      className="text-md text-foreground mb-3 flex items-center font-black uppercase drop-shadow-lg"
                       style={{
                         fontFamily:
                           'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
                         textShadow: "none",
                       }}
                     >
-                      <Eye className="mr-2 h-4 w-4 text-foreground" />
+                      <Eye className="text-foreground mr-2 h-4 w-4" />
                       General Observations
                     </h3>
-                    <div className="py-4 text-center">
+                    <div className="pb-4 text-center">
                       <p
-                        className="text-sm text-muted-foreground drop-shadow-lg"
+                        className="text-muted-foreground text-sm drop-shadow-lg"
                         style={{
                           fontFamily:
                             'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',

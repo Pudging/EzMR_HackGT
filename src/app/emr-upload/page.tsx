@@ -2166,7 +2166,7 @@ export default function EMRUploadPage() {
           <div className="space-y-6 overflow-y-auto">
             {/* Demographics */}
             <Card
-              className="border-foreground overflow-hidden border-2"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
@@ -2174,7 +2174,7 @@ export default function EMRUploadPage() {
             >
               <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="text-foreground flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2185,7 +2185,7 @@ export default function EMRUploadPage() {
                   <span>Patient Demographics</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 p-6">
+              <CardContent className="space-y-4 p-6 py-4">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label
@@ -2462,7 +2462,7 @@ export default function EMRUploadPage() {
 
             {/* Vital Signs */}
             <Card
-              className="border-foreground overflow-hidden border-2"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
@@ -2470,7 +2470,7 @@ export default function EMRUploadPage() {
             >
               <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="text-foreground flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2481,7 +2481,7 @@ export default function EMRUploadPage() {
                   <span>Vital Signs</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 p-6">
+              <CardContent className="space-y-4 p-6 py-4">
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                   <div className="space-y-2">
                     <Label
@@ -2752,7 +2752,7 @@ export default function EMRUploadPage() {
 
             {/* Medications & Prescription */}
             <Card
-              className="border-foreground overflow-hidden border-2"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
@@ -2760,7 +2760,7 @@ export default function EMRUploadPage() {
             >
               <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="text-foreground flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -2771,8 +2771,8 @@ export default function EMRUploadPage() {
                   <span>Medications & Prescriptions</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 p-6">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+              <CardContent className="space-y-4 p-6 py-4">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
                   <Input
                     value={newMedication.name}
                     onChange={(e) =>
@@ -3213,7 +3213,7 @@ export default function EMRUploadPage() {
 
             {/* Care Plans */}
             <Card
-              className="border-foreground overflow-hidden border-2"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
@@ -3221,7 +3221,7 @@ export default function EMRUploadPage() {
             >
               <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="text-foreground flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -3232,7 +3232,7 @@ export default function EMRUploadPage() {
                   <span>Care Plans</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 p-6">
+              <CardContent className="space-y-4 p-6 py-4">
                 <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
@@ -3290,7 +3290,7 @@ export default function EMRUploadPage() {
 
             {/* File Upload Section */}
             <Card
-              className="border-foreground overflow-hidden border-2"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
@@ -3298,7 +3298,7 @@ export default function EMRUploadPage() {
             >
               <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="text-foreground flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -3309,7 +3309,7 @@ export default function EMRUploadPage() {
                   <span>Lab Work & File Uploads</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 p-6">
+              <CardContent className="space-y-4 p-6 py-4">
                 <div
                   className="hover:border-opacity-80 border-foreground overflow-hidden border-2 border-dashed p-8 text-center transition-colors"
                   style={{
@@ -3663,7 +3663,7 @@ export default function EMRUploadPage() {
           <div className="space-y-6 overflow-y-auto">
             {/* Generic Notes for Auto-filling (Future Feature) */}
             <Card
-              className="border-foreground overflow-hidden border-2"
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
@@ -3671,7 +3671,7 @@ export default function EMRUploadPage() {
             >
               <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="text-foreground flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -3682,7 +3682,7 @@ export default function EMRUploadPage() {
                   <span>Smart Notes (Auto-fill Ready)</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 p-6">
+              <CardContent className="space-y-4 p-6 py-4">
                 <div
                   className="border-foreground mb-4 overflow-hidden border-2 p-4"
                   style={{
@@ -3698,7 +3698,7 @@ export default function EMRUploadPage() {
                       textShadow: "none",
                     }}
                   >
-                    💡 AI-Powered Feature
+                    AI-Powered Feature
                   </div>
                   <div
                     className="text-muted-foreground text-sm drop-shadow-lg"
@@ -3770,10 +3770,16 @@ export default function EMRUploadPage() {
             </Card>
 
             {/* Medical History Section */}
-            <Card className="border">
+            <Card
+              className="border-foreground gap-0 overflow-hidden border-2 py-4"
+              style={{
+                clipPath:
+                  "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
+              }}
+            >
               <CardHeader className="border-foreground border-b-2">
                 <CardTitle
-                  className="text-foreground flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
+                  className="text-foreground mb-2 flex items-center space-x-2 font-black tracking-wide uppercase drop-shadow-lg"
                   style={{
                     fontFamily:
                       'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo, Consolas, "Roboto Mono", "Liberation Mono", "Courier New", monospace',
@@ -3784,7 +3790,7 @@ export default function EMRUploadPage() {
                   <span>Medical History & Records</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6 p-6">
+              <CardContent className="space-y-6 p-6 py-4">
                 {/* Social History */}
                 <div className="space-y-4">
                   <h3
