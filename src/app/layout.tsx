@@ -21,12 +21,27 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${geist.variable} dark`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                  localStorage.setItem('theme', 'dark');
+                }
+                document.documentElement.classList.add('dark');
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
+          enableSystem={false}
+          forcedTheme="dark"
         >
           <AuthSessionProvider>
             <Navbar />
