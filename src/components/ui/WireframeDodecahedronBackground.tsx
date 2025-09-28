@@ -1,15 +1,15 @@
 "use client";
+import dynamic from "next/dynamic";
 
-import React, { useRef } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Edges } from "@react-three/drei";
 import { type Group } from "three";
 import { useTheme } from "next-themes";
 
-function DodecahedronMesh() {
+function DodecahedronMesh({ isLight }: { isLight: boolean }) {
   const meshRef = useRef<Group>(null);
   const { pointer } = useThree();
-  const { theme, resolvedTheme } = useTheme();
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -26,11 +26,8 @@ function DodecahedronMesh() {
   });
 
   // Theme-aware colors
-  const isLight = resolvedTheme === "light" || theme === "light";
   const edgeColor = isLight ? "#505050" : "#606060";
   const gridColor = isLight ? "#2a2a2a" : "#303030";
-  const ringColor = isLight ? "#333333" : "#505050";
-  const background = isLight ? "white" : "black";
 
   return (
     <group ref={meshRef}>
@@ -81,7 +78,7 @@ interface WireframeDodecahedronBackgroundProps {
   className?: string;
 }
 
-export default function WireframeDodecahedronBackground({
+export function WireframeDodecahedronBackground({
   className = "",
 }: WireframeDodecahedronBackgroundProps) {
   const { theme, resolvedTheme } = useTheme();
@@ -97,14 +94,20 @@ export default function WireframeDodecahedronBackground({
       }}
       aria-hidden="true"
     >
-      <Canvas
-        camera={{ position: [0, 0, 8], fov: 50 }}
-        style={{ background }}
-        gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
-        performance={{ min: 0.8 }}
-      >
-        <DodecahedronMesh />
-      </Canvas>
+      <Suspense>
+        <Canvas
+          camera={{ position: [0, 0, 8], fov: 50 }}
+          style={{ background }}
+          gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
+          performance={{ min: 0.8 }}
+        >
+          <DodecahedronMesh isLight={isLight} />
+        </Canvas>
+      </Suspense>
     </div>
   );
 }
+
+export default dynamic(() => Promise.resolve(WireframeDodecahedronBackground), {
+  ssr: false,
+});
