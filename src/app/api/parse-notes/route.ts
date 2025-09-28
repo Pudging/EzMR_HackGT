@@ -1,52 +1,76 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { runMastraGenerate } from '@/mastra/run';
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { runMastraGenerate } from "@/mastra/run";
+import { generateObject } from "ai";
+import { google } from "@ai-sdk/google";
 
 // Define Zod schema for medical data
 const medicalDataSchema = z.object({
-  demographics: z.object({
-    name: z.string().optional(),
-    dob: z.string().optional(),
-    sex: z.string().optional(),
-    address: z.string().optional(),
-    phone: z.string().optional(),
-    insurance: z.string().optional(),
-    emergencyContact: z.string().optional(),
-    patientId: z.string().optional(),
-  }).optional(),
-  vitals: z.object({
-    bloodPressure: z.string().optional(),
-    heartRate: z.string().optional(),
-    temperature: z.string().optional(),
-    weight: z.string().optional(),
-    height: z.string().optional(),
-    bmi: z.string().optional(),
-    bloodType: z.string().optional(),
-  }).optional(),
-  medications: z.array(z.object({
-    name: z.string(),
-    dosage: z.string().optional(),
-    schedule: z.string().optional(),
-  })).optional(),
-  socialHistory: z.object({
-    smoking: z.string().optional(),
-    drugs: z.string().optional(),
-    alcohol: z.string().optional(),
-  }).optional(),
-  pastConditions: z.array(z.object({
-    date: z.string().optional(),
-    bodyPart: z.string(),
-    notes: z.string(),
-  })).optional(),
-  immunizations: z.array(z.object({
-    date: z.string().optional(),
-    notes: z.string(),
-  })).optional(),
-  familyHistory: z.array(z.object({
-    date: z.string().optional(),
-    bodyPart: z.string(),
-    notes: z.string(),
-  })).optional(),
+  demographics: z
+    .object({
+      name: z.string().optional(),
+      dob: z.string().optional(),
+      sex: z.string().optional(),
+      address: z.string().optional(),
+      phone: z.string().optional(),
+      insurance: z.string().optional(),
+      emergencyContact: z.string().optional(),
+      patientId: z.string().optional(),
+    })
+    .optional(),
+  vitals: z
+    .object({
+      bloodPressure: z.string().optional(),
+      heartRate: z.string().optional(),
+      temperature: z.string().optional(),
+      weight: z.string().optional(),
+      height: z.string().optional(),
+      bmi: z.string().optional(),
+      bloodType: z.string().optional(),
+    })
+    .optional(),
+  medications: z
+    .array(
+      z.object({
+        name: z.string(),
+        dosage: z.string().optional(),
+        schedule: z.string().optional(),
+      }),
+    )
+    .optional(),
+  socialHistory: z
+    .object({
+      smoking: z.string().optional(),
+      drugs: z.string().optional(),
+      alcohol: z.string().optional(),
+    })
+    .optional(),
+  pastConditions: z
+    .array(
+      z.object({
+        date: z.string().optional(),
+        bodyPart: z.string(),
+        notes: z.string(),
+      }),
+    )
+    .optional(),
+  immunizations: z
+    .array(
+      z.object({
+        date: z.string().optional(),
+        notes: z.string(),
+      }),
+    )
+    .optional(),
+  familyHistory: z
+    .array(
+      z.object({
+        date: z.string().optional(),
+        bodyPart: z.string(),
+        notes: z.string(),
+      }),
+    )
+    .optional(),
   allergies: z.string().optional(),
   generalNotes: z.string().optional(),
   dnr: z.boolean().optional(),
@@ -57,21 +81,21 @@ export async function POST(request: NextRequest) {
   try {
     const { notes } = await request.json();
 
-    if (!notes || typeof notes !== 'string') {
+    if (!notes || typeof notes !== "string") {
       return NextResponse.json(
-        { error: 'Invalid or missing notes parameter' },
-        { status: 400 }
+        { error: "Invalid or missing notes parameter" },
+        { status: 400 },
       );
     }
 
     if (notes.length > 10000) {
       return NextResponse.json(
-        { error: 'Notes too long. Maximum 10,000 characters allowed.' },
-        { status: 400 }
+        { error: "Notes too long. Maximum 10,000 characters allowed." },
+        { status: 400 },
       );
     }
 
-    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
     const now = new Date().toISOString(); // Get current timestamp
 
     // Mastra: call Gemini via Mastra Agent and validate with Zod
@@ -140,37 +164,38 @@ Extract all relevant medical information from the notes and structure it accordi
 Return ONLY a strict JSON object that conforms to the schema with no extra commentary.
     `;
 
-    const text = await runMastraGenerate(prompt, 'gemini-2.0-flash-exp');
-
-    // Attempt to extract JSON block
-    const jsonMatch = /\{[\s\S]*\}/.exec(text);
-    const jsonString = jsonMatch ? jsonMatch[0] : text;
-
-    let parsed: unknown;
+    // Try Mastra first
     try {
-      parsed = JSON.parse(jsonString);
-    } catch (_err) {
-      return NextResponse.json(
-        { error: 'AI did not return valid JSON', raw: text },
-        { status: 502 }
-      );
+      const text = await runMastraGenerate(prompt, "gemini-2.0-flash-exp");
+      const jsonMatch = /\{[\s\S]*\}/.exec(text);
+      const jsonString = jsonMatch ? jsonMatch[0] : text;
+      const parsed = JSON.parse(jsonString);
+      const validated = medicalDataSchema.safeParse(parsed);
+      if (!validated.success) throw new Error("Schema validation failed");
+      return NextResponse.json(validated.data);
+    } catch (mastraErr) {
+      console.warn("Mastra failed, falling back to Vercel AI SDK:", mastraErr);
+      try {
+        const result = await generateObject({
+          model: google("gemini-2.0-flash-exp"),
+          schema: medicalDataSchema,
+          prompt,
+          temperature: 0.1,
+        });
+        return NextResponse.json(result.object);
+      } catch (fallbackErr) {
+        console.error("Fallback also failed:", fallbackErr);
+        return NextResponse.json(
+          { error: "Failed to parse medical notes" },
+          { status: 500 },
+        );
+      }
     }
-
-    const validated = medicalDataSchema.safeParse(parsed);
-    if (!validated.success) {
-      return NextResponse.json(
-        { error: 'AI output failed schema validation', issues: validated.error.issues, raw: parsed },
-        { status: 422 }
-      );
-    }
-
-    return NextResponse.json(validated.data);
-
   } catch (error) {
-    console.error('Error parsing medical notes:', error);
+    console.error("Error parsing medical notes:", error);
     return NextResponse.json(
-      { error: 'Failed to parse medical notes' },
-      { status: 500 }
+      { error: "Failed to parse medical notes" },
+      { status: 500 },
     );
   }
 }
