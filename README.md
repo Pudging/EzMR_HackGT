@@ -70,7 +70,7 @@ flowchart LR
     A -- Query --> B[Next.js API Routes]
   end
 
-  subgraph Backend (Vercel)
+  subgraph backend [Backend (Vercel)]
     B -- RBAC/Policies --> P[Policy Engine (HIPAA/HIE)]
     B -- AI Parse --> M[Gemini via Maestra]
     B -- DICOM Parse --> D[dicom-parser]
